@@ -1,3 +1,7 @@
 /Temp/
 /Library/
 /TestBuild_Data/
+/.vs/
+
+*.exe
+*.pdb
