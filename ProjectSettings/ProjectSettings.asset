@@ -74,7 +74,10 @@ PlayerSettings:
   ignoreAlphaClear: 0
   xboxOneResolution: 0
   xboxOneMonoLoggingLevel: 0
+<<<<<<< HEAD
+=======
   xboxOneLoggingLevel: 1
+>>>>>>> ab90da476f67967eea3f985b434093ad586bdaad
   ps3SplashScreen: {fileID: 0}
   videoMemoryForVertexBuffers: 0
   psp2PowerMode: 0
@@ -407,7 +410,10 @@ PlayerSettings:
   XboxOnePersistentLocalStorageSize: 0
   intPropertyNames:
   - Android::ScriptingBackend
+<<<<<<< HEAD
+=======
   - Metro::ScriptingBackend
+>>>>>>> ab90da476f67967eea3f985b434093ad586bdaad
   - Standalone::ScriptingBackend
   - WebGL::ScriptingBackend
   - WebGL::audioCompressionFormat
@@ -415,7 +421,10 @@ PlayerSettings:
   - WebGL::memorySize
   - WebPlayer::ScriptingBackend
   Android::ScriptingBackend: 0
+<<<<<<< HEAD
+=======
   Metro::ScriptingBackend: 2
+>>>>>>> ab90da476f67967eea3f985b434093ad586bdaad
   Standalone::ScriptingBackend: 0
   WebGL::ScriptingBackend: 1
   WebGL::audioCompressionFormat: 4

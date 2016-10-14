@@ -30,6 +30,7 @@ Transform:
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
   m_LocalPosition: {x: -0.04, y: 2.9, z: -10}
   m_LocalScale: {x: 1, y: 1, z: 1}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 0
@@ -42,17 +43,20 @@ MeshRenderer:
   m_Enabled: 1
   m_CastShadows: 1
   m_ReceiveShadows: 1
+  m_MotionVectors: 1
+  m_LightProbeUsage: 1
+  m_ReflectionProbeUsage: 1
   m_Materials:
   - {fileID: 10303, guid: 0000000000000000f000000000000000, type: 0}
   m_SubsetIndices: 
   m_StaticBatchRoot: {fileID: 0}
-  m_UseLightProbes: 1
-  m_ReflectionProbeUsage: 1
   m_ProbeAnchor: {fileID: 0}
+  m_LightProbeVolumeOverride: {fileID: 0}
   m_ScaleInLightmap: 1
   m_PreserveUVs: 1
   m_IgnoreNormalsForChartDetection: 0
   m_ImportantGI: 0
+  m_SelectedWireframeHidden: 0
   m_MinimumChartSize: 4
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
@@ -89,6 +93,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 50ea7ab0f389a3b4a8c7693ac180e8c8, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  shot: {fileID: 1000012717774120, guid: 216f459c05d58a0468c5713e471fba74, type: 2}
+  shotSpawn: {fileID: 4000012654939790, guid: 355ca2dc3fc0a7f4fbffaeef0e99aab1, type: 2}
+  fireDelta: 0.5
 --- !u!114 &11450540
 MonoBehaviour:
   m_ObjectHideFlags: 1

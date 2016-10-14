@@ -2,12 +2,24 @@
 using System.Collections;
 using UnityEngine.Networking;
 
+<<<<<<< HEAD:Assets/PlayerController.cs
+public class PlayerController : NetworkBehaviour {
+=======
 public class TestPlayerController : NetworkBehaviour {
     
+>>>>>>> ab90da476f67967eea3f985b434093ad586bdaad:Assets/Scripts/TestPlayerController.cs
 
+    //C:\Users\Andrus\Documents\ShapeFight\Assets\PlayerController.cs
 
-	// Update is called once per frame
-	void Update () {
+    //tulistamise jaoks
+    public GameObject shot;
+    public Transform shotSpawn;
+    public float fireDelta = 0.5F;
+    private GameObject newShot;
+    private float nextFire = 0.5F;
+    private float myTime = 0.0F;
+    // Update is called once per frame
+    void Update () {
         if (!isLocalPlayer)
         {
             return;
@@ -19,6 +31,17 @@ public class TestPlayerController : NetworkBehaviour {
         transform.Rotate(0, x, 0);
         transform.Translate(0, 0, z);
 
+        //copypaste unity dokumentatsioonist pmst
+        myTime = myTime + Time.deltaTime;
+
+        if (Input.GetButton("Fire1") && myTime > nextFire)
+        {
+            nextFire = myTime + fireDelta;
+            newShot = Instantiate (shot, shotSpawn.position, shotSpawn.rotation) as GameObject;   
+
+            nextFire = nextFire - myTime;
+            myTime = 0.0F;
+        }
         //https://unity3d.com/learn/tutorials/topics/multiplayer-networking/testing-multiplayer-movement?playlist=29690
     }
 
