@@ -2,7 +2,12 @@
 using System.Collections;
 using UnityEngine.Networking;
 
+<<<<<<< HEAD:Assets/PlayerController.cs
 public class PlayerController : NetworkBehaviour {
+=======
+public class TestPlayerController : NetworkBehaviour {
+    
+>>>>>>> ab90da476f67967eea3f985b434093ad586bdaad:Assets/Scripts/TestPlayerController.cs
 
     //C:\Users\Andrus\Documents\ShapeFight\Assets\PlayerController.cs
 
