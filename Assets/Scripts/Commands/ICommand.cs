@@ -15,7 +15,7 @@ public interface ICommand
 
     */
 
-    void execute();
-    void execute(object data);
+    void execute(bool[] inputFlags);
+    void execute(bool[] inputFlags, object data);
     ICommand clone();
 }
