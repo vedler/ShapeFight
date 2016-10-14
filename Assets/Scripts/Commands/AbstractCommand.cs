@@ -40,7 +40,7 @@ class AbstractCommand : ICommand
     {
         if (inputFlags == null || inputFlags.Length != 2)
         {
-            throw new UnityException("Calling command's execute (AbstractCommand's subclass) did not have the correct inputFlags as arguments (null or wrong length).");
+            throw new UnityException(this.GetType() + ": Calling command's execute (AbstractCommand's subclass) did not have the correct inputFlags as arguments (null or wrong length).");
         }
 
         keyHold = inputFlags[0];

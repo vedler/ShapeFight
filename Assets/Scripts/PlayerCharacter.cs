@@ -22,43 +22,30 @@ public class PlayerCharacter : MonoBehaviour, IUserInputListener {
 
     private Rigidbody2D rigidBody;
     private float gravityScale;
-
-    // Coroutine to reiterate until finished with loading
-    IEnumerator initPlayerCharacter()
+    
+    void Awake()
     {
-        if (GameManager.getInstance() == null || !GameManager.getInstance().areManagersReady())
-        {
-            yield return new WaitForSeconds(0.1f);    
-        }
-
         rigidBody = GetComponent<Rigidbody2D>();
         gravityScale = rigidBody.gravityScale;
+    }
 
+    // Use this for initialization
+    void Start ()
+    {
         inputManager = GameManager.getInstance().getInputManager();
 
         // Subscribe to all movement input events
         inputManager.subscribeToInputGroup(EInputGroup.MovementInput, this);
-
-        ready = true;
-        yield break;
     }
-
-    // Use this for initialization
-    void Start () {
-        StartCoroutine(initPlayerCharacter());
-	}
 	
 	// Update is called once per frame
 	void Update () {
-        if (!ready) return;
 	}
 
     public void OnUserInputKeyHold(EInputGroup group, ICommand command)
     {
         // TODO: Max velocity
         // TODO: Jetpack (when in air, holding jump will use jetpack)
-
-        if (!ready) return;
         
         if (command is MoveCommand)
         {
@@ -84,8 +71,6 @@ public class PlayerCharacter : MonoBehaviour, IUserInputListener {
 
     public void OnUserInputKeyDown(EInputGroup group, ICommand command)
     {
-        if (!ready) return;
-
         if (command is MoveCommand)
         {
             switch (((MoveCommand)command).control)
@@ -99,8 +84,6 @@ public class PlayerCharacter : MonoBehaviour, IUserInputListener {
 
     public void OnUserInputKeyUp(EInputGroup group, ICommand command)
     {
-        if (!ready) return;
-        
         if (command is MoveCommand)
         {
 

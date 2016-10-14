@@ -6,13 +6,6 @@ public class InputManager {
 
     private GameManager gameManager;
 
-    private static bool ready;
-
-    public bool isReady()
-    {
-        return ready;
-    }
-
     private Dictionary<EInputGroup, List<IUserInputListener>> inputGroupListeners;
     private Dictionary<EInputControls, ICommand> inputControlCommands;
     private Dictionary<EInputControls, EInputGroup> inputGroups;
@@ -25,7 +18,6 @@ public class InputManager {
     {
         // Init
         this.gameManager = gameManager;
-        ready = false;
 
         // Create key to input group map
         inputGroups = new Dictionary<EInputControls, EInputGroup>();
@@ -51,9 +43,6 @@ public class InputManager {
 
         // Create list for holding pressed keys
         pressedKeys = new List<KeyCode>();
-
-        // Let everyone know we are done loading
-        ready = true;
     }
 
     // Update is called once per frame
@@ -179,11 +168,6 @@ public class InputManager {
 
     public bool subscribeToInputGroup(EInputGroup group, IUserInputListener listener)
     {
-        if (!isReady())
-        {
-            return false;
-        }
-
         // Check if that input group is currently supported
         if (!inputGroupListeners.ContainsKey(group)) return false;
 
