@@ -18,6 +18,8 @@ public class InputManager {
     private Dictionary<EInputControls, EInputGroup> inputGroups;
     private Dictionary<KeyCode, EInputControls> inputControlBinds;
 
+    private List<KeyCode> pressedKeys;
+
     // Use this for initialization
     public InputManager(GameManager gameManager)
     {
@@ -47,6 +49,9 @@ public class InputManager {
         // TODO: Custom user key mapping settings
         initUserControlMap();
 
+        // Create list for holding pressed keys
+        pressedKeys = new List<KeyCode>();
+
         // Let everyone know we are done loading
         ready = true;
     }
@@ -62,6 +67,26 @@ public class InputManager {
 
     private void parseInput()
     {
+        // Check for released keys
+        foreach (KeyCode key in pressedKeys)
+        {
+            if (Input.GetKeyUp(key))
+            {
+                // Get KeyCode's control and then the control's command
+                ICommand command = inputControlCommands[inputControlBinds[key]];
+
+                // Indicate the button is not held down or pressed for the first time, meaning it was released
+                bool[] flags = new bool[2];
+                flags[0] = false;
+                flags[1] = false;
+
+                // Execute this command
+                command.execute(flags);
+            }
+        }
+
+        pressedKeys = new List<KeyCode>();
+
         // Check if there is any input
         if (!Input.anyKey && !Input.anyKeyDown)
         {
@@ -75,6 +100,9 @@ public class InputManager {
 
             if (hold || down)
             {
+                // Add to list so we can later check if it was released
+                pressedKeys.Add(key);
+
                 // Get KeyCode's control and then the control's command
                 ICommand command = inputControlCommands[inputControlBinds[key]];
 
@@ -147,6 +175,8 @@ public class InputManager {
         inputControlCommands.Add(EInputControls.ShootAlt, null);
     }
 
+    // --- Input event subscription ---
+
     public bool subscribeToInputGroup(EInputGroup group, IUserInputListener listener)
     {
         if (!isReady())
@@ -191,6 +221,8 @@ public class InputManager {
         }
     }
 
+    // -------------------------------------------------------------------
+
     public void invokeInputGroupEvent(EInputGroup group, ICommand command)
     {
         if (group == EInputGroup.MovementInput)
@@ -208,8 +240,14 @@ public class InputManager {
                 if (moveCommand.keyHold)
                 {
                     if (listener == null) continue;
-                    listener.OnUserInput(group, command);
+                    listener.OnUserInputKeyHold(group, command);
                 }
+                if (!moveCommand.keyDown && !moveCommand.keyHold)
+                {
+                    if (listener == null) continue;
+                    listener.OnUserInputKeyUp(group, command);
+                }
+
             }
         }
     }
