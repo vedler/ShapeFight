@@ -209,30 +209,30 @@ public class InputManager {
 
     public void invokeInputGroupEvent(EInputGroup group, ICommand command)
     {
-        if (group == EInputGroup.MovementInput)
+        // TODO: Abstractization
+        AbstractCommand absCommand = (AbstractCommand)command;
+
+        foreach (IUserInputListener listener in inputGroupListeners[group])
         {
-            // TODO: Abstractization
-            MoveCommand moveCommand = (MoveCommand)command;
-
-            foreach (IUserInputListener listener in inputGroupListeners[group])
+            // Pressed key
+            if (absCommand.keyDown)
             {
-                if (moveCommand.keyDown)
-                {
-                    if (listener == null) continue;
-                    listener.OnUserInputKeyDown(group, command);
-                }
-                if (moveCommand.keyHold)
-                {
-                    if (listener == null) continue;
-                    listener.OnUserInputKeyHold(group, command);
-                }
-                if (!moveCommand.keyDown && !moveCommand.keyHold)
-                {
-                    if (listener == null) continue;
-                    listener.OnUserInputKeyUp(group, command);
-                }
-
+                if (listener == null) continue;
+                listener.OnUserInputKeyDown(group, command);
             }
+            // Holding key
+            if (absCommand.keyHold)
+            {
+                if (listener == null) continue;
+                listener.OnUserInputKeyHold(group, command);
+            }
+            // Released key
+            if (!absCommand.keyDown && !absCommand.keyHold)
+            {
+                if (listener == null) continue;
+                listener.OnUserInputKeyUp(group, command);
+            }
+
         }
     }
 }
