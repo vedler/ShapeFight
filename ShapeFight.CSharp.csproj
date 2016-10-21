@@ -71,9 +71,9 @@
     <Compile Include="Assets\Scripts\Commands\EInputGroup.cs" />
     <Compile Include="Assets\Scripts\Commands\ICommand.cs" />
     <Compile Include="Assets\Scripts\Commands\MoveCommand.cs" />
-    <Compile Include="Assets\Scripts\GameManager.cs" />
     <Compile Include="Assets\Scripts\IUserInputListener.cs" />
-    <Compile Include="Assets\Scripts\InputManager.cs" />
+    <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
+    <Compile Include="Assets\Scripts\Managers\InputManager.cs" />
     <Compile Include="Assets\Scripts\PlayerCharacter.cs" />
     <Compile Include="Assets\Scripts\RocketMover.cs" />
     <Compile Include="Assets\Scripts\TestPlayerController.cs" />
