@@ -7,6 +7,7 @@ public class WeaponSpawner : MonoBehaviour, IUserInputListener {
     [SerializeField]
     public GameObject newRocket;
 
+    public Rigidbody2D rigidBody;
     // -----------------------
 
     private InputManager inputManager;
