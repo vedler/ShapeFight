@@ -14,6 +14,7 @@ public class PlayerCharacter : MonoBehaviour, IUserInputListener {
     [SerializeField]
     private float leftAndRightPower;
 
+
     // -----------------------
 
     private InputManager inputManager;
@@ -22,6 +23,7 @@ public class PlayerCharacter : MonoBehaviour, IUserInputListener {
 
     private Rigidbody2D rigidBody;
     private float gravityScale;
+
     
     void Awake()
     {
@@ -36,6 +38,9 @@ public class PlayerCharacter : MonoBehaviour, IUserInputListener {
 
         // Subscribe to all movement input events
         inputManager.subscribeToInputGroup(EInputGroup.MovementInput, this);
+
+        // Subscribe to all shooting input events
+        inputManager.subscribeToInputGroup(EInputGroup.ShootingInput, this);
     }
 	
 	// Update is called once per frame
@@ -66,6 +71,21 @@ public class PlayerCharacter : MonoBehaviour, IUserInputListener {
                     break;
             }
         }
+        /*  Tulistamiseks vajalik
+        if (command is ShootingCommand)
+        {
+
+            switch (((ShootingCommand)command).control)
+            {
+
+                case EInputControls.ShootMain:
+                    vajalik kood siia
+                    break;
+                case EInputControls.ShootAlt:
+                    vajalik kood siia
+                    break;
+            }
+        } */
     }
 
 
@@ -80,6 +100,7 @@ public class PlayerCharacter : MonoBehaviour, IUserInputListener {
                     break;
             }
         }
+
     }
 
     public void OnUserInputKeyUp(EInputGroup group, ICommand command)
