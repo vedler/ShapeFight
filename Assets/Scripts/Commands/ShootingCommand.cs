@@ -26,8 +26,6 @@ class ShootingCommand : AbstractCommand
         // Call AbstractCommand first to save the flags
         base.execute(inputFlags);
 
-        MonoBehaviour.print("Sai commandi kätte");
-        Vector2 targetPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
         GameManager.getInstance().getInputManager().invokeInputGroupEvent(EInputGroup.ShootingInput, this);
     }
 

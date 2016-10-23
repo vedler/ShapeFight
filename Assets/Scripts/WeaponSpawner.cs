@@ -4,13 +4,13 @@ using System;
 
 public class WeaponSpawner : MonoBehaviour, IUserInputListener {
 
-    [SerializeField]
     public GameObject newRocket;
-
     public Rigidbody2D rigidBody;
     // -----------------------
 
     private InputManager inputManager;
+
+    private WeaponManager weaponManager;
 
     public void OnUserInputKeyDown(EInputGroup group, ICommand command)
     {
@@ -20,15 +20,11 @@ public class WeaponSpawner : MonoBehaviour, IUserInputListener {
             switch (shootingCommand.control)
             {
                 case EInputControls.ShootMain:
-                    // Tuleks tekitada uus rakett iga kord, andes kaasa mängija koordinaadid.
-                    Vector2 myPos = new Vector3(transform.position.x + 1, transform.position.y + 1);
-                    Vector2 direction = shootingCommand.targetPos - myPos;
-                    direction.Normalize();
-                    Quaternion rotation = Quaternion.Euler(0, 0, Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg);
-                    GameObject rocketGameObject = (GameObject)Instantiate(newRocket, myPos, rotation);
-                    RocketMover missile = rocketGameObject.GetComponent<RocketMover>();
-                    rocketGameObject.layer = gameObject.layer + 1;
-                    missile.startMoving();
+                    Vector2 targetPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+                    Vector2 myPos = new Vector3(transform.position.x+1, transform.position.y+1);
+                    Vector2 direction = targetPos - myPos;
+                    Quaternion rotation = Quaternion.Euler(0, 0, -90 + (Mathf.Atan2(direction.y, direction.x)*Mathf.Rad2Deg));
+                    weaponManager.ReuseObject(newRocket, myPos, rotation, direction);
                     break;
                     /*case EInputControls.ShootAlt:
                         siia vajalik kood
@@ -62,16 +58,20 @@ public class WeaponSpawner : MonoBehaviour, IUserInputListener {
 
     void Awake()
     {
-        rigidBody = GetComponent<Rigidbody2D>();
+        rigidBody = newRocket.GetComponent<Rigidbody2D>();
     }
 
     // Use this for initialization
     void Start()
     {
         inputManager = GameManager.getInstance().getInputManager();
+        weaponManager = GameManager.getInstance().getWeaponManager();
+
+        weaponManager.CreatePool(newRocket, 5);
 
         // Subscribe to all shooting input events
         inputManager.subscribeToInputGroup(EInputGroup.ShootingInput, this);
+
     }
 
     // Update is called once per frame

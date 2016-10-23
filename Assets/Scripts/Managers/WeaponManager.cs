@@ -2,53 +2,89 @@
 using System.Collections;
 using System.Collections.Generic;
 
-public class WeaponManager : MonoBehaviour {
+public class WeaponManager {
 
-    Dictionary<int, Queue<GameObject>> poolDictionary = new Dictionary<int, Queue<GameObject>> ();
+    private GameManager gameManager;
 
-    static WeaponManager _instance;
+    Dictionary<int, Queue<ObjectInstance>> poolDictionary = new Dictionary<int, Queue<ObjectInstance>> ();
 
-    public static WeaponManager instance
+    // Use this for initialization
+    public WeaponManager (GameManager gameManager)
     {
-        get
-        {
-            if (_instance == null)
-            {
-                _instance = FindObjectOfType<WeaponManager>();
-            }
-            return _instance;
-        }
+        // Init
+        this.gameManager = gameManager;
+
     }
 
+    // Creates a pool with a certain size
 	public void CreatePool(GameObject prefab, int poolSize)
     {
         int poolKey = prefab.GetInstanceID();
 
         if (!poolDictionary.ContainsKey(poolKey))
         {
-            poolDictionary.Add(poolKey, new Queue<GameObject>());
+            poolDictionary.Add(poolKey, new Queue<ObjectInstance>());
 
             for (int i = 0; i < poolSize; ++i)
             {
-                GameObject newObject = Instantiate(prefab) as GameObject;
-                newObject.SetActive(false);
+                ObjectInstance newObject = new ObjectInstance (Object.Instantiate(prefab) as GameObject);
                 poolDictionary[poolKey].Enqueue(newObject);
             }
         }
     }
 
-    public void ReuseObject(GameObject prefab, Vector3 position, Quaternion rotation)
+
+    //Use this to reuse an object from the pool
+    public void ReuseObject(GameObject prefab, Vector3 position, Quaternion rotation, Vector2 direction)
     {
         int poolKey = prefab.GetInstanceID();
 
         if (poolDictionary.ContainsKey(poolKey))
         {
-            GameObject objectToReuse = poolDictionary[poolKey].Dequeue();
+            ObjectInstance objectToReuse = poolDictionary[poolKey].Dequeue();
             poolDictionary[poolKey].Enqueue(objectToReuse);
 
-            objectToReuse.SetActive(true);
-            objectToReuse.transform.position = position;
-            objectToReuse.transform.rotation = rotation;
+            objectToReuse.Reuse(position, rotation, direction);
         }
+    }
+
+    public class ObjectInstance{
+
+        GameObject gameObject;
+        bool hasPoolObjectComponent;
+        PoolObject poolObjectScript;
+
+        public ObjectInstance(GameObject objectInstance)
+        {
+            gameObject = objectInstance;
+            gameObject.SetActive(false);
+
+            if (gameObject.GetComponent<PoolObject>())
+            {
+                hasPoolObjectComponent = true;
+                poolObjectScript = gameObject.GetComponent<PoolObject>();
+            }
+        }
+
+        public void Reuse(Vector3 position, Quaternion rotation, Vector2 direction)
+        {
+            ResetObjectPhysics(); //resets the object's physics
+            gameObject.SetActive(true); 
+            gameObject.transform.position = position; // gives the object correct spawn parameters
+            gameObject.transform.rotation = rotation; //
+            
+            if (hasPoolObjectComponent)
+            {
+                poolObjectScript.OnObjectReuse();
+                poolObjectScript.FireMe(direction);
+            }
+        }
+
+        public void ResetObjectPhysics()
+        {
+            gameObject.GetComponent<Rigidbody2D>().velocity = Vector3.zero;
+            gameObject.GetComponent<Rigidbody2D>().angularVelocity = 0.0f;
+        }
+
     }
 }

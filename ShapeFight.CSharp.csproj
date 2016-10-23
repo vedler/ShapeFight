@@ -74,6 +74,7 @@
     <Compile Include="Assets\Scripts\Managers\InputManager.cs" />
     <Compile Include="Assets\Scripts\Managers\WeaponManager.cs" />
     <Compile Include="Assets\Scripts\PlayerCharacter.cs" />
+    <Compile Include="Assets\Scripts\PoolObject.cs" />
     <Compile Include="Assets\Scripts\RocketMover.cs" />
     <Compile Include="Assets\Scripts\TestPlayerController.cs" />
     <Compile Include="Assets\Scripts\WeaponSpawner.cs" />
