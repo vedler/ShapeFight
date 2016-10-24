@@ -66,6 +66,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Scripts\CamMovement.cs" />
     <Compile Include="Assets\Scripts\Commands\AbstractCommand.cs" />
     <Compile Include="Assets\Scripts\Commands\EInputControls.cs" />
     <Compile Include="Assets\Scripts\Commands\EInputGroup.cs" />
