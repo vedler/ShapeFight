@@ -10,4 +10,9 @@ public class PoolObject : MonoBehaviour {
     {
     }
 
+    public virtual void Reset()
+    {
+
+    }
+
 }
