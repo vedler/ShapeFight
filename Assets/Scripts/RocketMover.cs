@@ -44,7 +44,7 @@ public class RocketMover : PoolObject{
 
     void OnTriggerEnter2D(Collider2D collider)
     {
-        if (collider.gameObject.tag == "LocalPlayerTag")
+        if (collider.gameObject.tag == "LocalPlayerTag" || collider.gameObject.tag == "LocalProjectileTag")
         {
             return;
         }
