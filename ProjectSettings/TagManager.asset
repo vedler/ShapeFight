@@ -6,6 +6,7 @@ TagManager:
   tags:
   - PlatformTag
   - LocalPlayerTag
+  - LocalProjectileTag
   layers:
   - Default
   - TransparentFX
