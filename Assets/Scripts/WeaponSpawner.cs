@@ -23,7 +23,7 @@ public class WeaponSpawner : MonoBehaviour, IUserInputListener {
 
                     //Parse target data
                     Vector2 targetPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                    Vector2 myPos = new Vector3(transform.position.x+1, transform.position.y+1);
+                    Vector2 myPos = new Vector3(transform.position.x, transform.position.y+0.5f);
                     Vector2 direction = targetPos - myPos;
 
                     //Normalize the vector for the adding of force

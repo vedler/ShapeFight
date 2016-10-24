@@ -44,6 +44,11 @@ public class RocketMover : PoolObject{
 
     void OnTriggerEnter2D(Collider2D collider)
     {
+        if (collider.gameObject.tag == "LocalPlayerTag")
+        {
+            return;
+        }
+
         this.gameObject.SetActive(false);
     }
 
