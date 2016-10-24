@@ -11,5 +11,6 @@ public enum EInputControls
     MoveRight,
     Jump,
     ShootMain,
-    ShootAlt
+    ShootAlt, 
+    JetPack
 }

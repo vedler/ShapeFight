@@ -24,7 +24,7 @@ public class PlayerWallState : AbstractPMovementState
 
         if (!handler.isOnWall(direction))
         {
-            setNextState(new PlayerFlyingState(handler));
+            setNextState(new PlayerFlyingState(handler, false));
             return false;
         }
 
@@ -70,7 +70,7 @@ public class PlayerWallState : AbstractPMovementState
                         if (direction == PMovementStateHandler.EWallDirection.Right)
                         {
                             // We let go of the key that is holding us onto the wall
-                            setNextState(new PlayerFlyingState(handler));
+                            setNextState(new PlayerFlyingState(handler, true));
                             return false;
                         }
                         break;
@@ -80,7 +80,7 @@ public class PlayerWallState : AbstractPMovementState
                         if (direction == PMovementStateHandler.EWallDirection.Left)
                         {
                             // We let go of the key that is holding us onto the wall
-                            setNextState(new PlayerFlyingState(handler));
+                            setNextState(new PlayerFlyingState(handler, true));
                             return false;
                         }
                         break;
@@ -113,7 +113,7 @@ public class PlayerWallState : AbstractPMovementState
                             handler.playerCharacter.rigidBody.AddForce(new Vector2(-0.6f * handler.playerCharacter.jumpPower, 1.6f * handler.playerCharacter.jumpPower), ForceMode2D.Impulse);
                         }
 
-                        setNextState(new PlayerFlyingState(handler));
+                        setNextState(new PlayerFlyingState(handler, true));
                         handler.forceOffWall(direction);
                         return false;
                 }
@@ -147,7 +147,7 @@ public class PlayerWallState : AbstractPMovementState
                         if (direction == PMovementStateHandler.EWallDirection.Left)
                         { 
                             // Counteract the wall sticking force means player will fall
-                            setNextState(new PlayerFlyingState(handler));
+                            setNextState(new PlayerFlyingState(handler, false));
                             handler.forceOffWall(direction);
                             return false;
                         }
@@ -162,7 +162,7 @@ public class PlayerWallState : AbstractPMovementState
                         if (direction == PMovementStateHandler.EWallDirection.Right)
                         {
                             // Counteract the wall sticking force means player will fall
-                            setNextState(new PlayerFlyingState(handler));
+                            setNextState(new PlayerFlyingState(handler, false));
                             handler.forceOffWall(direction);
                             return false;
                         }
@@ -183,7 +183,7 @@ public class PlayerWallState : AbstractPMovementState
             }
             else
             {
-                setNextState(new PlayerFlyingState(handler));
+                setNextState(new PlayerFlyingState(handler, false));
             }
            
             handler.forceOffWall(direction);

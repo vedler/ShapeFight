@@ -25,6 +25,9 @@ public class PMovementStateHandler
     private float forceOffRightWallTimer;
     private float forceOffGroundTimer;
 
+    private float pressedJumpTimer;
+    private float forceDisablePressedJumpTimer;
+
     public enum EWallDirection
     {
         Left,
@@ -70,14 +73,18 @@ public class PMovementStateHandler
         onLeftWallTimer = float.MinValue;
         onRightWallTimer = float.MinValue;
 
+
         forceOffLeftWallTimer = float.MinValue;
         forceOffRightWallTimer = float.MinValue;
         forceOffGroundTimer = float.MinValue;
 
+        pressedJumpTimer = float.MinValue;
+        forceDisablePressedJumpTimer = float.MinValue;
+
         cacheUsedThisUpdate = false;
 
         // Default state is flying
-        currentState = new PlayerFlyingState(this);
+        currentState = new PlayerFlyingState(this, false);
         currentState.enter();
 
         currentGravityScale = playerCharacter.defaultGravityScale;
@@ -278,5 +285,36 @@ public class PMovementStateHandler
             onRightWallTimer = float.MinValue;
             forceOffRightWallTimer = Time.fixedTime;
         }
+    }
+
+    public void setIsInJump()
+    {
+        pressedJumpTimer = Time.fixedTime;
+    }
+
+    public void forceNotInJump()
+    {
+        forceDisablePressedJumpTimer = Time.fixedTime;
+        pressedJumpTimer = float.MinValue;
+    }
+
+    public bool isInJump()
+    {
+        // If the last time we were on ground was roughly 2 frames ago, we are still on ground
+
+        if (forceDisablePressedJumpTimer != float.MinValue)
+        {
+            if (forceDisablePressedJumpTimer + Time.fixedDeltaTime > Time.fixedTime)
+            {
+                return false;
+            }
+            else
+            {
+                forceDisablePressedJumpTimer = float.MinValue;
+                return true;
+            }
+        }
+
+        return pressedJumpTimer + Time.fixedDeltaTime > Time.fixedTime;
     }
 }

@@ -116,6 +116,7 @@ public class InputManager {
         inputGroups.Add(EInputControls.MoveLeft, EInputGroup.MovementInput);
         inputGroups.Add(EInputControls.MoveRight, EInputGroup.MovementInput);
         inputGroups.Add(EInputControls.Jump, EInputGroup.MovementInput);
+        inputGroups.Add(EInputControls.JetPack, EInputGroup.MovementInput);
 
         inputGroupListeners.Add(EInputGroup.MovementInput, new List<IUserInputListener>());
 
@@ -136,6 +137,7 @@ public class InputManager {
         inputControlBinds.Add(KeyCode.A, EInputControls.MoveLeft);
         inputControlBinds.Add(KeyCode.D, EInputControls.MoveRight);
         inputControlBinds.Add(KeyCode.Space, EInputControls.Jump);
+        inputControlBinds.Add(KeyCode.LeftShift, EInputControls.JetPack);
 
         // Alternate movement controls
         inputControlBinds.Add(KeyCode.UpArrow, EInputControls.MoveUp);
@@ -143,6 +145,7 @@ public class InputManager {
         inputControlBinds.Add(KeyCode.LeftArrow, EInputControls.MoveLeft);
         inputControlBinds.Add(KeyCode.RightArrow, EInputControls.MoveRight);
         inputControlBinds.Add(KeyCode.RightControl, EInputControls.Jump);
+        inputControlBinds.Add(KeyCode.RightShift, EInputControls.JetPack);
 
         // Shooting controls
         inputControlBinds.Add(KeyCode.Mouse0, EInputControls.ShootMain);
@@ -157,6 +160,7 @@ public class InputManager {
         inputControlCommands.Add(EInputControls.MoveLeft, new MoveCommand(EInputControls.MoveLeft));
         inputControlCommands.Add(EInputControls.MoveRight, new MoveCommand(EInputControls.MoveRight));
         inputControlCommands.Add(EInputControls.Jump, new MoveCommand(EInputControls.Jump));
+        inputControlCommands.Add(EInputControls.JetPack, new MoveCommand(EInputControls.JetPack));
 
         // Shooting commands
         inputControlCommands.Add(EInputControls.ShootMain, new ShootingCommand(EInputControls.ShootMain));
@@ -167,7 +171,6 @@ public class InputManager {
 
     public bool subscribeToInputGroup(EInputGroup group, IUserInputListener listener)
     {
-        MonoBehaviour.print("Subscribes inputi");
         // Check if that input group is currently supported
         if (!inputGroupListeners.ContainsKey(group)) return false;
 

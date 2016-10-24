@@ -68,7 +68,7 @@ public class WeaponSpawner : MonoBehaviour, IUserInputListener {
         inputManager = GameManager.getInstance().getInputManager();
         weaponManager = GameManager.getInstance().getWeaponManager();
 
-        weaponManager.CreatePool(newRocket, 5);
+        weaponManager.CreatePool(newRocket, 10);
 
         // Subscribe to all shooting input events
         inputManager.subscribeToInputGroup(EInputGroup.ShootingInput, this);

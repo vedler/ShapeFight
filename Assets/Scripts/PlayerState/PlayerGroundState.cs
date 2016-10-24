@@ -15,7 +15,7 @@ public class PlayerGroundState : AbstractPMovementState
         // If we are not on ground, we want to switch states to flying
         if (!handler.isOnGround())
         {
-            setNextState(new PlayerFlyingState(handler));
+            setNextState(new PlayerFlyingState(handler, false));
             return false;
         }
 
@@ -50,7 +50,7 @@ public class PlayerGroundState : AbstractPMovementState
                         handler.playerCharacter.rigidBody.AddForce(new Vector2(0, handler.playerCharacter.jumpPower), ForceMode2D.Impulse);
 
                         // Tell the state handler we want to switch states now
-                        setNextState(new PlayerFlyingState(handler));
+                        setNextState(new PlayerFlyingState(handler, true));
                         handler.forceOffGround();
                         return false;
                 }
@@ -85,6 +85,15 @@ public class PlayerGroundState : AbstractPMovementState
                     case EInputControls.MoveLeft:
                         
                         handler.playerCharacter.rigidBody.AddForce(new Vector2(-handler.playerCharacter.leftAndRightPower, 0), ForceMode2D.Impulse);
+                        break;
+                    case EInputControls.JetPack:
+
+                        handler.playerCharacter.rigidBody.AddForce(new Vector2(0, handler.playerCharacter.jetPackPower), ForceMode2D.Impulse);
+                        /*if (!isInJump)
+                        {
+                            
+                        } */
+
                         break;
                 }
             }

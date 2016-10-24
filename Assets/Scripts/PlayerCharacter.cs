@@ -17,6 +17,12 @@ public class PlayerCharacter : MonoBehaviour, IUserInputListener {
     [SerializeField]
     public float leftAndRightPower;
 
+    [SerializeField]
+    private float maxMoveSpeed;
+
+    [SerializeField]
+    public float jetPackPower;
+
 
     // -----------------------
 
@@ -120,6 +126,9 @@ public class PlayerCharacter : MonoBehaviour, IUserInputListener {
     {
         // Delegate to movementStateHandler
         movementStateHandler.FixedUpdate();
+
+        if (rigidBody.velocity.magnitude > maxMoveSpeed)
+            rigidBody.velocity = rigidBody.velocity.normalized * maxMoveSpeed;
     }
 
     public void OnUserInputKeyHold(EInputGroup group, ICommand command)

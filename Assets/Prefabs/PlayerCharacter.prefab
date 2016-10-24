@@ -23,6 +23,7 @@ GameObject:
   - 61: {fileID: 61000010198439266}
   - 50: {fileID: 50000011952419496}
   - 114: {fileID: 114000013352431198}
+  - 114: {fileID: 114000012399135594}
   m_Layer: 0
   m_Name: PlayerCharacter
   m_TagString: Untagged
@@ -74,6 +75,19 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Size: {x: 1.28, y: 1.28}
+--- !u!114 &114000012399135594
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000014168939284}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: bd2284f4275b2dc4594e8529c93f8a00, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  newRocket: {fileID: 1000013762273430, guid: c2ae316723061a54cb598cbf90016e96, type: 2}
+  rigidBody: {fileID: 0}
 --- !u!114 &114000013352431198
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -89,6 +103,8 @@ MonoBehaviour:
   verticalDeltaGravity: 4
   wallDeltaGravity: 5.5
   leftAndRightPower: 100
+  maxMoveSpeed: 40
+  jetPackPower: 300
   platformTag: PlatformTag
 --- !u!212 &212000010183901308
 SpriteRenderer:
