@@ -94,8 +94,7 @@ public class InputManager {
 
                 // Get KeyCode's control and then the control's command
                 ICommand command = inputControlCommands[inputControlBinds[key]];
-
-                // TODO: Check movecommand for possible abstractizable code
+                
                 // Bool for command data
                 bool[] flags = new bool[2];
                 flags[0] = hold;
@@ -209,7 +208,6 @@ public class InputManager {
 
     public void invokeInputGroupEvent(EInputGroup group, ICommand command)
     {
-        // TODO: Abstractization
         AbstractCommand absCommand = (AbstractCommand)command;
 
         foreach (IUserInputListener listener in inputGroupListeners[group])
@@ -232,7 +230,6 @@ public class InputManager {
                 if (listener == null) continue;
                 listener.OnUserInputKeyUp(group, command);
             }
-
         }
     }
 }

@@ -34,8 +34,6 @@ public class GameManager : MonoBehaviour
     // Use this for initialization
     void Awake()
     {
-        // TODO: Make this to not be destroyed on load and instead use a game manager loader as a component, that gets the instance instead (persist this when scene changes)
-
         // Set the singleton instance
         GameManager.instance = this;
 
@@ -45,9 +43,6 @@ public class GameManager : MonoBehaviour
 
         // Load and initialize InputManager
         this.inputManager = new InputManager(this);
-
-        // TODO: Make sure all manager and game components are loaded (ready) before allowing any execution (through not letting users get the components)
-
     }
 
     // Update is called once per frame

@@ -3,9 +3,7 @@ using System.Collections;
 using UnityEngine.Networking;
 
 public class PlayerController : NetworkBehaviour {
-
-    //C:\Users\Andrus\Documents\ShapeFight\Assets\PlayerController.cs
-
+    
     //tulistamise jaoks
     public GameObject shot;
     public Transform shotSpawn;

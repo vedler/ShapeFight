@@ -70,11 +70,22 @@
     <Compile Include="Assets\Scripts\Commands\EInputGroup.cs" />
     <Compile Include="Assets\Scripts\Commands\ICommand.cs" />
     <Compile Include="Assets\Scripts\Commands\MoveCommand.cs" />
-    <Compile Include="Assets\Scripts\GameManager.cs" />
+    <Compile Include="Assets\Scripts\Commands\ShootingCommand.cs" />
     <Compile Include="Assets\Scripts\IUserInputListener.cs" />
-    <Compile Include="Assets\Scripts\InputManager.cs" />
+    <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
+    <Compile Include="Assets\Scripts\Managers\InputManager.cs" />
     <Compile Include="Assets\Scripts\PlayerCharacter.cs" />
+    <Compile Include="Assets\Scripts\PlayerState\AbstractPMovementState.cs" />
+    <Compile Include="Assets\Scripts\PlayerState\IPlayerState.cs" />
+    <Compile Include="Assets\Scripts\PlayerState\PlayerFlyingState.cs" />
+    <Compile Include="Assets\Scripts\PlayerState\PlayerGroundState.cs" />
+    <Compile Include="Assets\Scripts\PlayerState\PlayerWallState.cs" />
+    <Compile Include="Assets\Scripts\PlayerState\PMovementStateHandler.cs" />
+    <Compile Include="Assets\Scripts\RocketMover.cs" />
     <Compile Include="Assets\Scripts\TestPlayerController.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Assets\Shaders\JutaTestShader.shader" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
