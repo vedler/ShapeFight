@@ -2,36 +2,44 @@
 using System.Collections;
 
 public class RocketMover : PoolObject{
+    [SerializeField]
     public float speed;
-    private bool shoot = false;
-    private bool hasBeenShot;
 
-    //[SerializeField]
-    //public Vector2 direction;
+    [SerializeField]
+    public float maxSpeed;
+
+    private bool isFired;
+    private Vector2 direction;
+
+    /*public override void Reset()
+    {
+        isFired = false;
+        direction = Vector2.zero;
+    }
+    */
+
+    //Neid võib hiljem vaja minna
+    //private bool shoot = false; 
+    //private bool hasBeenShot;
 
 	void Start () {
-        hasBeenShot = false;
+        //hasBeenShot = false;
         //GetComponent<Rigidbody2D>().isKinematic = true;
     }
 
     public void startMoving ()
     {
-        shoot = true;
+        //shoot = true;
         //GetComponent<Rigidbody2D>().AddForce(direction*100.0f, ForceMode2D.Impulse);
     }
 
     void FixedUpdate ()
     {
-        //GetComponent<Rigidbody2D>().AddForce(direction, ForceMode2D.Impulse);
-        //GetComponent<Rigidbody2D>().AddForce(new Vector3(100.0f, 0, 0));
-        /* GetComponent<Rigidbody2D>().AddForce(direction * speed);
-         if (shoot && !hasBeenShot)
-         {
-             hasBeenShot = true;
-             //GetComponent<Rigidbody2D>().isKinematic = false;
-         }
-         //GetComponent<Rigidbody2D>().velocity = transform.forward * speed;
-         */
+        if (isFired)
+        {
+            direction.Normalize();
+            GetComponent<Rigidbody2D>().AddForce(direction * maxSpeed, ForceMode2D.Impulse);
+        }
     }
 
     void OnTriggerEnter2D(Collider2D collider)
@@ -42,6 +50,8 @@ public class RocketMover : PoolObject{
     public override void FireMe(Vector2 direction)
     {
         GetComponent<Rigidbody2D>().AddForce(direction*speed, ForceMode2D.Impulse);
+        this.direction = direction;
+        isFired = true;
     }
 
 }

@@ -20,9 +20,13 @@ public class WeaponSpawner : MonoBehaviour, IUserInputListener {
             switch (shootingCommand.control)
             {
                 case EInputControls.ShootMain:
+
+                    //Parse target data
                     Vector2 targetPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
                     Vector2 myPos = new Vector3(transform.position.x+1, transform.position.y+1);
                     Vector2 direction = targetPos - myPos;
+
+                    //Normalize the vector for the adding of force
                     direction.Normalize();
                     Quaternion rotation = Quaternion.Euler(0, 0, -90 + (Mathf.Atan2(direction.y, direction.x)*Mathf.Rad2Deg));
                     weaponManager.ReuseObject(newRocket, myPos, rotation, direction);
@@ -68,7 +72,8 @@ public class WeaponSpawner : MonoBehaviour, IUserInputListener {
         inputManager = GameManager.getInstance().getInputManager();
         weaponManager = GameManager.getInstance().getWeaponManager();
 
-        weaponManager.CreatePool(newRocket, 10);
+        //Creates a rocket pool with a size of rockets
+        weaponManager.CreatePool(newRocket, 20);
 
         // Subscribe to all shooting input events
         inputManager.subscribeToInputGroup(EInputGroup.ShootingInput, this);

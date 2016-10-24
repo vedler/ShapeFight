@@ -55,9 +55,6 @@ public class PlayerCharacter : MonoBehaviour, IUserInputListener {
 
         // Subscribe to all movement input events
         inputManager.subscribeToInputGroup(EInputGroup.MovementInput, this);
-
-        // Subscribe to all shooting input events
-        inputManager.subscribeToInputGroup(EInputGroup.ShootingInput, this);
     }
 
     // Check for collision (called before update)
