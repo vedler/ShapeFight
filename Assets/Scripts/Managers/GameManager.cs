@@ -30,7 +30,18 @@ public class GameManager : MonoBehaviour
 
         return inputManager;
     }
-    
+
+    private WeaponManager weaponManager;
+
+    public WeaponManager getWeaponManager()
+    {
+        if (weaponManager == null)
+        {
+            throw new UnityException("GameManager's WeaponManager instance was accessed before Unity started it!");
+        }
+            return weaponManager;
+    }
+
     // Use this for initialization
     void Awake()
     {
@@ -43,6 +54,9 @@ public class GameManager : MonoBehaviour
 
         // Load and initialize InputManager
         this.inputManager = new InputManager(this);
+
+        //Load and initialize WeaponManager
+        this.weaponManager = new WeaponManager(this);
     }
 
     // Update is called once per frame

@@ -17,6 +17,7 @@ public class PlayerCharacter : MonoBehaviour, IUserInputListener {
     [SerializeField]
     public float leftAndRightPower;
 
+
     // -----------------------
 
     private InputManager inputManager;
@@ -35,6 +36,7 @@ public class PlayerCharacter : MonoBehaviour, IUserInputListener {
     // -------- State handling ---------
     private PMovementStateHandler movementStateHandler;
 
+    
     void Awake()
     {
         rigidBody = GetComponent<Rigidbody2D>();
@@ -51,7 +53,8 @@ public class PlayerCharacter : MonoBehaviour, IUserInputListener {
         // Subscribe to all movement input events
         inputManager.subscribeToInputGroup(EInputGroup.MovementInput, this);
 
-        // TODO: Register this object as a player in inputManager
+        // Subscribe to all shooting input events
+        inputManager.subscribeToInputGroup(EInputGroup.ShootingInput, this);
     }
 
     // Check for collision (called before update)
@@ -126,6 +129,21 @@ public class PlayerCharacter : MonoBehaviour, IUserInputListener {
         {
             movementStateHandler.addCommand(PMovementStateHandler.ECommandType.Hold, command);
         }
+        /*  Tulistamiseks vajalik
+        if (command is ShootingCommand)
+        {
+
+            switch (((ShootingCommand)command).control)
+            {
+
+                case EInputControls.ShootMain:
+                    vajalik kood siia
+                    break;
+                case EInputControls.ShootAlt:
+                    vajalik kood siia
+                    break;
+            }
+        } */
     }
 
 
@@ -135,6 +153,7 @@ public class PlayerCharacter : MonoBehaviour, IUserInputListener {
         {
             movementStateHandler.addCommand(PMovementStateHandler.ECommandType.Down, command);
         }
+
     }
 
     public void OnUserInputKeyUp(EInputGroup group, ICommand command)

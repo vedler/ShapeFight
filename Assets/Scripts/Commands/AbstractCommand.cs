@@ -49,6 +49,9 @@ class AbstractCommand : ICommand
 
     public virtual void execute(bool[] inputFlags, object data)
     {
+        //bool[] mousePosition = (bool[])data;
+
+
         execute(inputFlags);
     }
 }

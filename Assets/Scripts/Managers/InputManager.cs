@@ -145,8 +145,8 @@ public class InputManager {
         inputControlBinds.Add(KeyCode.RightControl, EInputControls.Jump);
 
         // Shooting controls
-        //inputControlBinds.Add(KeyCode.Mouse0, EInputControls.ShootMain);
-        //inputControlBinds.Add(KeyCode.Mouse1, EInputControls.ShootAlt);
+        inputControlBinds.Add(KeyCode.Mouse0, EInputControls.ShootMain);
+        inputControlBinds.Add(KeyCode.Mouse1, EInputControls.ShootAlt);
     }
 
     private void initUserControlBinds()
@@ -159,14 +159,15 @@ public class InputManager {
         inputControlCommands.Add(EInputControls.Jump, new MoveCommand(EInputControls.Jump));
 
         // Shooting commands
-        inputControlCommands.Add(EInputControls.ShootMain, null);
-        inputControlCommands.Add(EInputControls.ShootAlt, null);
+        inputControlCommands.Add(EInputControls.ShootMain, new ShootingCommand(EInputControls.ShootMain));
+        inputControlCommands.Add(EInputControls.ShootAlt, new ShootingCommand(EInputControls.ShootAlt));
     }
 
     // --- Input event subscription ---
 
     public bool subscribeToInputGroup(EInputGroup group, IUserInputListener listener)
     {
+        MonoBehaviour.print("Subscribes inputi");
         // Check if that input group is currently supported
         if (!inputGroupListeners.ContainsKey(group)) return false;
 
