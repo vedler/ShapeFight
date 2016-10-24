@@ -28,10 +28,7 @@ public class PlayerCharacter : MonoBehaviour, IUserInputListener {
     // ------ Ground checking ----------
     
     [SerializeField]
-    public string groundTag;
-
-    [SerializeField]
-    public string wallTag;
+    public string platformTag;
 
     // -------- State handling ---------
     private PMovementStateHandler movementStateHandler;
@@ -63,11 +60,13 @@ public class PlayerCharacter : MonoBehaviour, IUserInputListener {
         // TODO: Events
         // TODO: If we unlock Z rotation of the sprite, we need to make sure we rotate the player object to be "parallel" to the wall
         
-        if (collision.collider.gameObject.tag == groundTag)
+        /*if (collision.collider.gameObject.tag == groundTag)
         {
             movementStateHandler.setOnGround();
         }
-        else if (collision.collider.gameObject.tag == wallTag)
+        else */
+        
+        if (collision.collider.gameObject.tag == platformTag)
         {
             // neg left, 0 not touching, pos right
 
@@ -80,13 +79,13 @@ public class PlayerCharacter : MonoBehaviour, IUserInputListener {
 
             float angle = Vector3.Angle(hit, Vector3.up);
 
-            if (Mathf.Approximately(angle, 0))
+            if (angle < 80.0f)
             {
                 // TODO: If jetpacking, disable?
                 // The wall is "below" us, meaning we are on top of a wall and can treat it as ground
                 movementStateHandler.setOnGround();
             }
-            else if (Mathf.Approximately(angle, 90))
+            else if (angle >= 80.0f)
             {
                 // TODO: Possibly instead of layer flags, we can check if we are actually on on ground with these flags (or just on top of the wall, standing - below)
                 // Find which side we are touching
