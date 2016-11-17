@@ -23,12 +23,25 @@ public class WeaponSpawner : MonoBehaviour, IUserInputListener {
 
                     //Parse target data
                     Vector2 targetPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
-                    Vector2 myPos = new Vector3(transform.position.x, transform.position.y+0.5f);
-                    Vector2 direction = targetPos - myPos;
+
+                    Hand hand = FindObjectOfType<Hand>();
+                    PlayerCharacter player = FindObjectOfType<PlayerCharacter>();
+
+                    Vector2 playerVelocity = player.GetComponent<Rigidbody2D>().velocity;
+                    playerVelocity.Normalize();
+
+                    Vector2 direction = targetPos - new Vector2(hand.transform.position.x, hand.transform.position.y);
 
                     //Normalize the vector for the adding of force
                     direction.Normalize();
-                    Quaternion rotation = Quaternion.Euler(0, 0, -90 + (Mathf.Atan2(direction.y, direction.x)*Mathf.Rad2Deg));
+
+                    Vector2 myPos = new Vector2(
+                        hand.transform.position.x + Mathf.Sign(direction.x) * (Mathf.Abs(direction.x) + 1) + (-.5f) * Math.Abs(playerVelocity.x),
+                        hand.transform.position.y + direction.y + playerVelocity.y
+                        );
+
+                    Quaternion rotation = Quaternion.Euler(0, 0, -90 + (Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg));
+                    newRocket.GetComponent<RocketMover>().SetStartPosition(myPos);
                     weaponManager.ReuseObject(newRocket, myPos, rotation, direction);
                     break;
                     /*case EInputControls.ShootAlt:

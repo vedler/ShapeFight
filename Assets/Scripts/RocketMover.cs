@@ -2,7 +2,7 @@
 using System.Collections;
 
 public class RocketMover : PoolObject{
-    [SerializeField]
+    [SerializeField] 
     public float speed;
 
     [SerializeField]
@@ -10,6 +10,7 @@ public class RocketMover : PoolObject{
 
     private bool isFired;
     private Vector2 direction;
+    private Vector2 startPosition;
 
     /*public override void Reset()
     {
@@ -37,9 +38,15 @@ public class RocketMover : PoolObject{
     {
         if (isFired)
         {
+            //if (Mathf.Sign(GetComponentInParent<Rigidbody2D>().velocity.x) != Mathf.Sign(direction.x))
+            //{
+            //    Vector2 velocity = GetComponentInParent<Rigidbody2D>().velocity;
+            //}
             direction.Normalize();
             GetComponent<Rigidbody2D>().AddForce(direction * maxSpeed, ForceMode2D.Impulse);
+            
         }
+       
     }
 
     void OnTriggerEnter2D(Collider2D collider)
@@ -57,6 +64,17 @@ public class RocketMover : PoolObject{
         GetComponent<Rigidbody2D>().AddForce(direction*speed, ForceMode2D.Impulse);
         this.direction = direction;
         isFired = true;
+    }
+
+    public void SetVelocity(Vector2 velocity)
+    {
+        GetComponent<Rigidbody2D>().velocity = velocity;
+        GetComponent<Rigidbody2D>().AddForce(velocity, ForceMode2D.Impulse);
+    }
+
+    public void SetStartPosition(Vector2 sp)
+    {
+        startPosition = sp;
     }
 
 }
