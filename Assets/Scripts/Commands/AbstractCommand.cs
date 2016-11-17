@@ -51,4 +51,14 @@ class AbstractCommand : ICommand
     {
         execute(inputFlags);
     }
+
+    public override bool Equals(object obj)
+    {
+        if (!(obj is AbstractCommand))
+        {
+            return false;
+        }
+
+        return control == ((AbstractCommand)obj).control;
+    }
 }

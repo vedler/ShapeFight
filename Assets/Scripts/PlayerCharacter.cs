@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public class PlayerCharacter : MonoBehaviour, IUserInputListener {
+public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
 
     // Movement settings
     [SerializeField]
@@ -51,10 +51,17 @@ public class PlayerCharacter : MonoBehaviour, IUserInputListener {
     // Use this for initialization
     void Start ()
     {
-        inputManager = GameManager.getInstance().getInputManager();
+        // Subscribe to local input if this is our network view object
+        if (photonView.isMine)
+        {
+            inputManager = GameManager.getInstance().getInputManager();
 
-        // Subscribe to all movement input events
-        inputManager.subscribeToInputGroup(EInputGroup.MovementInput, this);
+            // Subscribe to all movement input events
+            inputManager.subscribeToInputGroup(EInputGroup.MovementInput, this);
+
+            // Register the camera to follow us
+            GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CamMovement>().setTarget(gameObject);
+        }
     }
 
     // Check for collision (called before update)
