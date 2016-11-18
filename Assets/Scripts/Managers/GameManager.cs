@@ -42,6 +42,17 @@ public class GameManager : MonoBehaviour
             return weaponManager;
     }
 
+    private WSelectionManager weaponSelectionManager;
+
+    public WSelectionManager getWSelectionManager()
+    {
+        if (weaponSelectionManager == null)
+        {
+            throw new UnityException("GameManager's WSelectionManager instance was accessed before Unity started it!");
+        }
+        return weaponSelectionManager;
+    }
+
     // Use this for initialization
     void Awake()
     {
@@ -57,6 +68,8 @@ public class GameManager : MonoBehaviour
 
         //Load and initialize WeaponManager
         this.weaponManager = new WeaponManager(this);
+
+        this.weaponSelectionManager = new WSelectionManager(this);
     }
 
     // Update is called once per frame
