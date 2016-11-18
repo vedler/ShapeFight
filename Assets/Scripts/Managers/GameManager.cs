@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using System;
 
 public class GameManager : MonoBehaviour
 {
@@ -42,6 +43,23 @@ public class GameManager : MonoBehaviour
             return weaponManager;
     }
 
+    private ParticlePool particlePool;
+
+    public ParticlePool getParticlePool()
+    {
+        if (particlePool == null)
+        {
+            throw new UnityException("GameManager's ParticlePool instance was accessed before Unity started it!");
+        }
+        return particlePool;
+    }
+
+    internal void onProjectileCollision(Vector3 position)
+    {
+        ParticleSpawner spawner = GameObject.FindGameObjectWithTag("LocalPlayerTag").GetComponent<ParticleSpawner>();
+        spawner.Spawn(position);
+    }
+
     // Use this for initialization
     void Awake()
     {
@@ -57,6 +75,8 @@ public class GameManager : MonoBehaviour
 
         //Load and initialize WeaponManager
         this.weaponManager = new WeaponManager(this);
+
+        this.particlePool = new ParticlePool(this);
     }
 
     // Update is called once per frame

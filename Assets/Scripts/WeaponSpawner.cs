@@ -27,7 +27,7 @@ public class WeaponSpawner : MonoBehaviour, IUserInputListener {
                     Hand hand = FindObjectOfType<Hand>();
                     PlayerCharacter player = FindObjectOfType<PlayerCharacter>();
 
-                    Vector2 playerVelocity = player.GetComponent<Rigidbody2D>().velocity;
+                    Vector2 playerVelocity = GameObject.FindGameObjectWithTag("LocalPlayerTag").GetComponent<Rigidbody2D>().velocity;
                     playerVelocity.Normalize();
 
                     Vector2 direction = targetPos - new Vector2(hand.transform.position.x, hand.transform.position.y);

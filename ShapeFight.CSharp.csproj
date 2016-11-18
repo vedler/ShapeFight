@@ -163,7 +163,9 @@
     <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
     <Compile Include="Assets\Scripts\Managers\InputManager.cs" />
     <Compile Include="Assets\Scripts\Managers\NetworkManager.cs" />
+    <Compile Include="Assets\Scripts\Managers\ParticlePool.cs" />
     <Compile Include="Assets\Scripts\Managers\WeaponManager.cs" />
+    <Compile Include="Assets\Scripts\ParticleSpawner.cs" />
     <Compile Include="Assets\Scripts\PlayerCharacter.cs" />
     <Compile Include="Assets\Scripts\PlayerState\AbstractPMovementState.cs" />
     <Compile Include="Assets\Scripts\PlayerState\IPlayerState.cs" />
@@ -173,6 +175,7 @@
     <Compile Include="Assets\Scripts\PlayerState\PlayerWallState.cs" />
     <Compile Include="Assets\Scripts\PoolObject.cs" />
     <Compile Include="Assets\Scripts\RocketMover.cs" />
+    <Compile Include="Assets\Scripts\RocketParticle.cs" />
     <Compile Include="Assets\Scripts\TestPlayerController.cs" />
     <Compile Include="Assets\Scripts\WeaponSpawner.cs" />
   </ItemGroup>

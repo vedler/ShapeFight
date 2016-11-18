@@ -14,6 +14,7 @@ GameObject:
   - 114: {fileID: 11450540}
   - 114: {fileID: 11414992}
   - 114: {fileID: 11461480}
+  - 114: {fileID: 114000011319515350}
   m_Layer: 0
   m_Name: PlayerTest
   m_TagString: Untagged
@@ -167,3 +168,15 @@ Prefab:
   m_ParentPrefab: {fileID: 0}
   m_RootGameObject: {fileID: 146454}
   m_IsPrefabParent: 1
+--- !u!114 &114000011319515350
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 146454}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ac819357ff1399547be3f38deab78d49, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  particle: {fileID: 1000014122404092, guid: 00b1761d9df5dd14db882d99f147cbb8, type: 2}

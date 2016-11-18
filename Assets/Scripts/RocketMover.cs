@@ -2,6 +2,9 @@
 using System.Collections;
 
 public class RocketMover : PoolObject{
+
+    private GameManager gm;
+
     [SerializeField] 
     public float speed;
 
@@ -24,6 +27,7 @@ public class RocketMover : PoolObject{
     //private bool hasBeenShot;
 
 	void Start () {
+        gm = GameManager.getInstance();
         //hasBeenShot = false;
         //GetComponent<Rigidbody2D>().isKinematic = true;
     }
@@ -38,13 +42,8 @@ public class RocketMover : PoolObject{
     {
         if (isFired)
         {
-            //if (Mathf.Sign(GetComponentInParent<Rigidbody2D>().velocity.x) != Mathf.Sign(direction.x))
-            //{
-            //    Vector2 velocity = GetComponentInParent<Rigidbody2D>().velocity;
-            //}
             direction.Normalize();
             GetComponent<Rigidbody2D>().AddForce(direction * maxSpeed, ForceMode2D.Impulse);
-            
         }
        
     }
@@ -55,7 +54,7 @@ public class RocketMover : PoolObject{
         {
             return;
         }
-
+        gm.onProjectileCollision(GetComponent<Rigidbody2D>().transform.position);
         this.gameObject.SetActive(false);
     }
 
