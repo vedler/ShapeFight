@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public class WeaponSpawner : MonoBehaviour, IUserInputListener {
+public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
 
     public GameObject newRocket;
     public Rigidbody2D rigidBody;
@@ -69,15 +69,19 @@ public class WeaponSpawner : MonoBehaviour, IUserInputListener {
     // Use this for initialization
     void Start()
     {
-        inputManager = GameManager.getInstance().getInputManager();
+        // Init weapon manager
         weaponManager = GameManager.getInstance().getWeaponManager();
 
         //Creates a rocket pool with a size of rockets
         weaponManager.CreatePool(newRocket, 20);
 
-        // Subscribe to all shooting input events
-        inputManager.subscribeToInputGroup(EInputGroup.ShootingInput, this);
-
+        // If view is ours, attach us to the input manager
+        if (photonView.isMine)
+        {
+            inputManager = GameManager.getInstance().getInputManager();
+            // Subscribe to all shooting input events
+            inputManager.subscribeToInputGroup(EInputGroup.ShootingInput, this);
+        }
     }
 
     // Update is called once per frame
