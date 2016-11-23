@@ -32,4 +32,10 @@ MonoBehaviour:
   - PunRespawn
   - RequestForPickupItems
   - RequestForPickupTimes
+  - ColorRpc
+  - DoJump
+  - Flash
+  - Marco
+  - Polo
+  - TaggedPlayer
   DisableAutoOpenWizard: 1
