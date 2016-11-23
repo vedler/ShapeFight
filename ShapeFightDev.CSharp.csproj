@@ -67,6 +67,9 @@
     <Reference Include="websocket-sharp">
       <HintPath>Assets\Plugins\WebSocket\websocket-sharp.dll</HintPath>
     </Reference>
+    <Reference Include="TrueSync">
+      <HintPath>Assets\Plugins\TrueSync.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="ShapeFightDev.CSharp.Plugins.csproj">
@@ -142,16 +145,6 @@
     <Compile Include="Assets\Photon Unity Networking\UtilityScripts\UI\ButtonInsideScrollList.cs" />
     <Compile Include="Assets\Photon Unity Networking\UtilityScripts\UI\TextButtonTransition.cs" />
     <Compile Include="Assets\Photon Unity Networking\UtilityScripts\UI\TextToggleIsOnTransition.cs" />
-    <Compile Include="Assets\PhotonChatApi\ChatChannel.cs" />
-    <Compile Include="Assets\PhotonChatApi\ChatClient.cs" />
-    <Compile Include="Assets\PhotonChatApi\ChatDisconnectCause.cs" />
-    <Compile Include="Assets\PhotonChatApi\ChatEventCode.cs" />
-    <Compile Include="Assets\PhotonChatApi\ChatOperationCode.cs" />
-    <Compile Include="Assets\PhotonChatApi\ChatParameterCode.cs" />
-    <Compile Include="Assets\PhotonChatApi\ChatPeer.cs" />
-    <Compile Include="Assets\PhotonChatApi\ChatState.cs" />
-    <Compile Include="Assets\PhotonChatApi\ChatUserStatus.cs" />
-    <Compile Include="Assets\PhotonChatApi\IChatClientListener.cs" />
     <Compile Include="Assets\Scripts\CamMovement.cs" />
     <Compile Include="Assets\Scripts\Commands\AbstractCommand.cs" />
     <Compile Include="Assets\Scripts\Commands\EInputControls.cs" />
@@ -177,6 +170,32 @@
     <Compile Include="Assets\Scripts\RocketMover.cs" />
     <Compile Include="Assets\Scripts\TestPlayerController.cs" />
     <Compile Include="Assets\Scripts\WeaponSpawner.cs" />
+    <Compile Include="Assets\TrueSync\Unity\LayerCollisionMatrix.cs" />
+    <Compile Include="Assets\TrueSync\Unity\PhotonTrueSyncCommunicator.cs" />
+    <Compile Include="Assets\TrueSync\Unity\Physics2DWorldManager.cs" />
+    <Compile Include="Assets\TrueSync\Unity\PhysicsManagerFactory.cs" />
+    <Compile Include="Assets\TrueSync\Unity\PhysicsWorldManager.cs" />
+    <Compile Include="Assets\TrueSync\Unity\TSBoxCollider.cs" />
+    <Compile Include="Assets\TrueSync\Unity\TSBoxCollider2D.cs" />
+    <Compile Include="Assets\TrueSync\Unity\TSCapsuleCollider.cs" />
+    <Compile Include="Assets\TrueSync\Unity\TSCircleCollider2D.cs" />
+    <Compile Include="Assets\TrueSync\Unity\TSCollider.cs" />
+    <Compile Include="Assets\TrueSync\Unity\TSCollider2D.cs" />
+    <Compile Include="Assets\TrueSync\Unity\TSMaterial.cs" />
+    <Compile Include="Assets\TrueSync\Unity\TSMeshCollider.cs" />
+    <Compile Include="Assets\TrueSync\Unity\TSPolygonCollider2D.cs" />
+    <Compile Include="Assets\TrueSync\Unity\TSRay.cs" />
+    <Compile Include="Assets\TrueSync\Unity\TSRaycastHit.cs" />
+    <Compile Include="Assets\TrueSync\Unity\TSRigidBody.cs" />
+    <Compile Include="Assets\TrueSync\Unity\TSRigidBody2D.cs" />
+    <Compile Include="Assets\TrueSync\Unity\TSSphereCollider.cs" />
+    <Compile Include="Assets\TrueSync\Unity\TSTerrainCollider.cs" />
+    <Compile Include="Assets\TrueSync\Unity\TSTransform.cs" />
+    <Compile Include="Assets\TrueSync\Unity\TSTransform2D.cs" />
+    <Compile Include="Assets\TrueSync\Unity\TrueSyncBehaviour.cs" />
+    <Compile Include="Assets\TrueSync\Unity\TrueSyncConfig.cs" />
+    <Compile Include="Assets\TrueSync\Unity\TrueSyncManager.cs" />
+    <Compile Include="Assets\TrueSync\Unity\UnityUtils.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Photon Unity Networking\changelog.txt" />
@@ -185,6 +204,8 @@
     <None Include="Assets\Plugins\Photon3Unity3D.xml" />
     <None Include="Assets\Plugins\release_history.txt" />
     <None Include="Assets\Shaders\JutaTestShader.shader" />
+    <None Include="Assets\TrueSync\link.xml" />
+    <None Include="Assets\changelog.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>

@@ -1,4 +1,3 @@
-#if UNITY_WEBGL || UNITY_XBOXONE
 // --------------------------------------------------------------------------------------------------------------------
 // <copyright file="SocketTcp.cs" company="Exit Games GmbH">
 //   Copyright (c) Exit Games GmbH.  All rights reserved.
@@ -14,32 +13,14 @@ using System.Collections;
 using UnityEngine;
 using SupportClassPun = ExitGames.Client.Photon.SupportClass;
 
+#if UNITY_WEBGL
 
 namespace ExitGames.Client.Photon
 {
-
-	/// <summary>
-	/// Yield Instruction to Wait for real seconds. Very important to keep connection working if Time.TimeScale is altered, we still want accurate network events
-	/// </summary>
-	public sealed class WaitForRealSeconds : CustomYieldInstruction
-	{
-		private readonly float _endTime;
-
-		public override bool keepWaiting
-		{
-			get { return _endTime > Time.realtimeSinceStartup; }
-		}
-
-		public WaitForRealSeconds(float seconds)
-		{
-			_endTime = Time.realtimeSinceStartup + seconds;
-		}
-	}
-
     /// <summary>
     /// Internal class to encapsulate the network i/o functionality for the realtime libary.
     /// </summary>
-    public class SocketWebTcp : IPhotonSocket, IDisposable
+    internal class SocketWebTcp : IPhotonSocket, IDisposable
     {
         private WebSocket sock;
 
@@ -50,11 +31,11 @@ namespace ExitGames.Client.Photon
             ServerAddress = npeer.ServerAddress;
             if (this.ReportDebugOfLevel(DebugLevel.INFO))
             {
-                Listener.DebugReturn(DebugLevel.INFO, "new SocketWebTcp() for Unity. Server: " + ServerAddress);
+                Listener.DebugReturn(DebugLevel.INFO, "new SocketWebTcp() " + ServerAddress);
             }
 
-            this.Protocol = ConnectionProtocol.WebSocket;
-            this.PollReceive = false;
+            Protocol = ConnectionProtocol.Tcp;
+            PollReceive = false;
         }
 
         public void Dispose()
@@ -89,20 +70,21 @@ namespace ExitGames.Client.Photon
 
             State = PhotonSocketState.Connecting;
 
-            if (this.websocketConnectionObject != null)
+            if (websocketConnectionObject != null)
             {
-                UnityEngine.Object.Destroy(this.websocketConnectionObject);
+                UnityEngine.Object.Destroy(websocketConnectionObject);
             }
 
-            this.websocketConnectionObject = new GameObject("websocketConnectionObject");
-            MonoBehaviour mb = this.websocketConnectionObject.AddComponent<MonoBehaviourExt>();
-            this.websocketConnectionObject.hideFlags = HideFlags.HideInHierarchy;
-            UnityEngine.Object.DontDestroyOnLoad(this.websocketConnectionObject);
+            websocketConnectionObject = new GameObject("websocketConnectionObject");
+            MonoBehaviour mb = websocketConnectionObject.AddComponent<MonoBehaviour>();
+            // TODO: not hidden for debug
+            //websocketConnectionObject.hideFlags = HideFlags.HideInHierarchy;
+            UnityEngine.Object.DontDestroyOnLoad(websocketConnectionObject);
 
             this.sock = new WebSocket(new Uri(ServerAddress));
-            this.sock.Connect();
+            mb.StartCoroutine(this.sock.Connect());
 
-            mb.StartCoroutine(this.ReceiveLoop());
+            mb.StartCoroutine(ReceiveLoop());
             return true;
         }
 
@@ -111,7 +93,7 @@ namespace ExitGames.Client.Photon
         {
             if (ReportDebugOfLevel(DebugLevel.INFO))
             {
-                this.Listener.DebugReturn(DebugLevel.INFO, "SocketWebTcp.Disconnect()");
+                this.Listener.DebugReturn(DebugLevel.INFO, "SocketTcp.Disconnect()");
             }
 
             State = PhotonSocketState.Disconnecting;
@@ -132,9 +114,9 @@ namespace ExitGames.Client.Photon
                 }
             }
 
-            if (this.websocketConnectionObject != null)
+            if (websocketConnectionObject != null)
             {
-                UnityEngine.Object.Destroy(this.websocketConnectionObject);
+                UnityEngine.Object.Destroy(websocketConnectionObject);
             }
 
             State = PhotonSocketState.Disconnected;
@@ -186,17 +168,15 @@ namespace ExitGames.Client.Photon
             this.Listener.DebugReturn(DebugLevel.INFO, "ReceiveLoop()");
             while (!this.sock.Connected && this.sock.Error == null)
             {
-				yield return new WaitForRealSeconds(0.1f); // while connecting
+                yield return new WaitForSeconds(0.1f);
             }
-
             if (this.sock.Error != null)
             {
-                this.Listener.DebugReturn(DebugLevel.ERROR, "Exiting receive thread. Server: " + this.ServerAddress + ":" + this.ServerPort + " Error: " + this.sock.Error);
+                this.Listener.DebugReturn(DebugLevel.ERROR, "Exiting receive thread due to error: " + this.sock.Error + " Server: " + this.ServerAddress);
 				this.HandleException(StatusCode.ExceptionOnConnect);
             }
             else
             {
-                // connected
                 if (this.ReportDebugOfLevel(DebugLevel.ALL))
                 {
                     this.Listener.DebugReturn(DebugLevel.ALL, "Receiving by websocket. this.State: " + State);
@@ -206,7 +186,7 @@ namespace ExitGames.Client.Photon
 				{
 					if (this.sock.Error != null)
 					{
-						this.Listener.DebugReturn(DebugLevel.ERROR, "Exiting receive thread (inside loop). Server: "+this.ServerAddress+":"+this.ServerPort+" Error: " + this.sock.Error);
+						this.Listener.DebugReturn(DebugLevel.ERROR, "Exiting receive thread (inside loop) due to error: " + this.sock.Error + " Server: " + this.ServerAddress);
 						this.HandleException(StatusCode.ExceptionOnReceive);
 						break;
 					}
@@ -215,7 +195,7 @@ namespace ExitGames.Client.Photon
 						byte[] inBuff = this.sock.Recv();
 						if (inBuff == null || inBuff.Length == 0)
 						{
-							yield return new WaitForRealSeconds(0.02f); // nothing received. wait a bit, try again
+							yield return new WaitForSeconds(0.1f);
 							continue;
 						}
 
@@ -224,6 +204,27 @@ namespace ExitGames.Client.Photon
 							this.Listener.DebugReturn(DebugLevel.ALL, "TCP << " + inBuff.Length + " = " + SupportClassPun.ByteArrayToString(inBuff));
 						}
 
+
+						// check if it's a ping-result (first byte = 0xF0). this is 9 bytes in total. no other headers!
+						// note: its a coincidence that ping-result-size == header-size. if this changes we have to refactor this
+						if (inBuff[0] == 0xF0)
+						{
+							try
+							{
+								HandleReceivedDatagram(inBuff, inBuff.Length, false);
+							}
+							catch (Exception e)
+							{
+								if (this.ReportDebugOfLevel(DebugLevel.ERROR))
+								{
+									this.EnqueueDebugReturn(DebugLevel.ERROR, "Receive issue. State: " + this.State + ". Server: '" + this.ServerAddress + "' Exception: " + e);
+								}
+								this.HandleException(StatusCode.ExceptionOnReceive);
+							}
+							continue;
+						}
+
+						// get data and split the datagram into two buffers: head and body
 						if (inBuff.Length > 0)
 						{
 							try
@@ -232,26 +233,20 @@ namespace ExitGames.Client.Photon
 							}
 							catch (Exception e)
 							{
-                                if (this.State != PhotonSocketState.Disconnecting && this.State != PhotonSocketState.Disconnected)
-                                {
-                                    if (this.ReportDebugOfLevel(DebugLevel.ERROR))
-                                    {
-                                        this.EnqueueDebugReturn(DebugLevel.ERROR, "Receive issue. State: " + this.State + ". Server: '" + this.ServerAddress + "' Exception: " + e);
-                                    }
-
-                                    this.HandleException(StatusCode.ExceptionOnReceive);
-                                }
+								if (this.ReportDebugOfLevel(DebugLevel.ERROR))
+								{
+									this.EnqueueDebugReturn(DebugLevel.ERROR, "Receive issue. State: " + this.State + ". Server: '" + this.ServerAddress + "' Exception: " + e);
+								}
+								this.HandleException(StatusCode.ExceptionOnReceive);
 							}
 						}
 					}
 				}
             }
 
-            this.Disconnect();
+            Disconnect();
         }
     }
-
-	internal class MonoBehaviourExt : MonoBehaviour {}
 }
 
 #endif

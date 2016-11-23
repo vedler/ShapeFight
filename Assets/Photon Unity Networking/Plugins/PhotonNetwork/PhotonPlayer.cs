@@ -9,7 +9,6 @@
 // <author>developer@exitgames.com</author>
 // ----------------------------------------------------------------------------
 
-using System;
 using System.Collections.Generic;
 using ExitGames.Client.Photon;
 using UnityEngine;
@@ -25,7 +24,7 @@ using Hashtable = ExitGames.Client.Photon.Hashtable;
 /// They are synced when joining a room.
 /// </remarks>
 /// \ingroup publicApi
-public class PhotonPlayer : IComparable<PhotonPlayer>, IComparable<int>, IEquatable<PhotonPlayer>, IEquatable<int>
+public class PhotonPlayer
 {
     /// <summary>This player's actorID</summary>
     public int ID
@@ -332,44 +331,6 @@ public class PhotonPlayer : IComparable<PhotonPlayer>, IComparable<int>, IEquata
         //if (nextHigherId != int.MaxValue) UnityEngine.Debug.LogWarning(this.RoomReference.GetPlayer(nextHigherId));
         return (nextHigherId != int.MaxValue) ? players[nextHigherId] : players[lowestId];
     }
-
-	#region IComparable implementation
-
-	public int CompareTo (PhotonPlayer other)
-	{
-		if ( other == null)
-		{
-			return 0;
-		}
-
-		return this.GetHashCode().CompareTo(other.GetHashCode());
-	}
-
-	public int CompareTo (int other)
-	{
-		return this.GetHashCode().CompareTo(other);
-	}
-
-	#endregion
-
-	#region IEquatable implementation
-
-	public bool Equals (PhotonPlayer other)
-	{
-		if ( other == null)
-		{
-			return false;
-		}
-		
-		return this.GetHashCode().Equals(other.GetHashCode());
-	}
-
-	public bool Equals (int other)
-	{	
-		return this.GetHashCode().Equals(other);
-	}
-
-	#endregion
 
     /// <summary>
     /// Brief summary string of the PhotonPlayer. Includes name or player.ID and if it's the Master Client.

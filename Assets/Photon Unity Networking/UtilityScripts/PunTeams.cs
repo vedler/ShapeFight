@@ -37,10 +37,6 @@ public class PunTeams : MonoBehaviour
         }
     }
 
-	public void OnDisable()
-	{
-		PlayersPerTeam = new Dictionary<Team, List<PhotonPlayer>>();
-	}
 
     /// <summary>Needed to update the team lists when joining a room.</summary>
     /// <remarks>Called by PUN. See enum PhotonNetworkingMessage for an explanation.</remarks>
@@ -50,11 +46,6 @@ public class PunTeams : MonoBehaviour
         this.UpdateTeams();
     }
 
-	public void OnLeftRoom()
-	{
-		Start();
-	}
-
     /// <summary>Refreshes the team lists. It could be a non-team related property change, too.</summary>
     /// <remarks>Called by PUN. See enum PhotonNetworkingMessage for an explanation.</remarks>
     public void OnPhotonPlayerPropertiesChanged(object[] playerAndUpdatedProps)
@@ -62,22 +53,11 @@ public class PunTeams : MonoBehaviour
         this.UpdateTeams();
     }
     
-	public void OnPhotonPlayerDisconnected(PhotonPlayer otherPlayer)
-	{
-		this.UpdateTeams();
-	}
-
-	public void OnPhotonPlayerConnected(PhotonPlayer newPlayer)
-	{
-		this.UpdateTeams();
-	}
-
     #endregion
     
 
     public void UpdateTeams()
     {
-		//Debug.Log("PunTeams : UpdateTeams");
         Array enumVals = Enum.GetValues(typeof(Team));
         foreach (var enumVal in enumVals)
         {
@@ -118,13 +98,12 @@ public static class TeamExtensions
         if (!PhotonNetwork.connectedAndReady)
         {
             Debug.LogWarning("JoinTeam was called in state: " + PhotonNetwork.connectionStateDetailed + ". Not connectedAndReady.");
-            return;
         }
 
-        PunTeams.Team currentTeam = player.GetTeam();
+        PunTeams.Team currentTeam = PhotonNetwork.player.GetTeam();
         if (currentTeam != team)
         {
-            player.SetCustomProperties(new Hashtable() {{PunTeams.TeamPlayerProp, (byte) team}});
+            PhotonNetwork.player.SetCustomProperties(new Hashtable() {{PunTeams.TeamPlayerProp, (byte) team}});
         }
     }
 }
