@@ -5,11 +5,11 @@ public class CamMovement : MonoBehaviour {
 
     //[SerializeField]
     private GameObject target;
-
+    
     // Use this for initialization
     void Start()
     {
-
+        GetComponent<Camera>().orthographicSize *= 100;
     }
 
     // Update is called once per frame

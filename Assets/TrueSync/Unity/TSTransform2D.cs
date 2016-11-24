@@ -11,7 +11,7 @@ namespace TrueSync {
         private const float DELTA_TIME_FACTOR = 10f;
 
         [SerializeField]
-        [HideInInspector]
+        //[HideInInspector]
         [AddTracking]
         private TSVector2 _position;
 
@@ -29,16 +29,23 @@ namespace TrueSync {
 				return _position;
             }
             set {
+                //TSVector2 oldValue = _position;
                 _position = value;
 
-                if (tsCollider != null && tsCollider.Body != null) {
+                /*if (tsCollider != null && tsCollider.Body != null) {
                     tsCollider.Body.TSPosition = _position + scaledCenter;
+                }*/
+
+                for (int i = 0; i < transform.childCount; ++i)
+                {
+                    TSTransform2D trans = transform.GetChild(i).gameObject.GetComponent<TSTransform2D>();
+                    if (trans != null) trans.position += value - oldValue;
                 }
             }
         }
 
         [SerializeField]
-        [HideInInspector]
+        //[HideInInspector]
         [AddTracking]
         private FP _rotation;
 
@@ -56,6 +63,12 @@ namespace TrueSync {
                 return _rotation;
             }
             set {
+                /*for (int i = 0; i < transform.childCount; ++i)
+                {
+                    TSTransform2D trans = transform.GetChild(i).gameObject.GetComponent<TSTransform2D>();
+                    if (trans != null) trans.rotation += value - _rotation;
+                }*/
+
                 _rotation = value;
 
                 if (tsCollider != null && tsCollider.Body != null) {
@@ -65,7 +78,7 @@ namespace TrueSync {
         }
 
         [SerializeField]
-        [HideInInspector]
+        //[HideInInspector]
         [AddTracking]
         private TSVector _scale;
 
@@ -77,6 +90,13 @@ namespace TrueSync {
                 return _scale;
             }
             set {
+                
+                /*for (int i = 0; i < transform.childCount; ++i)
+                {
+                    TSTransform2D trans = transform.GetChild(i).gameObject.GetComponent<TSTransform2D>();
+                    if (trans != null) trans.scale += value - _scale;
+                }*/
+
                 _scale = value;
             }
         }
@@ -137,6 +157,11 @@ namespace TrueSync {
         }
 
         public void Update() {
+            if (this.tag == "FullMap")
+            {
+                print("TSPOS: " + gameObject.transform.position);
+            }
+
             if (Application.isPlaying) {
                 if (initialized) {
                     UpdatePlayMode();
@@ -149,6 +174,7 @@ namespace TrueSync {
         private void UpdateEditMode() {
             if (transform.hasChanged) {
                 _position = transform.position.ToTSVector2();
+                // TODO: MINE MUNNI
                 _rotation = transform.rotation.eulerAngles.z;
                 _scale = transform.localScale.ToTSVector();
 
@@ -157,7 +183,8 @@ namespace TrueSync {
         }
 
         private void UpdatePlayMode() {
-			if (rb != null) {
+
+            if (rb != null) {
                 if (rb.interpolation == TSRigidBody2D.InterpolateMode.Interpolate) {
                     transform.position = Vector3.Lerp(transform.position, position.ToVector(), Time.deltaTime * DELTA_TIME_FACTOR);
                     transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0, 0, rotation.AsFloat()), Time.deltaTime * DELTA_TIME_FACTOR);

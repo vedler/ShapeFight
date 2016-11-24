@@ -7,6 +7,12 @@ TagManager:
   - PlatformTag
   - LocalPlayerTag
   - LocalProjectileTag
+  - Food
+  - GroundVer
+  - GroundHor
+  - goal
+  - ball
+  - FullMap
   layers:
   - Default
   - TransparentFX
