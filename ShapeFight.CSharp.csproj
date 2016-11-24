@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows:5</UnityBuildTarget>
     <UnityVersion>5.4.1f1</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <LangVersion Condition=" '$(VisualStudioVersion)' != '10.0' ">4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -163,9 +165,7 @@
     <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
     <Compile Include="Assets\Scripts\Managers\InputManager.cs" />
     <Compile Include="Assets\Scripts\Managers\NetworkManager.cs" />
-    <Compile Include="Assets\Scripts\Managers\ParticlePool.cs" />
     <Compile Include="Assets\Scripts\Managers\WeaponManager.cs" />
-    <Compile Include="Assets\Scripts\ParticleSpawner.cs" />
     <Compile Include="Assets\Scripts\PlayerCharacter.cs" />
     <Compile Include="Assets\Scripts\PlayerState\AbstractPMovementState.cs" />
     <Compile Include="Assets\Scripts\PlayerState\IPlayerState.cs" />
@@ -175,7 +175,6 @@
     <Compile Include="Assets\Scripts\PlayerState\PlayerWallState.cs" />
     <Compile Include="Assets\Scripts\PoolObject.cs" />
     <Compile Include="Assets\Scripts\RocketMover.cs" />
-    <Compile Include="Assets\Scripts\RocketParticle.cs" />
     <Compile Include="Assets\Scripts\TestPlayerController.cs" />
     <Compile Include="Assets\Scripts\WeaponSpawner.cs" />
   </ItemGroup>

@@ -85,6 +85,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: dbabb1c96e7e5fe47add7e474a5a7399, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  particleSysPrefab: {fileID: 1000011581375342, guid: f52c7532fba9f454fbc97eedf33251a5,
+    type: 2}
   speed: 7
   maxSpeed: 0.7
 --- !u!212 &212000011798571492

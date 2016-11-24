@@ -43,7 +43,7 @@ GameObject:
   - 114: {fileID: 114000012399135594}
   - 114: {fileID: 114000011656279730}
   - 114: {fileID: 114000010740739440}
-  - 114: {fileID: 114000014218828618}
+  - 114: {fileID: 114000014199864980}
   m_Layer: 0
   m_Name: PlayerCharacter
   m_TagString: LocalPlayerTag
@@ -190,7 +190,7 @@ MonoBehaviour:
   maxMoveSpeed: 40
   jetPackPower: 300
   platformTag: PlatformTag
---- !u!114 &114000014218828618
+--- !u!114 &114000014199864980
 MonoBehaviour:
   m_ObjectHideFlags: 1
   m_PrefabParentObject: {fileID: 0}
@@ -201,7 +201,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ac819357ff1399547be3f38deab78d49, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  particle: {fileID: 1000011717877182, guid: 11c6ae89f51387042832b5b525b391d4, type: 2}
+  particlesys: {fileID: 1000011581375342, guid: f52c7532fba9f454fbc97eedf33251a5,
+    type: 2}
 --- !u!212 &212000010183901308
 SpriteRenderer:
   m_ObjectHideFlags: 1

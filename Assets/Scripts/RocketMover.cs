@@ -5,6 +5,8 @@ public class RocketMover : PoolObject{
 
     private GameManager gm;
 
+    public GameObject particleSysPrefab;
+
     [SerializeField] 
     public float speed;
 
@@ -54,8 +56,9 @@ public class RocketMover : PoolObject{
         {
             return;
         }
-        gm.onProjectileCollision(GetComponent<Rigidbody2D>().transform.position);
-        this.gameObject.SetActive(false);
+        GameObject explosion = (GameObject)Instantiate(particleSysPrefab, transform.position, particleSysPrefab.transform.rotation);
+        Destroy(explosion, explosion.GetComponent<ParticleSystem>().startLifetime*2);
+        gameObject.SetActive(false);
     }
 
     public override void FireMe(Vector2 direction)
