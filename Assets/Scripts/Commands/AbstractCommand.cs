@@ -61,4 +61,9 @@ class AbstractCommand : ICommand
 
         return control == ((AbstractCommand)obj).control;
     }
+
+    public override int GetHashCode()
+    {
+        return base.GetHashCode() ^ control.GetHashCode();
+    }
 }

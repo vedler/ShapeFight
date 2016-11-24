@@ -3,9 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class InputManager {
-
-    private GameManager gameManager;
-
+    
     private Dictionary<EInputGroup, List<IUserInputListener>> inputGroupListeners;
     private Dictionary<EInputControls, ICommand> inputControlCommands;
     private Dictionary<EInputControls, EInputGroup> inputGroups;
@@ -14,11 +12,8 @@ public class InputManager {
     private List<KeyCode> pressedKeys;
 
     // Use this for initialization
-    public InputManager(GameManager gameManager)
+    public InputManager()
     {
-        // Init
-        this.gameManager = gameManager;
-
         // Create key to input group map
         inputGroups = new Dictionary<EInputControls, EInputGroup>();
 

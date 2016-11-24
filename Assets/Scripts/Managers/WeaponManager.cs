@@ -3,16 +3,12 @@ using System.Collections;
 using System.Collections.Generic;
 
 public class WeaponManager {
-
-    private GameManager gameManager;
-
+    
     Dictionary<int, Queue<ObjectInstance>> poolDictionary = new Dictionary<int, Queue<ObjectInstance>> ();
 
     // Use this for initialization
-    public WeaponManager (GameManager gameManager)
+    public WeaponManager ()
     {
-        // Init
-        this.gameManager = gameManager;
 
     }
 

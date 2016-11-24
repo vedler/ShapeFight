@@ -4,10 +4,6 @@
 // </copyright>
 // --------------------------------------------------------------------------------------------------------------------
 
-#if UNITY_5 && (!UNITY_5_0 && !UNITY_5_1 && !UNITY_5_2 && !UNITY_5_3) || UNITY_6
-#define UNITY_MIN_5_4
-#endif
-
 using System;
 using System.Collections;
 using System.Diagnostics;
@@ -17,14 +13,11 @@ using Debug = UnityEngine.Debug;
 using Hashtable = ExitGames.Client.Photon.Hashtable;
 using SupportClassPun = ExitGames.Client.Photon.SupportClass;
 
-#if UNITY_5_5_OR_NEWER
-using UnityEngine.Profiling;
-#endif
 
 /// <summary>
 /// Internal Monobehaviour that allows Photon to run an Update loop.
 /// </summary>
-internal class PhotonHandler : MonoBehaviour
+internal class PhotonHandler : Photon.MonoBehaviour
 {
     public static PhotonHandler SP;
 
@@ -60,30 +53,6 @@ internal class PhotonHandler : MonoBehaviour
         PhotonHandler.StartFallbackSendAckThread();
     }
 
-
-    #if UNITY_MIN_5_4
-
-    protected void Start()
-    {
-        UnityEngine.SceneManagement.SceneManager.sceneLoaded += (scene, loadingMode) =>
-        {
-            PhotonNetwork.networkingPeer.NewSceneLoaded();
-            PhotonNetwork.networkingPeer.SetLevelInPropsIfSynced(SceneManagerHelper.ActiveSceneName);
-        };
-    }
-
-    #else
-
-    /// <summary>Called by Unity after a new level was loaded.</summary>
-    protected void OnLevelWasLoaded(int level)
-    {
-        PhotonNetwork.networkingPeer.NewSceneLoaded();
-        PhotonNetwork.networkingPeer.SetLevelInPropsIfSynced(SceneManagerHelper.ActiveSceneName);
-    }
-
-    #endif
-
-
     /// <summary>Called by Unity when the application is closed. Disconnects.</summary>
     protected void OnApplicationQuit()
     {
@@ -96,14 +65,13 @@ internal class PhotonHandler : MonoBehaviour
     /// Called by Unity when the application gets paused (e.g. on Android when in background).
     /// </summary>
     /// <remarks>
-    /// Sets a disconnect timer when PhotonNetwork.BackgroundTimeout > 0.1f. See PhotonNetwork.BackgroundTimeout.
-    /// 
     /// Some versions of Unity will give false values for pause on Android (and possibly on other platforms).
+    /// Sets a disconnect timer when PhotonNetwork.BackgroundTimeout > 0.001f.
     /// </remarks>
-    /// <param name="pause">If the app pauses.</param>
+    /// <param name="pause"></param>
     protected void OnApplicationPause(bool pause)
     {
-        if (PhotonNetwork.BackgroundTimeout > 0.1f)
+        if (PhotonNetwork.BackgroundTimeout > 0.001f)
         {
             if (timerToStopConnectionInBackground == null)
             {
@@ -182,6 +150,13 @@ internal class PhotonHandler : MonoBehaviour
         }
     }
 
+    /// <summary>Called by Unity after a new level was loaded.</summary>
+    protected void OnLevelWasLoaded(int level)
+    {
+        PhotonNetwork.networkingPeer.NewSceneLoaded();
+        PhotonNetwork.networkingPeer.SetLevelInPropsIfSynced(SceneManagerHelper.ActiveSceneName);
+    }
+
     protected void OnJoinedRoom()
     {
         PhotonNetwork.networkingPeer.LoadLevelIfSynced();
@@ -194,7 +169,7 @@ internal class PhotonHandler : MonoBehaviour
 
     public static void StartFallbackSendAckThread()
     {
-	    #if !UNITY_WEBGL
+#if !UNITY_WEBGL
         if (sendThreadShouldRun)
         {
             return;
@@ -202,40 +177,30 @@ internal class PhotonHandler : MonoBehaviour
 
         sendThreadShouldRun = true;
         SupportClassPun.CallInBackground(FallbackSendAckThread);   // thread will call this every 100ms until method returns false
-	    #endif
+#endif
     }
 
     public static void StopFallbackSendAckThread()
     {
-	    #if !UNITY_WEBGL
+#if !UNITY_WEBGL
         sendThreadShouldRun = false;
-	    #endif
+#endif
     }
 
-    /// <summary>A thread which runs independent from the Update() calls. Keeps connections online while loading or in background. See PhotonNetwork.BackgroundTimeout.</summary>
     public static bool FallbackSendAckThread()
     {
         if (sendThreadShouldRun && PhotonNetwork.networkingPeer != null)
         {
             // check if the client should disconnect after some seconds in background
-            if (timerToStopConnectionInBackground != null && PhotonNetwork.BackgroundTimeout > 0.1f)
+            if (timerToStopConnectionInBackground != null && PhotonNetwork.BackgroundTimeout > 0.001f)
             {
                 if (timerToStopConnectionInBackground.ElapsedMilliseconds > PhotonNetwork.BackgroundTimeout * 1000)
                 {
-                    if (PhotonNetwork.connected)
-                    {
-                        PhotonNetwork.Disconnect();
-                    }
-                    timerToStopConnectionInBackground.Stop();
-                    timerToStopConnectionInBackground.Reset();
                     return sendThreadShouldRun;
                 }
             }
 
-            if (PhotonNetwork.networkingPeer.ConnectionTime - PhotonNetwork.networkingPeer.LastSendOutgoingTime > 200)
-            {
-                PhotonNetwork.networkingPeer.SendAcksOnly();
-            }
+            PhotonNetwork.networkingPeer.SendAcksOnly();
         }
 
         return sendThreadShouldRun;

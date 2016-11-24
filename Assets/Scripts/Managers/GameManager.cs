@@ -56,10 +56,10 @@ public class GameManager : MonoBehaviour
 
 
         // Load and initialize InputManager
-        this.inputManager = new InputManager(this);
+        this.inputManager = new InputManager();
 
         //Load and initialize WeaponManager
-        this.weaponManager = new WeaponManager(this);
+        this.weaponManager = new WeaponManager();
     }
 
     // Update is called once per frame

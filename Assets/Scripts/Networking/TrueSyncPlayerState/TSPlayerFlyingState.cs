@@ -1,0 +1,175 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using UnityEngine;
+
+public class TSPlayerFlyingState : AbstractTSPMovementState
+{
+    private bool isInJump;
+    private bool skipCheckingJumpFirstUpdate;
+
+    public TSPlayerFlyingState(TSPMovementStateHandler handler, bool isInJump) : base(handler)
+    {
+        this.isInJump = isInJump;
+        skipCheckingJumpFirstUpdate = false;
+    }
+
+    public override bool check()
+    {
+        // If we are not on ground, we want to switch states to flying
+        if (handler.isOnGround())
+        {
+            setNextState(new TSPlayerGroundState(handler));
+            return false;
+        }
+        
+        return true;
+    }
+
+    public override void enter()
+    {
+        /*if (isInJump)
+        {
+            // Make sure we dont lose the Jump key hold when we first run the queue after switching states
+            skipCheckingJumpFirstUpdate = true;
+            handler.setIsInJump();
+        }*/
+    }
+
+    public override void exit()
+    {
+        handler.forceNotInJump();
+    }
+
+    public override bool FixedUpdate(Dictionary<TSPMovementStateHandler.ECommandType, Queue<ICommand>> commandCache)
+    {
+        // We can keep flying left or right or manipulate the up-down gravity or use the jetpack
+
+        // Check if player is still holding the jump button (keyUp might have been eaten already)
+        // Also make sure this isn't the first frame, where we probably have already eaten the jump press
+
+        /*if (isInJump)
+        {
+            foreach (MoveCommand comm in commandCache[PMovementStateHandler.ECommandType.Up])
+            {
+                bool isStillHoldingJump = false;
+                if (comm.control == EInputControls.Jump)
+                {
+                    isStillHoldingJump = true;
+                    break;
+                }
+
+                if (!isStillHoldingJump)
+                {
+                    handler.forceNotInJump();
+                    isInJump = false;
+                }
+            }
+        }
+
+        if (isInJump && !skipCheckingJumpFirstUpdate)
+        {
+            bool isStillHoldingJump = false;
+
+            foreach (MoveCommand comm in commandCache[PMovementStateHandler.ECommandType.Hold])
+            {
+                if (comm.control == EInputControls.Jump)
+                {
+                    isStillHoldingJump = true;
+                    handler.setIsInJump();
+                    break;
+                }
+            }
+
+            if (!isStillHoldingJump)
+            {
+                isInJump = false;
+                MonoBehaviour.print("Release jump1");
+            }
+        }
+        else if (isInJump && skipCheckingJumpFirstUpdate)
+        {
+            // We are past the first update
+            skipCheckingJumpFirstUpdate = false;
+
+            bool isStillHoldingJump = false;
+
+            // Also check key up just to make sure (only the first frame)
+            foreach (MoveCommand comm in commandCache[PMovementStateHandler.ECommandType.Up])
+            {
+                if (comm.control == EInputControls.Jump)
+                {
+                    isStillHoldingJump = true;
+                    handler.setIsInJump();
+                    break;
+                }
+            }
+
+            if (!isStillHoldingJump)
+            {
+                isInJump = false;
+                MonoBehaviour.print("Release jump2");
+            }
+        }*/
+
+        // Key hold
+        while (commandCache[TSPMovementStateHandler.ECommandType.Hold].Count > 0)
+        {
+
+            ICommand baseCommand = commandCache[TSPMovementStateHandler.ECommandType.Hold].Dequeue();
+
+            if (baseCommand is MoveCommand)
+            {
+                switch (((MoveCommand)baseCommand).control)
+                {
+                    case EInputControls.MoveUp:
+
+                        handler.manipulateGravity(EInputControls.MoveUp, -handler.playerCharacter.verticalDeltaGravity);
+                        break;
+
+                    case EInputControls.MoveDown:
+
+                        handler.manipulateGravity(EInputControls.MoveDown, handler.playerCharacter.verticalDeltaGravity);
+                        break;
+
+                    case EInputControls.MoveRight:
+
+                        if (handler.isOnWall(TSPMovementStateHandler.EWallDirection.Right))
+                        {
+                            setNextState(new TSPlayerWallState(handler, TSPMovementStateHandler.EWallDirection.Right));
+                            return false;
+                        }
+
+                        handler.playerCharacter.rigidBody.AddForce(new Vector2(handler.playerCharacter.leftAndRightPower, 0), ForceMode2D.Impulse);
+                        break;
+
+                    case EInputControls.MoveLeft:
+
+                        if (handler.isOnWall(TSPMovementStateHandler.EWallDirection.Left))
+                        {
+                            setNextState(new TSPlayerWallState(handler, TSPMovementStateHandler.EWallDirection.Left));
+                            return false;
+                        }
+
+                        handler.playerCharacter.rigidBody.AddForce(new Vector2(-handler.playerCharacter.leftAndRightPower, 0), ForceMode2D.Impulse);
+                        break;
+
+                    case EInputControls.JetPack:
+
+                        handler.playerCharacter.rigidBody.AddForce(new Vector2(0, handler.playerCharacter.jetPackPower), ForceMode2D.Impulse);
+                        /*if (!isInJump)
+                        {
+                            
+                        } */
+
+                        break;
+                }
+            }
+        }
+
+        // Done with this fixedupdate cycle
+        handler.setCacheUsed();
+        return true;
+    }
+}
