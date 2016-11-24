@@ -4,6 +4,9 @@ using System.Collections.Generic;
 
 public class GameManager : MonoBehaviour
 {
+    // TODO: Object-pool based on an array and switch dead objects with the last active one instead of re-queueing
+
+
     private static GameManager instance;
 
     public static GameManager getInstance()

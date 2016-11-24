@@ -79,7 +79,8 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
         //GetComponent<Rigidbody2D>().position = Vector2.Lerp(syncStartPosition, syncEndPosition, syncTime / syncDelay);
         //GetComponent<Rigidbody2D>().velocity = Vector2.Lerp(syncStartVelocity, syncEndVelocity, syncTime / syncDelay);
 
-        RaycastHit hit;
+        Ray2D ray = new Ray2D();
+        
 
         // Get movement direction vector
         Vector2 rayDir = rigidBody.velocity;
@@ -95,17 +96,41 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
         bool collidingSoon = false;
         Vector2 collisionTransform = Vector2.zero;
 
-        if (Physics.Raycast(transform.position, rayDir, out hit, diagVec.magnitude * 3, layerMask))
+        //print(string.Format("{0} - {1} - {2} - {3}", rigidBody.position, rayDir, Mathf.Infinity, layerMask));
+        //print("vel: " + rigidBody.velocity + ", norm: " + rayDir);
+
+        ray.origin = rigidBody.position;
+        ray.direction = rigidBody.velocity;
+
+        RaycastHit2D hit = Physics2D.Raycast(rigidBody.position, rigidBody.velocity, (diagVec * 3).magnitude, layerMask);
+
+        //bool rayRes = Physics2D.Raycast(rigidBody.position, rigidBody.velocity, Mathf.Infinity, layerMask, 0, 0, );
+        //print(string.Format("Rayres:{0} - {1} - {2} - {3} - {4}", rayRes, rigidBody.position, rigidBody.velocity, Mathf.Infinity, layerMask));
+
+        if (rigidBody.velocity.magnitude > 0.2f && hit.collider != null)
         {
-            Vector3 colliderEdgePoint = boxCollider.bounds.ClosestPoint(hit.point);
-            print("closest to coll: " + colliderEdgePoint);
+            Vector2 colliderEdgePoint = boxCollider.bounds.ClosestPoint(hit.point);
+            //print("closest to coll: " + colliderEdgePoint);
             collidingSoon = Vector2.Distance(colliderEdgePoint, transform.position) * 2 >= Vector2.Distance(hit.point, transform.position);
 
             // Calculate the center of the transform
             if (collidingSoon)
             {
                 print("Colliding soon");
-                collisionTransform = hit.point - colliderEdgePoint + transform.position;
+                // Predicted position of the player transform in the point where the collider and raycast hitpoint match
+                collisionTransform = rigidBody.position - colliderEdgePoint + hit.point;
+
+                if (Vector2.Distance(rigidBody.position, collisionTransform) < Vector2.Distance(rigidBody.position, syncEndPosition))
+                {
+                    print("Reducing overextrapolation");
+                    // If our predicted player position is further away than the transform's collision position, update the end position
+                    syncEndPosition = collisionTransform;
+
+                    // Reset the Lerp interpolation to start from the current position of the transform and end at the new end position
+                    syncStartPosition = rigidBody.position;
+                    syncDelay -= syncTime;
+                    syncTime = 0f;
+                }
             }
         }
 
