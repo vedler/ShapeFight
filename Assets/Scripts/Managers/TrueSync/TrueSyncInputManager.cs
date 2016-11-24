@@ -1,18 +1,28 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System.Collections.Generic;
+using TrueSync;
 
-public class InputManager {
+public class TrueSyncInputManager : TrueSyncBehaviour
+{
     
     private Dictionary<EInputGroup, List<IUserInputListener>> inputGroupListeners;
     private Dictionary<EInputControls, ICommand> inputControlCommands;
     private Dictionary<EInputControls, EInputGroup> inputGroups;
     private Dictionary<KeyCode, EInputControls> inputControlBinds;
 
+    [AddTracking]
     private List<KeyCode> pressedKeys;
 
+    private bool onFocus = false;
+
+    void OnApplicationFocus(bool focusStatus)
+    {
+        onFocus = focusStatus;
+    }
+
     // Use this for initialization
-    public InputManager()
+    public TrueSyncInputManager()
     {
         // Create key to input group map
         inputGroups = new Dictionary<EInputControls, EInputGroup>();
@@ -40,6 +50,17 @@ public class InputManager {
         pressedKeys = new List<KeyCode>();
     }
 
+    public override void OnSyncedStart()
+    {
+        // needed for rollbacks
+        StateTracker.AddTracking(this);
+
+        //if (owner.Id == localOwner.Id)
+        //{
+        //    Camera.main.GetComponent<TopDownCamera>().target = transform;
+        //}
+    }
+
     // Update is called once per frame
     public void Update()
     {
@@ -47,6 +68,15 @@ public class InputManager {
         parseInput();
 
         // TODO: Consider saving mouse movements as commands too to have crosshair/aiming movement in replays as well
+    }
+
+    public override void OnSyncedInput()
+    {
+        // Assign bytes for each control (has to be deterministic, so sorted?)
+        // Once inputs come in, we flip each control in each type (up, hold, down) true or false
+        // Probably use a data-type that deals well with iterating
+        // Then in OnSyncedUpdate we call out each of the commands and let them run instantly in the game controller
+        //      instead of waiting for them to be put in a queue and then executed (with the new physics, the movement should be instant that way)
     }
 
     private void parseInput()

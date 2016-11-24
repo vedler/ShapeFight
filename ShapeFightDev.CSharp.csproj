@@ -64,11 +64,11 @@
     <Reference Include="Photon3Unity3D">
       <HintPath>Assets\Plugins\Photon3Unity3D.dll</HintPath>
     </Reference>
-    <Reference Include="websocket-sharp">
-      <HintPath>Assets\Plugins\WebSocket\websocket-sharp.dll</HintPath>
-    </Reference>
     <Reference Include="TrueSync">
       <HintPath>Assets\Plugins\TrueSync.dll</HintPath>
+    </Reference>
+    <Reference Include="websocket-sharp">
+      <HintPath>Assets\Plugins\WebSocket\websocket-sharp.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>
@@ -78,6 +78,23 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Demo\Boxes\GameSyncManager.cs" />
+    <Compile Include="Assets\Demo\Boxes\SimpleControl.cs" />
+    <Compile Include="Assets\Demo\Lock.io\LockPlayer.cs" />
+    <Compile Include="Assets\Demo\Lock.io\TopDownCamera.cs" />
+    <Compile Include="Assets\Demo\MatchJoiner.cs" />
+    <Compile Include="Assets\Demo\Menu.cs" />
+    <Compile Include="Assets\Demo\Pong\Scripts\BallController.cs" />
+    <Compile Include="Assets\Demo\Pong\Scripts\PaddleController.cs" />
+    <Compile Include="Assets\Demo\Pong\Scripts\PongSyncManager.cs" />
+    <Compile Include="Assets\Demo\ReplayPicker.cs" />
+    <Compile Include="Assets\Demo\ReplayUtils.cs" />
+    <Compile Include="Assets\Demo\SceneLoader.cs" />
+    <Compile Include="Assets\Demo\SimulationPanelScript.cs" />
+    <Compile Include="Assets\Demo\kickingheads\scripts\BallBehavior.cs" />
+    <Compile Include="Assets\Demo\kickingheads\scripts\GameEndHandler.cs" />
+    <Compile Include="Assets\Demo\kickingheads\scripts\GoalBehavior.cs" />
+    <Compile Include="Assets\Demo\kickingheads\scripts\PlayerBehavior.cs" />
     <Compile Include="Assets\Photon Unity Networking\Plugins\PhotonNetwork\CustomTypes.cs" />
     <Compile Include="Assets\Photon Unity Networking\Plugins\PhotonNetwork\Enums.cs" />
     <Compile Include="Assets\Photon Unity Networking\Plugins\PhotonNetwork\Extensions.cs" />
@@ -157,8 +174,17 @@
     <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
     <Compile Include="Assets\Scripts\Managers\InputManager.cs" />
     <Compile Include="Assets\Scripts\Managers\NetworkManager.cs" />
+    <Compile Include="Assets\Scripts\Managers\TrueSync\TrueSyncInputManager.cs" />
     <Compile Include="Assets\Scripts\Managers\WeaponManager.cs" />
     <Compile Include="Assets\Scripts\Networking\PlayerSynchronizer.cs" />
+    <Compile Include="Assets\Scripts\Networking\TSPlayerCharacter.cs" />
+    <Compile Include="Assets\Scripts\Networking\TrueSyncPhysics\TrueSyncRigidbody2D.cs" />
+    <Compile Include="Assets\Scripts\Networking\TrueSyncPlayerState\AbstractTSPMovementState.cs" />
+    <Compile Include="Assets\Scripts\Networking\TrueSyncPlayerState\ITSPlayerState.cs" />
+    <Compile Include="Assets\Scripts\Networking\TrueSyncPlayerState\TSPMovementStateHandler.cs" />
+    <Compile Include="Assets\Scripts\Networking\TrueSyncPlayerState\TSPlayerFlyingState.cs" />
+    <Compile Include="Assets\Scripts\Networking\TrueSyncPlayerState\TSPlayerGroundState.cs" />
+    <Compile Include="Assets\Scripts\Networking\TrueSyncPlayerState\TSPlayerWallState.cs" />
     <Compile Include="Assets\Scripts\PlayerCharacter.cs" />
     <Compile Include="Assets\Scripts\PlayerState\AbstractPMovementState.cs" />
     <Compile Include="Assets\Scripts\PlayerState\IPlayerState.cs" />
