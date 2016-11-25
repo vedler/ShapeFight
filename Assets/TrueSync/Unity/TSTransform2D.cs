@@ -29,17 +29,10 @@ namespace TrueSync {
 				return _position;
             }
             set {
-                //TSVector2 oldValue = _position;
                 _position = value;
 
-                /*if (tsCollider != null && tsCollider.Body != null) {
+                if (tsCollider != null && tsCollider.Body != null) {
                     tsCollider.Body.TSPosition = _position + scaledCenter;
-                }*/
-
-                for (int i = 0; i < transform.childCount; ++i)
-                {
-                    TSTransform2D trans = transform.GetChild(i).gameObject.GetComponent<TSTransform2D>();
-                    if (trans != null) trans.position += value - oldValue;
                 }
             }
         }
@@ -63,11 +56,6 @@ namespace TrueSync {
                 return _rotation;
             }
             set {
-                /*for (int i = 0; i < transform.childCount; ++i)
-                {
-                    TSTransform2D trans = transform.GetChild(i).gameObject.GetComponent<TSTransform2D>();
-                    if (trans != null) trans.rotation += value - _rotation;
-                }*/
 
                 _rotation = value;
 
@@ -90,13 +78,6 @@ namespace TrueSync {
                 return _scale;
             }
             set {
-                
-                /*for (int i = 0; i < transform.childCount; ++i)
-                {
-                    TSTransform2D trans = transform.GetChild(i).gameObject.GetComponent<TSTransform2D>();
-                    if (trans != null) trans.scale += value - _scale;
-                }*/
-
                 _scale = value;
             }
         }
@@ -174,7 +155,6 @@ namespace TrueSync {
         private void UpdateEditMode() {
             if (transform.hasChanged) {
                 _position = transform.position.ToTSVector2();
-                // TODO: MINE MUNNI
                 _rotation = transform.rotation.eulerAngles.z;
                 _scale = transform.localScale.ToTSVector();
 
