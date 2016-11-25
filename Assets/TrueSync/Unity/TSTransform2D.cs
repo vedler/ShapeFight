@@ -11,7 +11,7 @@ namespace TrueSync {
         private const float DELTA_TIME_FACTOR = 10f;
 
         [SerializeField]
-        //[HideInInspector]
+        [HideInInspector]
         [AddTracking]
         private TSVector2 _position;
 
@@ -38,7 +38,7 @@ namespace TrueSync {
         }
 
         [SerializeField]
-        //[HideInInspector]
+        [HideInInspector]
         [AddTracking]
         private FP _rotation;
 
@@ -56,7 +56,6 @@ namespace TrueSync {
                 return _rotation;
             }
             set {
-
                 _rotation = value;
 
                 if (tsCollider != null && tsCollider.Body != null) {
@@ -66,7 +65,7 @@ namespace TrueSync {
         }
 
         [SerializeField]
-        //[HideInInspector]
+        [HideInInspector]
         [AddTracking]
         private TSVector _scale;
 
@@ -138,11 +137,6 @@ namespace TrueSync {
         }
 
         public void Update() {
-            if (this.tag == "FullMap")
-            {
-                print("TSPOS: " + gameObject.transform.position);
-            }
-
             if (Application.isPlaying) {
                 if (initialized) {
                     UpdatePlayMode();
@@ -163,8 +157,7 @@ namespace TrueSync {
         }
 
         private void UpdatePlayMode() {
-
-            if (rb != null) {
+			if (rb != null) {
                 if (rb.interpolation == TSRigidBody2D.InterpolateMode.Interpolate) {
                     transform.position = Vector3.Lerp(transform.position, position.ToVector(), Time.deltaTime * DELTA_TIME_FACTOR);
                     transform.rotation = Quaternion.Lerp(transform.rotation, Quaternion.Euler(0, 0, rotation.AsFloat()), Time.deltaTime * DELTA_TIME_FACTOR);

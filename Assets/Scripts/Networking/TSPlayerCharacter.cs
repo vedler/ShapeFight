@@ -3,58 +3,65 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using UnityEngine;
+using TrueSync;
 
-public class TSPlayerCharacter : Photon.MonoBehaviour, IUserInputListener
+public class TSPlayerCharacter : TrueSyncBehaviour, IUserInputListener
 {
     // Movement settings
     [SerializeField]
-    public float jumpPower;
+    public FP jumpPower;
 
     [SerializeField]
-    public float verticalDeltaGravity;
+    public FP verticalDeltaGravity;
 
     [SerializeField]
-    public float wallDeltaGravity;
+    public FP wallDeltaGravity;
 
     [SerializeField]
-    public float leftAndRightPower;
+    public FP leftAndRightPower;
 
     [SerializeField]
-    private float maxMoveSpeed;
+    private FP maxMoveSpeed;
 
     [SerializeField]
-    public float jetPackPower;
+    public FP jetPackPower;
 
 
     // -----------------------
 
     private InputManager inputManager;
 
-    public Rigidbody2D rigidBody { get; private set; }
-    public float defaultGravityScale { get; private set; }
+    public TSRigidBody2D rigidBody { get; private set; }
+    public FP defaultGravityScale { get; private set; }
 
     // ------ Ground checking ----------
 
     [SerializeField]
     public string platformTag;
 
+    [AddTracking]
+    [SerializeField]
+    private FP gravityScale;
+
     // -------- State handling ---------
     private TSPMovementStateHandler movementStateHandler;
 
 
-    void Awake()
+    /*void Awake()
     {
-        rigidBody = GetComponent<Rigidbody2D>();
-        defaultGravityScale = rigidBody.gravityScale;
-
-        movementStateHandler = new TSPMovementStateHandler(this);
-    }
+       
+    }*/
 
     // Use this for initialization
-    void Start()
+    public override void OnSyncedStart()
     {
+        rigidBody = GetComponent<TSRigidBody2D>();
+        defaultGravityScale = gravityScale;
+
+        movementStateHandler = new TSPMovementStateHandler(this);
+
         // Subscribe to local input if this is our network view object
-        if (photonView.isMine)
+        if (owner.Id == localOwner.Id)
         {
             inputManager = GameManager.getInstance().getInputManager();
 
@@ -62,21 +69,37 @@ public class TSPlayerCharacter : Photon.MonoBehaviour, IUserInputListener
             inputManager.subscribeToInputGroup(EInputGroup.MovementInput, this);
 
             // Register the camera to follow us
-            GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CamMovement>().setTarget(gameObject);
+            //GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CamMovement>().setTarget(gameObject);
         }
+
+
     }
 
     // Check for collision (called before update)
-    void OnCollisionStay2D(Collision2D collision)
+    public void OnCollisionStay(GameObject other)
     {
+        FP x1 = new FP();
+        FP x2 = new FP();
+        FP y1 = new FP();
+        FP y2 = new FP();
+
+        x1 = this.gameObject.transform.position.x;
+        y1 = this.gameObject.transform.position.y;
+
+        x2 = other.transform.position.x;
+        y2 = other.transform.position.y;
+
+        TSVector dir = new TSVector(x2 - x1, y2 - y1, 0);
+        dir.Normalize();
+
+        TSRay ray = new TSRay(new TSVector(x1, y1, 0), dir);
+
+        // TODO: Find out what this does
+        //TrueSync.PhysicsManager.instance.Raycast(new TSVector(x1, y1, 0), dir, new RaycastCallback()
+        
+        //collision.GetComponent<TSCollider2D>().
         // TODO: Events
         // TODO: If we unlock Z rotation of the sprite, we need to make sure we rotate the player object to be "parallel" to the wall
-
-        /*if (collision.collider.gameObject.tag == groundTag)
-        {
-            movementStateHandler.setOnGround();
-        }
-        else */
 
         if (collision.collider.gameObject.tag == platformTag)
         {
@@ -114,28 +137,27 @@ public class TSPlayerCharacter : Photon.MonoBehaviour, IUserInputListener
         }
     }
 
-    // TODO: Max velocity (normalize velocity * maxSpeed)
-    // TODO: Jetpack (when in air, holding jump will use jetpack)
-
     // Update is called once per frame
     void Update()
     {
 
     }
 
-    void LateUpdate()
+    void LocalLateUpdate()
     {
         // Delegate to movementStateHandler
         movementStateHandler.LateUpdate();
     }
 
-    void FixedUpdate()
+    public override void OnSyncedUpdate()
     {
         // Delegate to movementStateHandler
         movementStateHandler.FixedUpdate();
 
         if (rigidBody.velocity.magnitude > maxMoveSpeed)
             rigidBody.velocity = rigidBody.velocity.normalized * maxMoveSpeed;
+
+        this.LocalLateUpdate();
     }
 
     public void OnUserInputKeyHold(EInputGroup group, ICommand command)
@@ -144,21 +166,6 @@ public class TSPlayerCharacter : Photon.MonoBehaviour, IUserInputListener
         {
             movementStateHandler.addCommand(TSPMovementStateHandler.ECommandType.Hold, command);
         }
-        /*  Tulistamiseks vajalik
-        if (command is ShootingCommand)
-        {
-
-            switch (((ShootingCommand)command).control)
-            {
-
-                case EInputControls.ShootMain:
-                    vajalik kood siia
-                    break;
-                case EInputControls.ShootAlt:
-                    vajalik kood siia
-                    break;
-            }
-        } */
     }
 
 

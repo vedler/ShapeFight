@@ -13,11 +13,13 @@
     <TargetFrameworkIdentifier>.NETFramework</TargetFrameworkIdentifier>
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <TargetFrameworkProfile>Unity Subset v3.5</TargetFrameworkProfile>
-    <CompilerResponseFile></CompilerResponseFile>
+    <CompilerResponseFile>
+    </CompilerResponseFile>
     <UnityProjectType>Game:1</UnityProjectType>
     <UnityBuildTarget>StandaloneWindows64:19</UnityBuildTarget>
     <UnityVersion>5.4.1f1</UnityVersion>
-    <RootNamespace></RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <LangVersion Condition=" '$(VisualStudioVersion)' != '10.0' ">4</LangVersion>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
@@ -78,6 +80,23 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Demo\Boxes\GameSyncManager.cs" />
+    <Compile Include="Assets\Demo\Boxes\SimpleControl.cs" />
+    <Compile Include="Assets\Demo\Lock.io\LockPlayer.cs" />
+    <Compile Include="Assets\Demo\Lock.io\TopDownCamera.cs" />
+    <Compile Include="Assets\Demo\MatchJoiner.cs" />
+    <Compile Include="Assets\Demo\Menu.cs" />
+    <Compile Include="Assets\Demo\Pong\Scripts\BallController.cs" />
+    <Compile Include="Assets\Demo\Pong\Scripts\PaddleController.cs" />
+    <Compile Include="Assets\Demo\Pong\Scripts\PongSyncManager.cs" />
+    <Compile Include="Assets\Demo\ReplayPicker.cs" />
+    <Compile Include="Assets\Demo\ReplayUtils.cs" />
+    <Compile Include="Assets\Demo\SceneLoader.cs" />
+    <Compile Include="Assets\Demo\SimulationPanelScript.cs" />
+    <Compile Include="Assets\Demo\kickingheads\scripts\BallBehavior.cs" />
+    <Compile Include="Assets\Demo\kickingheads\scripts\GameEndHandler.cs" />
+    <Compile Include="Assets\Demo\kickingheads\scripts\GoalBehavior.cs" />
+    <Compile Include="Assets\Demo\kickingheads\scripts\PlayerBehavior.cs" />
     <Compile Include="Assets\Photon Unity Networking\Plugins\PhotonNetwork\CustomTypes.cs" />
     <Compile Include="Assets\Photon Unity Networking\Plugins\PhotonNetwork\Enums.cs" />
     <Compile Include="Assets\Photon Unity Networking\Plugins\PhotonNetwork\Extensions.cs" />
@@ -161,7 +180,6 @@
     <Compile Include="Assets\Scripts\Managers\WeaponManager.cs" />
     <Compile Include="Assets\Scripts\Networking\PlayerSynchronizer.cs" />
     <Compile Include="Assets\Scripts\Networking\TSPlayerCharacter.cs" />
-    <Compile Include="Assets\Scripts\Networking\TrueSyncPhysics\TrueSyncRigidbody2D.cs" />
     <Compile Include="Assets\Scripts\Networking\TrueSyncPlayerState\AbstractTSPMovementState.cs" />
     <Compile Include="Assets\Scripts\Networking\TrueSyncPlayerState\ITSPlayerState.cs" />
     <Compile Include="Assets\Scripts\Networking\TrueSyncPlayerState\TSPMovementStateHandler.cs" />

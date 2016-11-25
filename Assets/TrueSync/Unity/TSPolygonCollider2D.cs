@@ -35,34 +35,13 @@ namespace TrueSync {
          *  @brief Create the internal shape used to represent a TSBoxCollider.
          **/
         public override TrueSync.Physics2D.Shape CreateShape() {
-            if (_points == null) {
+            if (_points == null || _points.Length == 0) {
                 return null;
-            }
-
-            if (_points.Length == 0)
-            {
-                PolygonCollider2D unityCollider = this.gameObject.GetComponent<PolygonCollider2D>();
-
-                if (unityCollider == null || unityCollider.pathCount != 1 || unityCollider.GetPath(0).Length == 0)
-                {
-                    return null;
-                }
-
-                TSVector2[] tsPoints = new TSVector2[unityCollider.GetPath(0).Length];
-
-                for (int i = 0; i < unityCollider.GetPath(0).Length; ++i)
-                {
-                    tsPoints[i] = new TSVector2(new FP((int)unityCollider.GetPath(0)[i].x), new FP((int)unityCollider.GetPath(0)[i].y));
-                }
-
-                _points = tsPoints;
-                //generated = true;
             }
 
             TSVector2 lossy2D = new TSVector2(lossyScale.x, lossyScale.y);
 
             TrueSync.Physics2D.Vertices v = new Physics2D.Vertices();
-
             for (int index = 0, length = _points.Length; index < length; index++) {
                 v.Add(TSVector2.Scale(_points[index], lossy2D));
             }
