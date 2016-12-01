@@ -59,7 +59,7 @@ public class WeaponManager {
             gameObject = objectInstance;
             gameObject.SetActive(false);
 
-            if (gameObject.GetComponent<PoolObject>())
+            if (gameObject.GetComponent<PoolObject>() != null)
             {
                 hasPoolObjectComponent = true;
                 poolObjectScript = gameObject.GetComponent<PoolObject>();

@@ -175,4 +175,9 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
             movementStateHandler.addCommand(PMovementStateHandler.ECommandType.Up, command);
         }
     }
+
+    public float getMaxMoveSpeed()
+    {
+        return maxMoveSpeed;
+    }
 }
