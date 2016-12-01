@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TrueSync;
 using UnityEngine;
 
 public class TSPlayerWallState : AbstractTSPMovementState
@@ -52,7 +53,7 @@ public class TSPlayerWallState : AbstractTSPMovementState
         }
 
         // We are currently sticking to a wall
-        handler.manipulateGravity(direction == TSPMovementStateHandler.EWallDirection.Left ? EInputControls.MoveLeft : EInputControls.MoveRight, -handler.playerCharacter.wallDeltaGravity);
+        handler.manipulateGravity(direction == TSPMovementStateHandler.EWallDirection.Left ? EInputControls.MoveLeft : EInputControls.MoveRight, -handler.playerCharacter.wallDeltaGravity.AsFloat());
 
 
         // Key up
@@ -104,13 +105,13 @@ public class TSPlayerWallState : AbstractTSPMovementState
                         {
                             // Half the jump power facing away from the wall and vertical jump also hindered
                             handler.counterGravityManipulation(EInputControls.MoveLeft);
-                            handler.playerCharacter.rigidBody.AddForce(new Vector2(0.6f * handler.playerCharacter.jumpPower, 1.6f * handler.playerCharacter.jumpPower), ForceMode2D.Impulse);
+                            handler.playerCharacter.rigidBody.AddForce(new TSVector2(0.6f * handler.playerCharacter.jumpPower, 1.6f * handler.playerCharacter.jumpPower), ForceMode.Impulse);
                         }
                         else if (direction == TSPMovementStateHandler.EWallDirection.Right)
                         {
                             // Half the jump power facing away from the wall and vertical jump also hindered
                             handler.counterGravityManipulation(EInputControls.MoveRight);
-                            handler.playerCharacter.rigidBody.AddForce(new Vector2(-0.6f * handler.playerCharacter.jumpPower, 1.6f * handler.playerCharacter.jumpPower), ForceMode2D.Impulse);
+                            handler.playerCharacter.rigidBody.AddForce(new TSVector2(-0.6f * handler.playerCharacter.jumpPower, 1.6f * handler.playerCharacter.jumpPower), ForceMode.Impulse);
                         }
 
                         setNextState(new TSPlayerFlyingState(handler, true));
@@ -134,12 +135,12 @@ public class TSPlayerWallState : AbstractTSPMovementState
                 {
                     case EInputControls.MoveUp:
 
-                        handler.manipulateGravity(EInputControls.MoveUp, -handler.playerCharacter.verticalDeltaGravity);
+                        handler.manipulateGravity(EInputControls.MoveUp, -handler.playerCharacter.verticalDeltaGravity.AsFloat());
                         break;
 
                     case EInputControls.MoveDown:
 
-                        handler.manipulateGravity(EInputControls.MoveDown, handler.playerCharacter.verticalDeltaGravity);
+                        handler.manipulateGravity(EInputControls.MoveDown, handler.playerCharacter.verticalDeltaGravity.AsFloat());
                         break;
 
                     case EInputControls.MoveRight:

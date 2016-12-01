@@ -41,7 +41,7 @@ public class TSPlayerCharacter : TrueSyncBehaviour, IUserInputListener
 
     [AddTracking]
     [SerializeField]
-    private FP gravityScale;
+    public FP gravityScale;
 
     // -------- State handling ---------
     private TSPMovementStateHandler movementStateHandler;
@@ -69,40 +69,61 @@ public class TSPlayerCharacter : TrueSyncBehaviour, IUserInputListener
             inputManager.subscribeToInputGroup(EInputGroup.MovementInput, this);
 
             // Register the camera to follow us
-            //GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CamMovement>().setTarget(gameObject);
+            GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CamMovement>().setTarget(gameObject);
         }
 
 
     }
 
     // Check for collision (called before update)
-    public void OnCollisionStay(GameObject other)
+    //public void OnCollisionStay(GameObject other)
+    public void OnSyncedCollisionStay(GameObject other)
     {
-        FP x1 = new FP();
-        FP x2 = new FP();
-        FP y1 = new FP();
-        FP y2 = new FP();
+        //contact.
+        print("COLLISION");
 
-        x1 = this.gameObject.transform.position.x;
-        y1 = this.gameObject.transform.position.y;
-
-        x2 = other.transform.position.x;
-        y2 = other.transform.position.y;
-
-        TSVector dir = new TSVector(x2 - x1, y2 - y1, 0);
-        dir.Normalize();
-
-        TSRay ray = new TSRay(new TSVector(x1, y1, 0), dir);
-
-        // TODO: Find out what this does
-        //TrueSync.PhysicsManager.instance.Raycast(new TSVector(x1, y1, 0), dir, new RaycastCallback()
-        
         //collision.GetComponent<TSCollider2D>().
         // TODO: Events
         // TODO: If we unlock Z rotation of the sprite, we need to make sure we rotate the player object to be "parallel" to the wall
-
-        if (collision.collider.gameObject.tag == platformTag)
+        // Dont try to raycast unless we are dealing with the right object here
+        /*if (collision.collider.gameObject.tag == platformTag)
         {
+            print("COLLISION2");
+
+            /*FP x1 = new FP();
+            FP x2 = new FP();
+            FP y1 = new FP();
+            FP y2 = new FP();
+
+            x1 = this.gameObject.transform.position.x;
+            y1 = this.gameObject.transform.position.y;
+
+            x2 = other.transform.position.x;
+            y2 = other.transform.position.y;
+
+            // Get the direction towards the object
+            TSVector dir = new TSVector(x2 - x1, y2 - y1, 0);
+            dir.Normalize();
+
+            TSRay ray = new TSRay(new TSVector(x1, y1, 0), dir);
+
+            IBody body;
+            TSVector hitNormal;
+            FP fraction;
+
+            //(new TrueSync.RigidBody(null)).BoundingBox.
+
+            TrueSync.PhysicsManager.instance.Raycast(new TSVector(x1, y1, 0), dir, null, out body, out hitNormal, out fraction);
+            
+            TSRigidBody2D rBody = (TSRigidBody2D)body;// ** /
+            //TrueSync.Physics2D.Collision coll = new TrueSync.Physics2D.Collision();
+
+            //other.gameObject.GetComponent<TSCollider2D>().Shape.
+
+
+            //other.GetComponent<BoxCollider2D>().bounds.ClosestPoint()
+
+
             // neg left, 0 not touching, pos right
 
             // Get the vector of the contact normal
@@ -134,7 +155,7 @@ public class TSPlayerCharacter : TrueSyncBehaviour, IUserInputListener
                     movementStateHandler.setOnWall(TSPMovementStateHandler.EWallDirection.Right);
                 }
             }
-        }
+        }*/
     }
 
     // Update is called once per frame

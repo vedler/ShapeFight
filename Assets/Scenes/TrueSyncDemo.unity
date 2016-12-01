@@ -3685,13 +3685,29 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce4f8847705c37e499949ab6ff9905cc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jumpPower: 3200
-  verticalDeltaGravity: 4
-  wallDeltaGravity: 5.5
-  leftAndRightPower: 100
-  maxMoveSpeed: 40
-  jetPackPower: 300
+  numberOfPlayers: 0
+  ownerIndex: -1
+  owner:
+    id: 0
+    name: 
+  localOwner:
+    id: 0
+    name: 
+  jumpPower:
+    _serializedValue: 13743895347200
+  verticalDeltaGravity:
+    _serializedValue: 17179869184
+  wallDeltaGravity:
+    _serializedValue: 23622320128
+  leftAndRightPower:
+    _serializedValue: 429496729600
+  maxMoveSpeed:
+    _serializedValue: 171798691840
+  jetPackPower:
+    _serializedValue: 1288490188800
   platformTag: PlatformTag
+  gravityScale:
+    _serializedValue: 42949672960
 --- !u!114 &2014030154
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3863,7 +3879,7 @@ BoxCollider2D:
   m_PrefabParentObject: {fileID: 0}
   m_PrefabInternal: {fileID: 0}
   m_GameObject: {fileID: 2014030150}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0

@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
+using TrueSync;
 using UnityEngine;
 
 public class TSPlayerGroundState : AbstractTSPMovementState
@@ -47,7 +48,7 @@ public class TSPlayerGroundState : AbstractTSPMovementState
                 switch (((MoveCommand)baseCommand).control)
                 {
                     case EInputControls.Jump:
-                        handler.playerCharacter.rigidBody.AddForce(new Vector2(0, handler.playerCharacter.jumpPower), ForceMode2D.Impulse);
+                        handler.playerCharacter.rigidBody.AddForce(new TSVector2(0, handler.playerCharacter.jumpPower), ForceMode.Impulse);
 
                         // Tell the state handler we want to switch states now
                         setNextState(new TSPlayerFlyingState(handler, true));
@@ -69,26 +70,26 @@ public class TSPlayerGroundState : AbstractTSPMovementState
                 {
                     case EInputControls.MoveUp:
 
-                        handler.manipulateGravity(EInputControls.MoveUp, - handler.playerCharacter.verticalDeltaGravity);
+                        handler.manipulateGravity(EInputControls.MoveUp, - handler.playerCharacter.verticalDeltaGravity.AsFloat());
                         break;
 
                     case EInputControls.MoveDown:
 
-                        handler.manipulateGravity(EInputControls.MoveDown, handler.playerCharacter.verticalDeltaGravity);
+                        handler.manipulateGravity(EInputControls.MoveDown, handler.playerCharacter.verticalDeltaGravity.AsFloat());
                         break;
 
                     case EInputControls.MoveRight:
 
-                        handler.playerCharacter.rigidBody.AddForce(new Vector2(handler.playerCharacter.leftAndRightPower, 0), ForceMode2D.Impulse);
+                        handler.playerCharacter.rigidBody.AddForce(new TSVector2(handler.playerCharacter.leftAndRightPower, 0), ForceMode.Impulse);
                         break;
 
                     case EInputControls.MoveLeft:
                         
-                        handler.playerCharacter.rigidBody.AddForce(new Vector2(-handler.playerCharacter.leftAndRightPower, 0), ForceMode2D.Impulse);
+                        handler.playerCharacter.rigidBody.AddForce(new TSVector2(-handler.playerCharacter.leftAndRightPower, 0), ForceMode.Impulse);
                         break;
                     case EInputControls.JetPack:
 
-                        handler.playerCharacter.rigidBody.AddForce(new Vector2(0, handler.playerCharacter.jetPackPower), ForceMode2D.Impulse);
+                        handler.playerCharacter.rigidBody.AddForce(new TSVector2(0, handler.playerCharacter.jetPackPower), ForceMode.Impulse);
                         /*if (!isInJump)
                         {
                             

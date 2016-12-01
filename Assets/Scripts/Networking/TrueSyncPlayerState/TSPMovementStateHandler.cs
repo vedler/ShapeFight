@@ -87,7 +87,7 @@ public class TSPMovementStateHandler
         currentState = new TSPlayerFlyingState(this, false);
         currentState.enter();
 
-        currentGravityScale = playerCharacter.defaultGravityScale;
+        currentGravityScale = TrueSync.FP.ToFloat(playerCharacter.defaultGravityScale);
         grvManipulatorsThisFrame = new Dictionary<EInputControls, float>();
     }
 
@@ -106,8 +106,8 @@ public class TSPMovementStateHandler
         Dictionary<ECommandType, Queue<ICommand>> cloneCache = new Dictionary<ECommandType, Queue<ICommand>>(finalizedCache);
 
         // Use a new gravity scale for this update
-        currentGravityScale = playerCharacter.defaultGravityScale;
-        playerCharacter.rigidBody.gravityScale = currentGravityScale;
+        currentGravityScale = TrueSync.FP.ToFloat(playerCharacter.defaultGravityScale);
+        playerCharacter.gravityScale = currentGravityScale;
 
         // Create a new list of gravity manipulators for one frame, so that a double'd input doesn't change the gravity twice
         grvManipulatorsThisFrame = new Dictionary<EInputControls, float>();
@@ -155,7 +155,7 @@ public class TSPMovementStateHandler
         {
             grvManipulatorsThisFrame.Add(manipulator, manipulation);
             currentGravityScale += manipulation;
-            playerCharacter.rigidBody.gravityScale = currentGravityScale;
+            playerCharacter.gravityScale = currentGravityScale;
         }
     }
 
@@ -165,7 +165,7 @@ public class TSPMovementStateHandler
         {
             // Counter the value
             currentGravityScale -= grvManipulatorsThisFrame[manipulator];
-            playerCharacter.rigidBody.gravityScale = currentGravityScale;
+            playerCharacter.gravityScale = currentGravityScale;
 
             // Remove it from manipulators
             grvManipulatorsThisFrame.Remove(manipulator);
