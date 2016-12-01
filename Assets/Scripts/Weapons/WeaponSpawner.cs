@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public class WeaponSpawner : MonoBehaviour, IUserInputListener {
+public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
 
     private InputManager inputManager;
 
@@ -95,9 +95,12 @@ public class WeaponSpawner : MonoBehaviour, IUserInputListener {
         weaponManager.CreatePool(weaponSelectionManager.getMainWeapon(), 20);
         weaponManager.CreatePool(weaponSelectionManager.getAltWeapon(), 20);
 
-        // Subscribe to all shooting input events
-        inputManager.subscribeToInputGroup(EInputGroup.ShootingInput, this);
-
+        // If view is ours, attach us to the input manager
+        if (photonView.isMine)
+        {
+            // Subscribe to all shooting input events
+            inputManager.subscribeToInputGroup(EInputGroup.ShootingInput, this);
+        }
     }
 
     // Update is called once per frame
