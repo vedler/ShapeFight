@@ -7,6 +7,7 @@ public class BackgroundMusicControl : MonoBehaviour {
 
     public AudioMixerSnapshot defaultSnap;
     public AudioMixerSnapshot beginGame;
+    private bool started = false;
 
 
 	// Use this for initialization
@@ -15,12 +16,13 @@ public class BackgroundMusicControl : MonoBehaviour {
 	}
 
 
-    void OnTriggerEnter(Collider other)
+    void OnTriggerEnter2D(Collider2D other)
     {
         print("ENTERED SOUNDTRACK TRIGGER");
-        if (other.CompareTag("LocalPlayerTag"))
+        if (!started && other.CompareTag("LocalPlayerTag"))
         {
             beginGame.TransitionTo(0.1f);
+            started = true;
         }
     }
 }
