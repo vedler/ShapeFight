@@ -109,6 +109,7 @@
     <Compile Include="Assets\Photon Unity Networking\Plugins\PhotonNetwork\Views\PhotonTransformViewScaleControl.cs" />
     <Compile Include="Assets\Photon Unity Networking\Plugins\PhotonNetwork\Views\PhotonTransformViewScaleModel.cs" />
     <Compile Include="Assets\Photon Unity Networking\UtilityScripts\ConnectAndJoinRandom.cs" />
+    <Compile Include="Assets\Photon Unity Networking\UtilityScripts\CullArea.cs" />
     <Compile Include="Assets\Photon Unity Networking\UtilityScripts\HighlightOwnedGameObj.cs" />
     <Compile Include="Assets\Photon Unity Networking\UtilityScripts\InRoomChat.cs" />
     <Compile Include="Assets\Photon Unity Networking\UtilityScripts\InRoomRoundTimer.cs" />
@@ -116,12 +117,14 @@
     <Compile Include="Assets\Photon Unity Networking\UtilityScripts\InputToEvent.cs" />
     <Compile Include="Assets\Photon Unity Networking\UtilityScripts\ManualPhotonViewAllocator.cs" />
     <Compile Include="Assets\Photon Unity Networking\UtilityScripts\MoveByKeys.cs" />
+    <Compile Include="Assets\Photon Unity Networking\UtilityScripts\NetworkCullingHandler.cs" />
     <Compile Include="Assets\Photon Unity Networking\UtilityScripts\OnAwakeUsePhotonView.cs" />
     <Compile Include="Assets\Photon Unity Networking\UtilityScripts\OnClickDestroy.cs" />
     <Compile Include="Assets\Photon Unity Networking\UtilityScripts\OnClickInstantiate.cs" />
     <Compile Include="Assets\Photon Unity Networking\UtilityScripts\OnClickLoadSomething.cs" />
     <Compile Include="Assets\Photon Unity Networking\UtilityScripts\OnJoinedInstantiate.cs" />
     <Compile Include="Assets\Photon Unity Networking\UtilityScripts\OnStartDelete.cs" />
+    <Compile Include="Assets\Photon Unity Networking\UtilityScripts\PhotonPlayer\PlayerRoomIndexing.cs" />
     <Compile Include="Assets\Photon Unity Networking\UtilityScripts\PickupItem.cs" />
     <Compile Include="Assets\Photon Unity Networking\UtilityScripts\PickupItemSimple.cs" />
     <Compile Include="Assets\Photon Unity Networking\UtilityScripts\PickupItemSyncer.cs" />
@@ -138,6 +141,7 @@
     <Compile Include="Assets\Photon Unity Networking\UtilityScripts\TimeKeeper.cs" />
     <Compile Include="Assets\Photon Unity Networking\UtilityScripts\UI\ButtonInsideScrollList.cs" />
     <Compile Include="Assets\Photon Unity Networking\UtilityScripts\UI\TextButtonTransition.cs" />
+    <Compile Include="Assets\Photon Unity Networking\UtilityScripts\UI\TextToggleIsOnTransition.cs" />
     <Compile Include="Assets\PhotonChatApi\ChatChannel.cs" />
     <Compile Include="Assets\PhotonChatApi\ChatClient.cs" />
     <Compile Include="Assets\PhotonChatApi\ChatDisconnectCause.cs" />
@@ -162,6 +166,7 @@
     <Compile Include="Assets\Scripts\Managers\NetworkManager.cs" />
     <Compile Include="Assets\Scripts\Managers\WSelectionManager.cs" />
     <Compile Include="Assets\Scripts\Managers\WeaponManager.cs" />
+    <Compile Include="Assets\Scripts\Networking\PlayerSynchronizer.cs" />
     <Compile Include="Assets\Scripts\PlayerCharacter.cs" />
     <Compile Include="Assets\Scripts\PlayerState\AbstractPMovementState.cs" />
     <Compile Include="Assets\Scripts\PlayerState\IPlayerState.cs" />
@@ -174,13 +179,16 @@
     <Compile Include="Assets\Scripts\Weapons\AbsWeaponEffect.cs" />
     <Compile Include="Assets\Scripts\Weapons\AbsWeaponMover.cs" />
     <Compile Include="Assets\Scripts\Weapons\BulletMover.cs" />
+    <Compile Include="Assets\Scripts\Weapons\GrenadeMover.cs" />
     <Compile Include="Assets\Scripts\Weapons\IWeaponEffect.cs" />
     <Compile Include="Assets\Scripts\Weapons\IWeaponMover.cs" />
+    <Compile Include="Assets\Scripts\Weapons\PelletMover.cs" />
     <Compile Include="Assets\Scripts\Weapons\RocketMover.cs" />
     <Compile Include="Assets\Scripts\Weapons\WeaponProjectile.cs" />
     <Compile Include="Assets\Scripts\Weapons\WeaponSpawner.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="Assets\Photon Unity Networking\changelog.txt" />
     <None Include="Assets\Photon Unity Networking\link.xml" />
     <None Include="Assets\Photon Unity Networking\readme.txt" />
     <None Include="Assets\Plugins\Photon3Unity3D.xml" />

@@ -4,6 +4,9 @@ using System;
 
 public class RocketMover : AbsWeaponMover {
 
+    [SerializeField]
+    public float acceleration;
+
     public override void FireMe(Vector2 direction)
     {
         this.direction = direction;
@@ -17,14 +20,14 @@ public class RocketMover : AbsWeaponMover {
     {
         if (isFired)
         { 
-            GetComponent<Rigidbody2D>().AddForce(direction * speed, ForceMode2D.Impulse);
+            GetComponent<Rigidbody2D>().AddForce(direction * acceleration, ForceMode2D.Impulse);
             //print("mag: " + GetComponent<Rigidbody2D>().velocity.magnitude);
         }
     }
 
     public override void OnObjectReuse()
     {
-        speed = 0.7f;
-        maxSpeed = 50.0f;
+        //acceleration = 0.7f;
+        //maxSpeed = 50.0f;
     }
 }

@@ -112,9 +112,11 @@ public class PMovementStateHandler
         // Create a new list of gravity manipulators for one frame, so that a double'd input doesn't change the gravity twice
         grvManipulatorsThisFrame = new Dictionary<EInputControls, float>();
 
+        HashSet<Type> usedStateClasses = new HashSet<Type>();
+
         while (true)
         {
-            MonoBehaviour.print(currentState.ToString());
+            //MonoBehaviour.print(currentState.ToString());
 
             // Check if the current state wants to switch or if the update wants to switch in the middle of the update
             if (currentState.check() && (cacheUsedThisUpdate || currentState.FixedUpdate(cloneCache)))
@@ -123,10 +125,19 @@ public class PMovementStateHandler
                 break;
             }
 
+            // Prevent infinite loop
+            if (usedStateClasses.Contains<Type>(currentState.getNextState().GetType()))
+            {
+                break;
+            }
+
             // Otherwise we switch states and keep executing
             currentState.exit();
             currentState = currentState.getNextState();
             currentState.enter();
+
+            // Add to list of used states
+            usedStateClasses.Add(currentState.GetType());
         }
         
         cacheUsedThisUpdate = true;
