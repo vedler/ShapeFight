@@ -23,6 +23,13 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     [SerializeField]
     public float jetPackPower;
 
+    [SerializeField]
+    public GameObject jetpack;
+
+    private Coroutine jetsFiring;
+
+    private float jetpackFuel = 1000;
+
     private Color clr;
 
 
@@ -51,15 +58,14 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     }
 
     // Use this for initialization
-    void Start ()
-    {
-        clr = UnityEngine.Random.ColorHSV(0, 1, 1, 1, 1, 1);
-        GetComponent<SpriteRenderer>().color = clr;
-        transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().color = clr;
-
+    void Start() { 
+    
         // Subscribe to local input if this is our network view object
         if (photonView.isMine)
         {
+            clr = UnityEngine.Random.ColorHSV(0, 1, 1, 1, 1, 1);
+            GetComponent<SpriteRenderer>().color = clr;
+            jetpack = transform.GetChild(1).gameObject;
             inputManager = GameManager.getInstance().getInputManager();
 
             // Subscribe to all movement input events
@@ -68,6 +74,10 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
             // Register the camera to follow us
             GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CamMovement>().setTarget(gameObject);
         }
+        transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().color = clr;
+        transform.GetChild(1).gameObject.GetComponent<ParticleSystem>().startColor = clr;
+        transform.GetChild(1).gameObject.GetComponent<ParticleSystem>().Stop();
+        stopJets();
     }
 
     // Check for collision (called before update)
@@ -185,5 +195,72 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     public float getMaxMoveSpeed()
     {
         return maxMoveSpeed;
+    }
+
+    // Juta's jetpack code
+
+    public float getJetpackFuel()
+    {
+        return jetpackFuel;
+    }
+
+    public void reduceFuel()
+    {
+        jetpackFuel -= 5f;
+    }
+
+    public void reduceFuel(float f)
+    {
+        jetpackFuel -= f;
+    }
+
+    public void restoreFuelABit()
+    {
+        jetpackFuel += 7f;
+    }
+
+    private IEnumerator jetLifeCycle()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            yield return new WaitForSeconds(.3f);
+        }
+        jetpack.GetComponent<ParticleSystem>().Stop();
+    }
+
+    public void fireJets()
+    {
+        //PlayerGroundState.nullifySoundCount();
+        jetpack.GetComponent<ParticleSystem>().Play();
+
+        reduceFuel();
+        jetsFiring = StartCoroutine(jetLifeCycle());
+    }
+
+    public void stopJets()
+    {
+        if (jetsFiring != null)
+            StopCoroutine(jetsFiring);
+        jetpack.GetComponent<ParticleSystem>().Stop();
+    }
+
+    public void rotateJetpack()
+    {
+        Quaternion rotateTo = Quaternion.Euler(0, 0, 180);
+        jetpack.transform.rotation = Quaternion.Slerp(jetpack.transform.rotation, rotateTo, Time.deltaTime * 1.2f);
+    }
+
+    public void rotateJetpack(float deg)
+    {
+        reduceFuel(3.5f);
+        Quaternion rotateTo = Quaternion.Euler(0, 0, deg);
+        jetpack.transform.rotation = Quaternion.Slerp(jetpack.transform.rotation, rotateTo, Time.deltaTime * .9f);
+    }
+
+    public void burst()
+    {
+        reduceFuel(12);
+        Quaternion rotateTo = Quaternion.Euler(0, 0, 180);
+        jetpack.transform.rotation = Quaternion.Slerp(jetpack.transform.rotation, rotateTo, Time.deltaTime * 1.9f);
     }
 }

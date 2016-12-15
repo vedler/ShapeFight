@@ -36,6 +36,8 @@ public class PlayerGroundState : AbstractPMovementState
     {
         // We can jump, move left and move right, also we can manipulate gravity (just to be sure)
 
+        handler.playerCharacter.restoreFuelABit();
+
         // Key Down
         while (commandCache[PMovementStateHandler.ECommandType.Down].Count > 0)
         {
@@ -53,6 +55,14 @@ public class PlayerGroundState : AbstractPMovementState
                         setNextState(new PlayerFlyingState(handler, true));
                         handler.forceOffGround();
                         return false;
+
+                    case EInputControls.JetPack:
+                        if (handler.playerCharacter.getJetpackFuel() >= 3.5)
+                        {
+                            handler.playerCharacter.stopJets();
+                            handler.playerCharacter.fireJets();
+                        }
+                        break;
                 }
             }
         }
@@ -88,7 +98,13 @@ public class PlayerGroundState : AbstractPMovementState
                         break;
                     case EInputControls.JetPack:
 
-                        handler.playerCharacter.rigidBody.AddForce(new Vector2(0, handler.playerCharacter.jetPackPower), ForceMode2D.Impulse);
+                        if (handler.playerCharacter.getJetpackFuel() >= 3.5)
+                        {
+                            handler.playerCharacter.rotateJetpack();
+                            handler.playerCharacter.rigidBody.AddForce(new Vector2(0, handler.playerCharacter.jetPackPower), ForceMode2D.Impulse);
+                        }
+
+                        //handler.playerCharacter.rigidBody.AddForce(new Vector2(0, handler.playerCharacter.jetPackPower), ForceMode2D.Impulse);
                         /*if (!isInJump)
                         {
                             
