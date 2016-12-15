@@ -4,6 +4,8 @@ using System;
 
 public abstract class AbsWeaponMover : MonoBehaviour, PoolObject, IWeaponMover {
 
+    public GameObject particleSysPrefab;
+
     public float speed;
     public float maxSpeed;
 
@@ -53,6 +55,8 @@ public abstract class AbsWeaponMover : MonoBehaviour, PoolObject, IWeaponMover {
         {
             return;
         }
+        GameObject explosion = (GameObject)Instantiate(particleSysPrefab, transform.position, particleSysPrefab.transform.rotation);
+        Destroy(explosion, explosion.GetComponent<ParticleSystem>().startLifetime * 2);
 
         this.gameObject.SetActive(false);
     }
