@@ -116,7 +116,7 @@ public class PMovementStateHandler
 
         while (true)
         {
-            MonoBehaviour.print(currentState.ToString());
+            //MonoBehaviour.print(currentState.ToString());
 
             // Check if the current state wants to switch or if the update wants to switch in the middle of the update
             if (currentState.check() && (cacheUsedThisUpdate || currentState.FixedUpdate(cloneCache)))

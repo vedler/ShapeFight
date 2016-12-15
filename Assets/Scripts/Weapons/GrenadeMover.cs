@@ -1,9 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections;
-using System;
 
-public class BulletMover : AbsWeaponMover
-{
+public class GrenadeMover : AbsWeaponMover {
+
     public override void FireMe(Vector2 direction)
     {
         this.direction = direction;
@@ -17,12 +16,20 @@ public class BulletMover : AbsWeaponMover
     {
         if (isFired)
         {
-            //GetComponent<Rigidbody2D>().AddForce(direction * speed, ForceMode2D.Impulse);
-            //print("mag: " + GetComponent<Rigidbody2D>().velocity.magnitude);
         }
     }
 
     public override void OnObjectReuse()
     {
+    }
+
+    void OnTriggerEnter2D(Collider2D collider)
+    {
+        if (collider.gameObject.tag == "LocalPlayerTag" || collider.gameObject.tag == "LocalProjectileTag" || collider.gameObject.tag == "")
+        {
+            return;
+        }
+
+        this.gameObject.SetActive(false);
     }
 }

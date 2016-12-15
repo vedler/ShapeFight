@@ -4,10 +4,11 @@ using System;
 
 public abstract class AbsWeaponMover : MonoBehaviour, PoolObject, IWeaponMover {
 
-    public float speed;
     public float maxSpeed;
+    public float cooldownPeriod;
 
     protected bool isFired;
+    protected bool hasEnded;
     protected Vector2 direction;
     protected Vector2 startPosition;
 
@@ -17,6 +18,8 @@ public abstract class AbsWeaponMover : MonoBehaviour, PoolObject, IWeaponMover {
 
     public abstract void OnObjectReuse();
 
+    protected Rigidbody2D rigidBody;
+
     public virtual void Reset()
     {
         throw new NotImplementedException();
@@ -24,8 +27,9 @@ public abstract class AbsWeaponMover : MonoBehaviour, PoolObject, IWeaponMover {
 
     // Use this for initialization
     void Start () {
-	    
-	}
+        this.rigidBody = GetComponent<Rigidbody2D>();
+
+    }
 	
 	// Update is called once per frame
 	void Update () {
@@ -38,12 +42,17 @@ public abstract class AbsWeaponMover : MonoBehaviour, PoolObject, IWeaponMover {
         {
             move();
 
-            if (GetComponent<Rigidbody2D>().velocity.magnitude > maxSpeed)
+            if (rigidBody.velocity.magnitude > maxSpeed)
             {
                 Vector2 vel = GetComponent<Rigidbody2D>().velocity;
                 vel.Normalize();
                 GetComponent<Rigidbody2D>().velocity = vel * maxSpeed; 
             }
+        }
+
+        if (hasEnded)
+        {
+            this.gameObject.SetActive(false);
         }
     }
 
