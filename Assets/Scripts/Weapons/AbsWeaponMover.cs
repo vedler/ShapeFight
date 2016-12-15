@@ -6,6 +6,7 @@ public abstract class AbsWeaponMover : MonoBehaviour, PoolObject, IWeaponMover {
 
     public float maxSpeed;
     public float cooldownPeriod;
+    public GameObject particleSysPrefab;
 
     protected bool isFired;
     protected bool hasEnded;
@@ -62,6 +63,8 @@ public abstract class AbsWeaponMover : MonoBehaviour, PoolObject, IWeaponMover {
         {
             return;
         }
+        GameObject explosion = (GameObject)Instantiate(particleSysPrefab, transform.position, particleSysPrefab.transform.rotation);
+        Destroy(explosion, explosion.GetComponent<ParticleSystem>().startLifetime * 2);
 
         this.gameObject.SetActive(false);
     }

@@ -22,7 +22,7 @@ GameObject:
   - 198: {fileID: 198000010077683490}
   - 199: {fileID: 199000013592908816}
   m_Layer: 0
-  m_Name: BulletParticleSys
+  m_Name: PelletParticleSys
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -131,7 +131,7 @@ ParticleSystem:
         m_RotationOrder: 4
       minMaxState: 0
     startSpeed:
-      scalar: 20
+      scalar: 15
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -253,11 +253,11 @@ ParticleSystem:
         atime7: 0
         m_NumColorKeys: 2
         m_NumAlphaKeys: 2
-      minColor: {r: 0.8156863, g: 0.49019608, b: 0, a: 1}
-      maxColor: {r: 0.9843137, g: 1, b: 0, a: 1}
+      minColor: {r: 0.56078434, g: 0.21176471, b: 0.21176471, a: 1}
+      maxColor: {r: 0.91764706, g: 0.31764707, b: 0.31764707, a: 1}
       minMaxState: 2
     startSize:
-      scalar: 0.73
+      scalar: 0.2
       maxCurve:
         serializedVersion: 2
         m_Curve:
@@ -468,7 +468,7 @@ ParticleSystem:
       minMaxState: 0
     randomizeRotationDirection: 0
     gravityModifier: 0.01
-    maxNumParticles: 36
+    maxNumParticles: 50
     size3D: 0
     rotation3D: 0
   ShapeModule:
@@ -496,7 +496,7 @@ ParticleSystem:
     serializedVersion: 2
     m_Type: 0
     rate:
-      scalar: 36
+      scalar: 50
       maxCurve:
         serializedVersion: 2
         m_Curve:

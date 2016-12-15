@@ -21,15 +21,6 @@ public class GrenadeMover : AbsWeaponMover {
 
     public override void OnObjectReuse()
     {
-    }
 
-    void OnTriggerEnter2D(Collider2D collider)
-    {
-        if (collider.gameObject.tag == "LocalPlayerTag" || collider.gameObject.tag == "LocalProjectileTag" || collider.gameObject.tag == "")
-        {
-            return;
-        }
-
-        this.gameObject.SetActive(false);
     }
 }

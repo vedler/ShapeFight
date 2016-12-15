@@ -87,6 +87,8 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSpeed: 50
   cooldownPeriod: 0
+  particleSysPrefab: {fileID: 1000011581375342, guid: 9b30324a1ee4ee84f815fdceec8f8d60,
+    type: 2}
 --- !u!212 &212000011831764386
 SpriteRenderer:
   m_ObjectHideFlags: 1
