@@ -10,6 +10,8 @@ public class RocketMover : AbsWeaponMover {
     public override void FireMe(Vector2 direction)
     {
         this.direction = direction;
+        radius = 10;
+        damage = 30;
         direction.Normalize();
         // TODO: Initial velocity based on player speed instead of percentage of max speed (player speed + some margin)
         GetComponent<Rigidbody2D>().velocity = direction * (maxSpeed * 0.5f);

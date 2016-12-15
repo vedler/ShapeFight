@@ -5,7 +5,9 @@ using System;
 public class PelletMover : AbsWeaponMover {
 
     public override void FireMe(Vector2 direction)
-    {   
+    {
+        damage = 15;
+        radius = 3;
         this.direction = direction;
         direction.Normalize();
         // TODO: Initial velocity based on player speed instead of percentage of max speed (player speed + some margin)

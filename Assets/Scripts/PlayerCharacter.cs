@@ -28,7 +28,10 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
 
     private Coroutine jetsFiring;
 
-    private float jetpackFuel = 1000;
+    private float jetpackFuel = 2000;
+
+    [SerializeField]
+    private float health = 100;
 
     private Color clr;
 
@@ -262,5 +265,25 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
         reduceFuel(12);
         Quaternion rotateTo = Quaternion.Euler(0, 0, 180);
         jetpack.transform.rotation = Quaternion.Slerp(jetpack.transform.rotation, rotateTo, Time.deltaTime * 1.9f);
+    }
+
+    public void getHit(float dam)
+    {
+        health -= dam;
+        StartCoroutine(damageAnim());
+    }
+
+    public IEnumerator damageAnim()
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            if (i % 6 == 0)
+                GetComponent<SpriteRenderer>().color = Color.red;
+            else if (i % 6 == 3)
+                GetComponent<SpriteRenderer>().color = Color.white;
+            else
+                GetComponent<SpriteRenderer>().color = clr;
+            yield return new WaitForSeconds(.1f);
+        }
     }
 }

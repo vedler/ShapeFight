@@ -5,6 +5,9 @@ public class GrenadeMover : AbsWeaponMover {
 
     public override void FireMe(Vector2 direction)
     {
+        damage = 20;
+        radius = 15;
+
         this.direction = direction;
         direction.Normalize();
         // TODO: Initial velocity based on player speed instead of percentage of max speed (player speed + some margin)

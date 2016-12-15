@@ -12,6 +12,8 @@ public abstract class AbsWeaponMover : MonoBehaviour, PoolObject, IWeaponMover {
     protected bool hasEnded;
     protected Vector2 direction;
     protected Vector2 startPosition;
+    protected float damage;
+    protected float radius;
 
     public abstract void FireMe(Vector2 direction);
 
@@ -65,7 +67,12 @@ public abstract class AbsWeaponMover : MonoBehaviour, PoolObject, IWeaponMover {
         }
         GameObject explosion = (GameObject)Instantiate(particleSysPrefab, transform.position, particleSysPrefab.transform.rotation);
         Destroy(explosion, explosion.GetComponent<ParticleSystem>().startLifetime * 2);
-
+        PlayerCharacter[] pcs = FindObjectsOfType<PlayerCharacter>();
+        foreach (PlayerCharacter pc in pcs)
+        {
+            if ((pc.transform.position - transform.position).magnitude <= radius)
+                pc.getHit((1 - (pc.transform.position - transform.position).magnitude / 10) * damage);
+        }
         this.gameObject.SetActive(false);
     }
 
