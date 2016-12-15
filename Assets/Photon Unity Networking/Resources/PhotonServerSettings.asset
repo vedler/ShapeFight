@@ -38,4 +38,8 @@ MonoBehaviour:
   - Marco
   - Polo
   - TaggedPlayer
+  - ReceiveClientInputData
+  - FinishClientInputSending
+  - SendClientInput
+  - StartClientInputSending
   DisableAutoOpenWizard: 1

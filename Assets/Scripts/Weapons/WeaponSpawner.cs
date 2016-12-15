@@ -18,7 +18,7 @@ public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
         {
             ShootingCommand shootingCommand = (ShootingCommand)command;
             //Parse target data
-            Vector2 targetPos = Camera.main.ScreenToWorldPoint(Input.mousePosition);
+            Vector2 targetPos = shootingCommand.targetPos;
 
             Hand hand = FindObjectOfType<Hand>();
             PlayerCharacter player = FindObjectOfType<PlayerCharacter>();

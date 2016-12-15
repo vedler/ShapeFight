@@ -17,7 +17,7 @@ public abstract class AbstractPMovementState : IPlayerState
     public abstract void exit();
 
     // If the command forces the player off the ground, make the check code be run
-    public abstract bool FixedUpdate(Dictionary<PMovementStateHandler.ECommandType, Queue<ICommand>> commandCache);
+    public abstract bool FixedUpdate(ref Dictionary<byte, Queue<ICommand>> commandCache);
 
     // Check if the state wants to make a switch
     public abstract bool check();

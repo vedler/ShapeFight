@@ -10,7 +10,7 @@ public interface IPlayerState
     void exit();
 
     // If the command forces the player off the ground, make the check code be run
-    bool FixedUpdate(Dictionary<PMovementStateHandler.ECommandType, Queue<ICommand>> commandCache);
+    bool FixedUpdate(ref Dictionary<byte, Queue<ICommand>> commandCache);
 
     // Check if the state wants to make a switch
     bool check();

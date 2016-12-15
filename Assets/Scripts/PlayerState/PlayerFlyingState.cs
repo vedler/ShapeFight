@@ -42,7 +42,7 @@ public class PlayerFlyingState : AbstractPMovementState
         handler.forceNotInJump();
     }
 
-    public override bool FixedUpdate(Dictionary<PMovementStateHandler.ECommandType, Queue<ICommand>> commandCache)
+    public override bool FixedUpdate(ref Dictionary<byte, Queue<ICommand>> commandCache)
     {
         // We can keep flying left or right or manipulate the up-down gravity or use the jetpack
 
@@ -114,10 +114,10 @@ public class PlayerFlyingState : AbstractPMovementState
         }*/
 
         // Key hold
-        while (commandCache[PMovementStateHandler.ECommandType.Hold].Count > 0)
+        while (commandCache[(byte)PMovementStateHandler.ECommandType.Hold].Count > 0)
         {
 
-            ICommand baseCommand = commandCache[PMovementStateHandler.ECommandType.Hold].Dequeue();
+            ICommand baseCommand = commandCache[(byte)PMovementStateHandler.ECommandType.Hold].Dequeue();
 
             if (baseCommand is MoveCommand)
             {

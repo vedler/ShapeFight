@@ -40,7 +40,7 @@ public class PlayerWallState : AbstractPMovementState
         handler.counterGravityManipulation(direction == PMovementStateHandler.EWallDirection.Left ? EInputControls.MoveLeft : EInputControls.MoveRight);
     }
 
-    public override bool FixedUpdate(Dictionary<PMovementStateHandler.ECommandType, Queue<ICommand>> commandCache)
+    public override bool FixedUpdate(ref Dictionary<byte, Queue<ICommand>> commandCache)
     {
         // We can walljump, slide slower, slide faster or not stick to the wall at all (no autostick, hold key towards wall to stay on it)
 
@@ -56,10 +56,10 @@ public class PlayerWallState : AbstractPMovementState
 
 
         // Key up
-        while (commandCache[PMovementStateHandler.ECommandType.Up].Count > 0)
+        while (commandCache[(byte)PMovementStateHandler.ECommandType.Up].Count > 0)
         {
 
-            ICommand baseCommand = commandCache[PMovementStateHandler.ECommandType.Up].Dequeue();
+            ICommand baseCommand = commandCache[(byte)PMovementStateHandler.ECommandType.Up].Dequeue();
 
             if (baseCommand is MoveCommand)
             {
@@ -89,10 +89,10 @@ public class PlayerWallState : AbstractPMovementState
         }
 
         // Key down
-        while (commandCache[PMovementStateHandler.ECommandType.Down].Count > 0)
+        while (commandCache[(byte)PMovementStateHandler.ECommandType.Down].Count > 0)
         {
 
-            ICommand baseCommand = commandCache[PMovementStateHandler.ECommandType.Down].Dequeue();
+            ICommand baseCommand = commandCache[(byte)PMovementStateHandler.ECommandType.Down].Dequeue();
 
             if (baseCommand is MoveCommand)
             {
@@ -123,10 +123,10 @@ public class PlayerWallState : AbstractPMovementState
         bool wasKeyHeld = false;
 
         // Key hold
-        while (commandCache[PMovementStateHandler.ECommandType.Hold].Count > 0)
+        while (commandCache[(byte)PMovementStateHandler.ECommandType.Hold].Count > 0)
         {
 
-            ICommand baseCommand = commandCache[PMovementStateHandler.ECommandType.Hold].Dequeue();
+            ICommand baseCommand = commandCache[(byte)PMovementStateHandler.ECommandType.Hold].Dequeue();
             
             if (baseCommand is MoveCommand)
             {

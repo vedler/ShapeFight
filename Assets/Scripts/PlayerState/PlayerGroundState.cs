@@ -32,15 +32,15 @@ public class PlayerGroundState : AbstractPMovementState
         
     }
 
-    public override bool FixedUpdate(Dictionary<PMovementStateHandler.ECommandType, Queue<ICommand>> commandCache)
+    public override bool FixedUpdate(ref Dictionary<byte, Queue<ICommand>> commandCache)
     {
         // We can jump, move left and move right, also we can manipulate gravity (just to be sure)
 
         // Key Down
-        while (commandCache[PMovementStateHandler.ECommandType.Down].Count > 0)
+        while (commandCache[(byte)PMovementStateHandler.ECommandType.Down].Count > 0)
         {
 
-            ICommand baseCommand = commandCache[PMovementStateHandler.ECommandType.Down].Dequeue();
+            ICommand baseCommand = commandCache[(byte)PMovementStateHandler.ECommandType.Down].Dequeue();
 
             if (baseCommand is MoveCommand)
             {
@@ -58,10 +58,10 @@ public class PlayerGroundState : AbstractPMovementState
         }
 
         // Key hold
-        while (commandCache[PMovementStateHandler.ECommandType.Hold].Count > 0)
+        while (commandCache[(byte)PMovementStateHandler.ECommandType.Hold].Count > 0)
         {
 
-            ICommand baseCommand = commandCache[PMovementStateHandler.ECommandType.Hold].Dequeue();
+            ICommand baseCommand = commandCache[(byte)PMovementStateHandler.ECommandType.Hold].Dequeue();
 
             if (baseCommand is MoveCommand)
             {

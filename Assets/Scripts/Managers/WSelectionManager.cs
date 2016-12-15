@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class WSelectionManager{
+public class WSelectionManager {
 
     private GameManager gameManager;
 

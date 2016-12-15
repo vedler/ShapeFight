@@ -37,23 +37,40 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     public string platformTag;
 
     // -------- State handling ---------
-    private PMovementStateHandler movementStateHandler;
+    public PMovementStateHandler movementStateHandler { get; private set; }
 
-    
+    public bool wasMine { get; private set; }
+
+    // -------- Networking ----------
+    private PlayerSynchronizer synchronizer;
+    public long numberOfTicks { get; private set; }
+
     void Awake()
     {
+        numberOfTicks = 0;
+
         rigidBody = GetComponent<Rigidbody2D>();
         defaultGravityScale = rigidBody.gravityScale;
         
         movementStateHandler = new PMovementStateHandler(this);
+
+        if (photonView.isMine)
+        {
+            print("ismine");
+            wasMine = true;
+        }
+
+        synchronizer = GetComponent<PlayerSynchronizer>();
     }
 
     // Use this for initialization
     void Start ()
     {
         // Subscribe to local input if this is our network view object
-        if (photonView.isMine)
+        if (wasMine)
         {
+            print("wasmine");
+
             inputManager = GameManager.getInstance().getInputManager();
 
             // Subscribe to all movement input events
@@ -111,8 +128,7 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
             }
         }
     }
-
-    // TODO: Max velocity (normalize velocity * maxSpeed)
+    
     // TODO: Jetpack (when in air, holding jump will use jetpack)
 
     // Update is called once per frame
@@ -128,34 +144,33 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
 
     void FixedUpdate()
     {
+        numberOfTicks++;
+
+        if (wasMine && !(PhotonNetwork.isMasterClient))
+        {
+            synchronizer.sendInputData();
+        }
+
         // Delegate to movementStateHandler
         movementStateHandler.FixedUpdate();
 
+        if (wasMine && !(PhotonNetwork.isMasterClient))
+        {
+            //synchronizer.sendInputData();
+        }
+
         if (rigidBody.velocity.magnitude > maxMoveSpeed)
+        {
             rigidBody.velocity = rigidBody.velocity.normalized * maxMoveSpeed;
+        }
     }
 
     public void OnUserInputKeyHold(EInputGroup group, ICommand command)
-    {   
+    {
         if (command is MoveCommand)
         {
             movementStateHandler.addCommand(PMovementStateHandler.ECommandType.Hold, command);
         }
-        /*  Tulistamiseks vajalik
-        if (command is ShootingCommand)
-        {
-
-            switch (((ShootingCommand)command).control)
-            {
-
-                case EInputControls.ShootMain:
-                    vajalik kood siia
-                    break;
-                case EInputControls.ShootAlt:
-                    vajalik kood siia
-                    break;
-            }
-        } */
     }
 
 

@@ -11,6 +11,24 @@ public class PMovementStateHandler
         in fixedupdate, but all the input is received in normal update, so those two are not in sync.
 
         Every fixedupdate we let the current state first decide if it needs to switch to any other state and if not, handle the current cache of commands.
+
+        Networked version of this:
+
+            In normal mode, the commands are added by the PlayerCharacter script by receiving events from the InputManager. With the networked version, the
+            server (or master client in this case, who acts as the server) will also run all of the commands received from RPC calls (client calls master client RPC's) 
+            into the NetworkSynchroniser script that then uses the same PMovementStateHandler from the PlayerCharacter script to add the list of commands to all of
+            the networked player objects.
+
+            Master client will have the say what the actual positions of the characters should be and any non-master clients will only try to predict and then later
+            reconcile any differences between the master client and the non-master characters. In other words all clients will use their inputs to move themselves, cache those
+            movements or positional states and later with the response from the server, change their position to the one that was sent by the server. High-ping tests
+            will be necessary to see if this concept will work out with larger pings. Photon should have some ping-testing scripts ready to go.
+
+            Script execution order will be important here, since we want to first receive all the networked data and then run any updates from the PlayerCharacter script,
+            which also delegates any update calls to the movement state handler. Movement changes will be interpolated and every new movement will also try to use very simple
+            collision checking (just a raycast) to see if the changed movement will cause any collision problems. If they will, the interpolation is stopped and the final
+            position is used instantly. Since re-simulating all of the movement (solving rigidbody physics multiple times in one physics update frame) with the input 
+            is not possible, our concept of using movement and velocity delta interpolation would have to work.
     */
 
     public PlayerCharacter playerCharacter { get; private set; }
@@ -28,21 +46,21 @@ public class PMovementStateHandler
     private float pressedJumpTimer;
     private float forceDisablePressedJumpTimer;
 
-    public enum EWallDirection
+    public enum EWallDirection : byte
     {
-        Left,
+        Left = 0,
         Right
     }
 
-    public enum ECommandType
+    public enum ECommandType : byte
     {
-        Up,
+        Up = 0,
         Down,
         Hold
     }
 
-    public Dictionary<ECommandType, Queue<ICommand>> commandCache { get; private set; }
-    public Dictionary<ECommandType, Queue<ICommand>> finalizedCache { get; private set; }
+    public Dictionary<byte, Queue<ICommand>> commandCache { get; private set; }
+    public Dictionary<byte, Queue<ICommand>> finalizedCache { get; private set; }
 
     // Sometimes there are no FixedUpdates between two Update calls, so we don't want this input to be lost
     // Also to note: key up and key down commands will only be executed once between two update calls,
@@ -103,23 +121,23 @@ public class PMovementStateHandler
         // Make a copy of the finalized cache
         // After using, only the "key hold" commands (to be executed multiple times between updates) 
         //      + any remaining commands from the clone should be in the finalized cache
-        Dictionary<ECommandType, Queue<ICommand>> cloneCache = new Dictionary<ECommandType, Queue<ICommand>>(finalizedCache);
+        Dictionary<byte, Queue<ICommand>> cloneCache = new Dictionary<byte, Queue<ICommand>>(finalizedCache);
 
         // Use a new gravity scale for this update
         currentGravityScale = playerCharacter.defaultGravityScale;
         playerCharacter.rigidBody.gravityScale = currentGravityScale;
 
-        // Create a new list of gravity manipulators for one frame, so that a double'd input doesn't change the gravity twice
+        // Create a new list of gravity manipulators for one frame, so that duplicate input doesn't change the gravity twice
         grvManipulatorsThisFrame = new Dictionary<EInputControls, float>();
 
         HashSet<Type> usedStateClasses = new HashSet<Type>();
 
         while (true)
         {
-            MonoBehaviour.print(currentState.ToString());
+            //MonoBehaviour.print(currentState.ToString());
 
             // Check if the current state wants to switch or if the update wants to switch in the middle of the update
-            if (currentState.check() && (cacheUsedThisUpdate || currentState.FixedUpdate(cloneCache)))
+            if (currentState.check() && (cacheUsedThisUpdate || currentState.FixedUpdate(ref cloneCache)))
             {
                 // If the check was good and the fixedupdate finished, we are done with this full FixedUpdate call
                 break;
@@ -174,24 +192,24 @@ public class PMovementStateHandler
     
     private void resetCommandCache()
     {
-        commandCache = new Dictionary<ECommandType, Queue<ICommand>>();
-        commandCache.Add(ECommandType.Down, new Queue<ICommand>());
-        commandCache.Add(ECommandType.Up, new Queue<ICommand>());
-        commandCache.Add(ECommandType.Hold, new Queue<ICommand>());
+        commandCache = new Dictionary<byte, Queue<ICommand>>();
+        commandCache.Add((byte)ECommandType.Down, new Queue<ICommand>());
+        commandCache.Add((byte)ECommandType.Up, new Queue<ICommand>());
+        commandCache.Add((byte)ECommandType.Hold, new Queue<ICommand>());
     }
 
     private void checkForFinalizedCacheReuse()
     {
         if (!hasFinalizedCacheBeenUsedOnce)
         {
-            commandCache = new Dictionary<ECommandType, Queue<ICommand>>(finalizedCache);
+            commandCache = new Dictionary<byte, Queue<ICommand>>(finalizedCache);
             hasFinalizedCacheBeenUsedOnce = true;
         }
     }
 
     private void finalizeCommandCache()
     {
-        finalizedCache = new Dictionary<ECommandType, Queue<ICommand>>(commandCache);
+        finalizedCache = new Dictionary<byte, Queue<ICommand>>(commandCache);
         hasFinalizedCacheBeenUsedOnce = false;
     }
 
@@ -199,7 +217,7 @@ public class PMovementStateHandler
     {
         checkForFinalizedCacheReuse();
 
-        commandCache[type].Enqueue(command);
+        commandCache[(byte)type].Enqueue(command);
     }
     
     public void setOnGround()

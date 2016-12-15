@@ -6,6 +6,8 @@ public class GameManager : MonoBehaviour
 {
     private static GameManager instance;
 
+    public static float currentFixedTime { get; private set; }
+
     public static GameManager getInstance()
     {
         if (instance == null)
@@ -70,6 +72,11 @@ public class GameManager : MonoBehaviour
         this.weaponManager = new WeaponManager(this);
 
         this.weaponSelectionManager = new WSelectionManager(this);
+
+        // PhotonPeer.RegisterType(Type customType, byte code, SerializeMethod serializeMethod, DeserializeMethod constructor)
+
+        // Doesn't matter that this time is not synced with the server, it is used more as an identifier
+        currentFixedTime = 0;
     }
 
     // Update is called once per frame
@@ -77,5 +84,31 @@ public class GameManager : MonoBehaviour
     {
         inputManager.Update();
     }
-    
+
+    void FixedUpdate()
+    {
+        currentFixedTime += Time.fixedDeltaTime;
+    }
+
+    // Enum serialization
+    public static byte[] SerializeEnum(object customobject)
+    {
+        return ExitGames.Client.Photon.Protocol.Serialize((byte)customobject);
+    }
+
+    public static object DeserializeEnum(byte[] bytes)
+    {
+        return ExitGames.Client.Photon.Protocol.Deserialize(bytes);
+    }
+
+    // Enum serialization
+    public static byte[] SerializeEnum2(object customobject)
+    {
+        return ExitGames.Client.Photon.Protocol.Serialize((byte)customobject);
+    }
+
+    public static object DeserializeEnum2(byte[] bytes)
+    {
+        return ExitGames.Client.Photon.Protocol.Deserialize(bytes);
+    }
 }

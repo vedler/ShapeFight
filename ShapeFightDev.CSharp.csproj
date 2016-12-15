@@ -164,6 +164,7 @@
     <Compile Include="Assets\Scripts\Managers\GameManager.cs" />
     <Compile Include="Assets\Scripts\Managers\InputManager.cs" />
     <Compile Include="Assets\Scripts\Managers\NetworkManager.cs" />
+    <Compile Include="Assets\Scripts\Managers\WSelectionManager.cs" />
     <Compile Include="Assets\Scripts\Managers\WeaponManager.cs" />
     <Compile Include="Assets\Scripts\Networking\PlayerSynchronizer.cs" />
     <Compile Include="Assets\Scripts\PlayerCharacter.cs" />
@@ -174,9 +175,15 @@
     <Compile Include="Assets\Scripts\PlayerState\PlayerGroundState.cs" />
     <Compile Include="Assets\Scripts\PlayerState\PlayerWallState.cs" />
     <Compile Include="Assets\Scripts\PoolObject.cs" />
-    <Compile Include="Assets\Scripts\RocketMover.cs" />
     <Compile Include="Assets\Scripts\TestPlayerController.cs" />
-    <Compile Include="Assets\Scripts\WeaponSpawner.cs" />
+    <Compile Include="Assets\Scripts\Weapons\AbsWeaponEffect.cs" />
+    <Compile Include="Assets\Scripts\Weapons\AbsWeaponMover.cs" />
+    <Compile Include="Assets\Scripts\Weapons\BulletMover.cs" />
+    <Compile Include="Assets\Scripts\Weapons\IWeaponEffect.cs" />
+    <Compile Include="Assets\Scripts\Weapons\IWeaponMover.cs" />
+    <Compile Include="Assets\Scripts\Weapons\RocketMover.cs" />
+    <Compile Include="Assets\Scripts\Weapons\WeaponProjectile.cs" />
+    <Compile Include="Assets\Scripts\Weapons\WeaponSpawner.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\Photon Unity Networking\changelog.txt" />
