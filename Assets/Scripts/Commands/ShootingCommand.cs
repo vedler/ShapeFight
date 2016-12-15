@@ -103,10 +103,11 @@ class ShootingCommand : AbstractCommand, ISerializable
 
         Queue<ShootingCommand> commands = (Queue<ShootingCommand>)customobject;
 
-        foreach (var obj in commands)
+        /*foreach (var obj in commands)
         {
             bin.Serialize(ms, obj);
-        }
+        }*/
+        bin.Serialize(ms, commands);
 
         return ms.ToArray();
     }
@@ -127,7 +128,13 @@ class ShootingCommand : AbstractCommand, ISerializable
         {
             object obj = bin.Deserialize(ms);
 
-            var queue = obj as ShootingCommand[];
+            var queue = obj as Queue<ShootingCommand>;
+
+            if (queue == null)
+            {
+                Photon.MonoBehaviour.print("ShootingCommand[] null");
+                return new Queue<ShootingCommand>();
+            }
 
             Queue<ShootingCommand> q = new Queue<ShootingCommand>(queue);
 

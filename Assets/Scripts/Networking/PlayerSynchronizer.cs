@@ -61,6 +61,10 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
 
     }
 
+    void OnPhotonSerializeViews(PhotonStream stream, PhotonMessageInfo info)
+    {
+    }
+
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
         //print("(PV) This: " + Time.realtimeSinceStartup + ", Last: " + lastCommandsSentTime);
@@ -106,18 +110,12 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
                 {
                     if (receivedCommandInfo.Peek().tickNum > parentCharacter.numberOfTicks)
                     {
-                        CommandInformation newInfo = receivedCommandInfo.Dequeue();
-
-                        // Make sure we wait for the physics to solve before we send the positional information
-                        if (receivedCommandInfo.Count > 0 && receivedCommandInfo.Peek().tickNum > parentCharacter.numberOfTicks)
-                        {
-                            // If we saved a bunch in the preceding frames, send the latest we can
-                            continue;
-                        }
-                        else
-                        {
-                            cmdInfo = newInfo;
-                        }
+                        cmdInfo = receivedCommandInfo.Dequeue();
+                    }
+                    else
+                    {
+                        // Got to the part of the queue, where the next object is too new
+                        break;
                     }
                 }
 
@@ -345,6 +343,9 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
 
     }
 
+    // ----------------------------- INPUT MESSAGE EXCHANGE ----------------------------------
+    // Instead of serializeview, lets use RPC to exchange pos data
+
     // Clientside
     public void sendInputData()
     {
@@ -352,7 +353,7 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
         if (!PhotonNetwork.isMasterClient)
         {
             // Send it
-            print("(SI) Time: " + Time.realtimeSinceStartup);
+            //print("(SI) Time: " + Time.realtimeSinceStartup);
             lastCommandsSentTime = Time.realtimeSinceStartup;
 
             Dictionary<byte, Queue<ICommand>> commands = parentCharacter.movementStateHandler.finalizedCache;
@@ -360,10 +361,6 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
 
             // Begin
             photonView.RPC("StartClientInputSending", PhotonTargets.MasterClient, lastCommandsSentTime);
-
-            Queue<AbstractCommand> abs;
-            Queue<MoveCommand> move;
-            Queue<ShootingCommand> shoot;
 
             foreach (var type in commands.Keys)
             {
@@ -406,11 +403,7 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
             // Actual reconciliation code would save the input data here, but we use deltas to calculate the actual position
         }
     }
-
-
-
-
-
+    
     // ------------------------ SERVER LOGIC ------------------------------------------
 
     public class NetworkInputData
@@ -420,6 +413,7 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
 
         public NetworkInputData(float timestamp)
         {
+            this.timestamp = timestamp;
             commands = new Dictionary<byte, Queue<ICommand>>();
             commands.Add((byte)PMovementStateHandler.ECommandType.Up, new Queue<ICommand>());
             commands.Add((byte)PMovementStateHandler.ECommandType.Down, new Queue<ICommand>());
@@ -483,7 +477,8 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
         {
             print("yo mismatch with views");
         }
-        print("(RI) TimeS: " + networkInputData.timestamp + ", Size: " + (networkInputData.commands[(byte)PMovementStateHandler.ECommandType.Down].Count + networkInputData.commands[(byte)PMovementStateHandler.ECommandType.Hold].Count + networkInputData.commands[(byte)PMovementStateHandler.ECommandType.Up].Count));
+        //print("(RI) TimeS: " + networkInputData.timestamp + ", Size: " + (networkInputData.commands[(byte)PMovementStateHandler.ECommandType.Down].Count + networkInputData.commands[(byte)PMovementStateHandler.ECommandType.Hold].Count + networkInputData.commands[(byte)PMovementStateHandler.ECommandType.Up].Count));
+        print("(RI) Size: " + (networkInputData.commands[(byte)PMovementStateHandler.ECommandType.Down].Count + networkInputData.commands[(byte)PMovementStateHandler.ECommandType.Hold].Count + networkInputData.commands[(byte)PMovementStateHandler.ECommandType.Up].Count));
 
 
         // Mimic InputManager logic
@@ -517,7 +512,8 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
         {
             print("yo mismatch with views");
         }
-        print("(RI) TimeS: " + timestamp + ", Size: " + (commands[(byte)PMovementStateHandler.ECommandType.Down].Count + commands[(byte)PMovementStateHandler.ECommandType.Hold].Count + commands[(byte)PMovementStateHandler.ECommandType.Up].Count));
+        //print("(RI) TimeS: " + timestamp + ", Size: " + (commands[(byte)PMovementStateHandler.ECommandType.Down].Count + commands[(byte)PMovementStateHandler.ECommandType.Hold].Count + commands[(byte)PMovementStateHandler.ECommandType.Up].Count));
+        print("(RI) Size: " + (commands[(byte)PMovementStateHandler.ECommandType.Down].Count + commands[(byte)PMovementStateHandler.ECommandType.Hold].Count + commands[(byte)PMovementStateHandler.ECommandType.Up].Count));
 
 
         // Mimic InputManager logic

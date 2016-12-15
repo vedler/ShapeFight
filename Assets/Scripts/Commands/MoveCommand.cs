@@ -63,10 +63,11 @@ class MoveCommand : AbstractCommand, ISerializable
 
         Queue<MoveCommand> commands = (Queue<MoveCommand>)customobject;
 
-        foreach (var obj in commands)
+        /*foreach (var obj in commands)
         {
             bin.Serialize(ms, obj);
-        }
+        }*/
+        bin.Serialize(ms, commands);
 
         return ms.ToArray();
     }
@@ -87,7 +88,13 @@ class MoveCommand : AbstractCommand, ISerializable
         {
             object obj = bin.Deserialize(ms);
 
-            var queue = obj as MoveCommand[];
+            var queue = obj as Queue<MoveCommand>;
+
+            if (queue == null)
+            {
+                Photon.MonoBehaviour.print("MoveCommand[] null");
+                return new Queue<MoveCommand>();
+            }
 
             Queue<MoveCommand> q = new Queue<MoveCommand>(queue);
 
