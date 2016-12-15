@@ -23,6 +23,8 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     [SerializeField]
     public float jetPackPower;
 
+    private Color clr;
+
 
     // -----------------------
 
@@ -51,6 +53,10 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     // Use this for initialization
     void Start ()
     {
+        clr = UnityEngine.Random.ColorHSV(0, 1, 1, 1, 1, 1);
+        GetComponent<SpriteRenderer>().color = clr;
+        transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().color = clr;
+
         // Subscribe to local input if this is our network view object
         if (photonView.isMine)
         {
