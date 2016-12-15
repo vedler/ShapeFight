@@ -8,6 +8,8 @@ TagManager:
   - LocalPlayerTag
   - LocalProjectileTag
   - soundTag
+  - LocalJetpackTag
+  - SoundTriggerTag
   layers:
   - Default
   - TransparentFX

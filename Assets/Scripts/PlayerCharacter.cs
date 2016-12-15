@@ -269,6 +269,7 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
 
     public void getHit(float dam)
     {
+        GetComponent<AudioSource>().Play();
         health -= dam;
         StartCoroutine(damageAnim());
     }

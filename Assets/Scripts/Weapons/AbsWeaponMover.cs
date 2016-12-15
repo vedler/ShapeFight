@@ -7,6 +7,8 @@ public abstract class AbsWeaponMover : MonoBehaviour, PoolObject, IWeaponMover {
     public float maxSpeed;
     public float cooldownPeriod;
     public GameObject particleSysPrefab;
+    private AudioSource[] sounds;
+
 
     protected bool isFired;
     protected bool hasEnded;
@@ -31,7 +33,7 @@ public abstract class AbsWeaponMover : MonoBehaviour, PoolObject, IWeaponMover {
     // Use this for initialization
     void Start () {
         this.rigidBody = GetComponent<Rigidbody2D>();
-
+        sounds = GameObject.FindGameObjectWithTag("WeaponSoundsTag").GetComponents<AudioSource>();
     }
 	
 	// Update is called once per frame
@@ -61,19 +63,30 @@ public abstract class AbsWeaponMover : MonoBehaviour, PoolObject, IWeaponMover {
 
     void OnTriggerEnter2D(Collider2D collider)
     {
-        if (collider.gameObject.tag == "LocalPlayerTag" || collider.gameObject.tag == "LocalProjectileTag" || collider.gameObject.tag == "")
+        if (!CompareTag("SoundTriggerTag"))
         {
-            return;
+            if (collider.GetComponent<GrenadeMover>() != null)
+                sounds[2].Play();
+            else if (collider.GetComponent<RocketMover>() != null)
+                sounds[1].Play();
+            else if (collider.GetComponent<PelletMover>() != null)
+                sounds[0].Play();
+
+            if (collider.gameObject.tag == "LocalPlayerTag" || collider.gameObject.tag == "LocalProjectileTag" || collider.gameObject.tag == "")
+            {
+                return;
+            }
+
+            GameObject explosion = (GameObject)Instantiate(particleSysPrefab, transform.position, particleSysPrefab.transform.rotation);
+            Destroy(explosion, explosion.GetComponent<ParticleSystem>().startLifetime * 2);
+            PlayerCharacter[] pcs = FindObjectsOfType<PlayerCharacter>();
+            foreach (PlayerCharacter pc in pcs)
+            {
+                if ((pc.transform.position - transform.position).magnitude <= radius)
+                    pc.getHit((1 - (pc.transform.position - transform.position).magnitude / 10) * damage);
+            }
+            this.gameObject.SetActive(false);
         }
-        GameObject explosion = (GameObject)Instantiate(particleSysPrefab, transform.position, particleSysPrefab.transform.rotation);
-        Destroy(explosion, explosion.GetComponent<ParticleSystem>().startLifetime * 2);
-        PlayerCharacter[] pcs = FindObjectsOfType<PlayerCharacter>();
-        foreach (PlayerCharacter pc in pcs)
-        {
-            if ((pc.transform.position - transform.position).magnitude <= radius)
-                pc.getHit((1 - (pc.transform.position - transform.position).magnitude / 10) * damage);
-        }
-        this.gameObject.SetActive(false);
     }
 
 
