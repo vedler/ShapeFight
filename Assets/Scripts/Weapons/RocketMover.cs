@@ -22,6 +22,16 @@ public class RocketMover : AbsWeaponMover {
         }
     }
 
+    [PunRPC]
+    public override void TriggerMove(PhotonMessageInfo info)
+    {
+        if (isFired)
+        {
+            GetComponent<Rigidbody2D>().AddForce(direction * speed, ForceMode2D.Impulse);
+            //print("mag: " + GetComponent<Rigidbody2D>().velocity.magnitude);
+        }
+    }
+
     public override void OnObjectReuse()
     {
         speed = 0.7f;
@@ -29,7 +39,7 @@ public class RocketMover : AbsWeaponMover {
     }
 
     [PunRPC]
-    public override void TriggerFireMe(Vector2 direction)
+    public override void TriggerFireMe(Vector2 direction, PhotonMessageInfo info)
     {
         this.direction = direction;
         direction.Normalize();

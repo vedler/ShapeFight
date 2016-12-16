@@ -1,7 +1,8 @@
 ﻿using UnityEngine;
 using System.Collections.Generic;
 
-public class PlayerSynchronizer : Photon.MonoBehaviour {
+public class PlayerSynchronizer : Photon.MonoBehaviour
+{
 
     public struct NetworkInfo
     {
@@ -40,6 +41,7 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
     // Client
     private float lastCommandsSentTime;
     private Queue<NetworkInfo> clientSnapshots;
+    private Hand hand;
 
     // Server
     private Queue<CommandInformation> receivedCommandInfo;
@@ -54,6 +56,7 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
         collider = GetComponent<Collider2D>();
 
         parentCharacter = GetComponent<PlayerCharacter>();
+        hand = gameObject.GetComponentInChildren<Hand>();
         receivedCommandInfo = new Queue<CommandInformation>();
 
         clientSnapshots = new Queue<NetworkInfo>();
@@ -189,7 +192,7 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
                 }
             }
         }
-        
+
     }
 
     void FixedUpdate()
@@ -204,19 +207,19 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
             collider = GetComponent<Collider2D>();
         }
 
-       /* if (parentCharacter.wasMine)
-        {
-            print("(FU) This: " + Time.realtimeSinceStartup + ", Last: " + lastCommandsSentTime);
-            // Save state
-            SaveCurrentSnapshot();
+        /* if (parentCharacter.wasMine)
+         {
+             print("(FU) This: " + Time.realtimeSinceStartup + ", Last: " + lastCommandsSentTime);
+             // Save state
+             SaveCurrentSnapshot();
 
-            // We need to reconciliate, because we are not the host
-            SyncedExternalMovement();
+             // We need to reconciliate, because we are not the host
+             SyncedExternalMovement();
 
-            sendInputData();
-        }
-        else*/ 
-        
+             sendInputData();
+         }
+         else*/
+
         if (!parentCharacter.wasMine && !photonView.isMine)
         {
             SyncedExternalMovement();
@@ -275,13 +278,13 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
         if (collidingSoon)
         {
             rigidBody.position = Vector2.Lerp(syncStartPosition, collisionTransform, Mathf.Pow(syncTime / syncDelay, 2));
-        } 
+        }
         else
         {
             rigidBody.position = Vector2.Lerp(syncStartPosition, syncEndPosition, Mathf.Pow(syncTime / syncDelay, 2));
         }
 
-        
+
         rigidBody.velocity = Vector2.Lerp(syncStartVelocity, syncEndVelocity, Mathf.Pow(syncTime / syncDelay, 2));
     }
 
@@ -312,7 +315,7 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
 
                 Queue<ICommand> cloneCommands = new Queue<ICommand>(commands[type]);
 
-                while(cloneCommands.Count > 0)
+                while (cloneCommands.Count > 0)
                 {
                     ICommand comm = cloneCommands.Dequeue();
 
@@ -345,7 +348,7 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
             // Actual reconciliation code would save the input data here, but we use deltas to calculate the actual position
         }
     }
-    
+
     // ------------------------ SERVER LOGIC ------------------------------------------
 
     public class NetworkInputData
@@ -372,7 +375,7 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
         Shoot
     }
 
-    [PunRPC] 
+    [PunRPC]
     public void StartClientInputSending(float timestamp, Vector2 syncPosition, Vector2 syncVelocity, PhotonMessageInfo info)
     {
         networkInputData = new NetworkInputData(timestamp);
@@ -449,7 +452,7 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
         }
 
         CommandInformation commandInfo = new CommandInformation();
-        commandInfo.tickNum = 
+        commandInfo.tickNum =
             parentCharacter.numberOfTicks;
         commandInfo.timestamp = networkInputData.timestamp;
 
@@ -468,7 +471,8 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
 
 
         // Mimic InputManager logic
-        foreach (byte type in commands.Keys) {
+        foreach (byte type in commands.Keys)
+        {
             Queue<ICommand> queue = commands[type];
 
             while (queue.Count > 0)
@@ -487,5 +491,11 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
         commandInfo.timestamp = timestamp;
 
         receivedCommandInfo.Enqueue(commandInfo);
+    }
+
+    [PunRPC]
+    public void SendHandRotation(Quaternion rotation, PhotonMessageInfo info)
+    {
+        hand.setTargetRot(rotation);
     }
 }

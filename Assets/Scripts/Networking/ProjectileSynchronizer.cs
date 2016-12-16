@@ -155,8 +155,17 @@ public class ProjectileSynchronizer : Photon.MonoBehaviour
         rigidBody.velocity = velocity;
         rigidBody.transform.rotation = rotation;
         rigidBody.angularVelocity = 0.0f;
-        syncEndPosition = position;
+        //syncEndPosition = position;
+        //syncEndVelocity = velocity;
+
+        syncTime = 0f;
+        syncDelay = Time.realtimeSinceStartup - lastSynchronizationTime;
+        lastSynchronizationTime = Time.realtimeSinceStartup;
+
+        syncEndPosition = position + velocity * syncDelay;
         syncEndVelocity = velocity;
+        syncStartPosition = position;
+        syncStartVelocity = velocity;
     }
 
     public void TriggerExploded(Vector2 position)

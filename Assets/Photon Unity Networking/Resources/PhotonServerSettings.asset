@@ -45,4 +45,6 @@ MonoBehaviour:
   - Exploded
   - ResetToPosition
   - TriggerFireMe
+  - TriggerMove
+  - SendHandRotation
   DisableAutoOpenWizard: 1

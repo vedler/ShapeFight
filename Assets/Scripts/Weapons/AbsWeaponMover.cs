@@ -18,9 +18,12 @@ public abstract class AbsWeaponMover : Photon.MonoBehaviour, PoolObject, IWeapon
     public abstract void FireMe(Vector2 direction);
 
     [PunRPC]
-    public abstract void TriggerFireMe(Vector2 direction);
+    public abstract void TriggerFireMe(Vector2 direction, PhotonMessageInfo info);
 
     public abstract void move();
+    
+    [PunRPC]
+    public abstract void TriggerMove(PhotonMessageInfo info);
 
     public abstract void OnObjectReuse();
 
