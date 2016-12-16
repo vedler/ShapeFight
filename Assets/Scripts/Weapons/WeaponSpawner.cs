@@ -12,6 +12,8 @@ public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
 
     // -----------------------
 
+    Hand hand;
+
     public void OnUserInputKeyDown(EInputGroup group, ICommand command)
     {
         if (command is ShootingCommand)
@@ -20,7 +22,7 @@ public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
             //Parse target data
             Vector2 targetPos = shootingCommand.targetPos;
 
-            Hand hand = FindObjectOfType<Hand>();
+            
             PlayerCharacter player = FindObjectOfType<PlayerCharacter>();
             Vector2 playerVelocity = player.GetComponent<Rigidbody2D>().velocity;
             playerVelocity.Normalize();
@@ -82,6 +84,7 @@ public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
 
     void Awake()
     {
+        hand = gameObject.GetComponentInChildren<Hand>();
     }
 
     // Use this for initialization

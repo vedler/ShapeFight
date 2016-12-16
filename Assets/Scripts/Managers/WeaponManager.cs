@@ -106,7 +106,8 @@ public class WeaponManager {
             gameObject.SetActive(true); 
             gameObject.transform.position = position; // gives the object correct spawn parameters
             gameObject.transform.rotation = rotation; //
-            
+            sync.TriggerResetToPosition(position, Vector2.zero, rotation);
+
             if (hasPoolObjectComponent)
             {
                 poolObjectScript.OnObjectReuse();

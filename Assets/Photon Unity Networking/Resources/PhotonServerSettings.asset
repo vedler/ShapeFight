@@ -42,4 +42,7 @@ MonoBehaviour:
   - FinishClientInputSending
   - SendClientInput
   - StartClientInputSending
+  - Exploded
+  - ResetToPosition
+  - TriggerFireMe
   DisableAutoOpenWizard: 1

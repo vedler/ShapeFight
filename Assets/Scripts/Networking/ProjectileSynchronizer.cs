@@ -19,10 +19,13 @@ public class ProjectileSynchronizer : Photon.MonoBehaviour
     private Rigidbody2D rigidBody;
     private Collider2D collider;
 
+    private AbsWeaponMover mover;
+
     void Awake()
     {
         rigidBody = GetComponent<Rigidbody2D>();
         collider = GetComponent<Collider2D>();
+        mover = GetComponent<AbsWeaponMover>();
     }
 
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
@@ -129,13 +132,14 @@ public class ProjectileSynchronizer : Photon.MonoBehaviour
     // Exploded
     // Owner migration?
 
-    public void TriggerResetToPosition(Vector2 position, Vector2 velocity, float rotation)
+    public void TriggerResetToPosition(Vector2 position, Vector2 velocity, Quaternion rotation)
     {
         active = true;
         gameObject.SetActive(true);
         rigidBody.position = position;
         rigidBody.velocity = velocity;
-        rigidBody.rotation = rotation;
+        rigidBody.transform.rotation = rotation;
+        rigidBody.angularVelocity = 0.0f;
         syncEndPosition = position;
         syncEndVelocity = velocity;
 
@@ -143,18 +147,19 @@ public class ProjectileSynchronizer : Photon.MonoBehaviour
     }
 
     [PunRPC]
-    public void ResetToPosition(Vector2 position, Vector2 velocity, float rotation, PhotonMessageInfo info)
+    public void ResetToPosition(Vector2 position, Vector2 velocity, Quaternion rotation, PhotonMessageInfo info)
     {
         active = true;
         gameObject.SetActive(true);
         rigidBody.position = position;
         rigidBody.velocity = velocity;
-        rigidBody.rotation = rotation;
+        rigidBody.transform.rotation = rotation;
+        rigidBody.angularVelocity = 0.0f;
         syncEndPosition = position;
         syncEndVelocity = velocity;
     }
 
-    public void TriggerExploded(Vector2 position, PhotonMessageInfo info)
+    public void TriggerExploded(Vector2 position)
     {
         active = false;
         gameObject.SetActive(false);

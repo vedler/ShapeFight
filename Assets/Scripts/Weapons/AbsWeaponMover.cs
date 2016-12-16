@@ -2,7 +2,7 @@
 using System.Collections;
 using System;
 
-public abstract class AbsWeaponMover : MonoBehaviour, PoolObject, IWeaponMover {
+public abstract class AbsWeaponMover : Photon.MonoBehaviour, PoolObject, IWeaponMover {
 
     public float speed;
     public float maxSpeed;
@@ -11,9 +11,14 @@ public abstract class AbsWeaponMover : MonoBehaviour, PoolObject, IWeaponMover {
     protected Vector2 direction;
     protected Vector2 startPosition;
 
+    protected Rigidbody2D rigidBody;
+
     public ProjectileSynchronizer sync;
 
     public abstract void FireMe(Vector2 direction);
+
+    [PunRPC]
+    public abstract void TriggerFireMe(Vector2 direction);
 
     public abstract void move();
 
@@ -25,8 +30,9 @@ public abstract class AbsWeaponMover : MonoBehaviour, PoolObject, IWeaponMover {
     }
 
     // Use this for initialization
-    void Start () {
+    void Awake () {
         sync = GetComponent<ProjectileSynchronizer>();
+        rigidBody = GetComponent<Rigidbody2D>();
     }
 	
 	// Update is called once per frame
@@ -57,6 +63,7 @@ public abstract class AbsWeaponMover : MonoBehaviour, PoolObject, IWeaponMover {
         }
 
         this.gameObject.SetActive(false);
+        sync.TriggerExploded(rigidBody.position);
     }
 
 
