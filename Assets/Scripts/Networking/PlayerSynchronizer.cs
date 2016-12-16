@@ -61,12 +61,19 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
 
     }
 
-    void OnPhotonSerializeViews(PhotonStream stream, PhotonMessageInfo info)
-    {
-    }
-
     void OnPhotonSerializeView(PhotonStream stream, PhotonMessageInfo info)
     {
+        // OLD: 
+        // We attempt to send the last received and parsed time from RPC command call
+        // We used the time from that and the current position and velocity to send the info back
+        // Another possibility is to also cache all of the forces given this frame and send them too (pre-position, pre-velocity and applied forces)
+        //      This could make the packets too large, however
+
+        // Another thing we have to make sure, is that we always stick to fixedupdate timesteps when sending and receiving these changes
+        // We can definitely make sure we do the RPC calls from fixeduptade
+        // But we also have to send the results within fixedupdate
+
+
         //print("(PV) This: " + Time.realtimeSinceStartup + ", Last: " + lastCommandsSentTime);
 
         // If the object doesnt have the correct components, set them up
@@ -80,108 +87,62 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
             collider = GetComponent<Collider2D>();
         }
 
-        // We are the host
-        if (PhotonNetwork.isMasterClient)
+        // It's our view
+        if (photonView.isMine)
         {
-            //print("We are the host");
-            
-            if (!photonView.isMine)
-            {
-                print("Attempting to request ownership");
-                photonView.RequestOwnership();
-                return;
-            }
-
             if (stream.isWriting)
-            {
-                // We attempt to send the last received and parsed time from RPC command call
-                // We used the time from that and the current position and velocity to send the info back
-                // Another possibility is to also cache all of the forces given this frame and send them too (pre-position, pre-velocity and applied forces)
-                //      This could make the packets too large, however
-
-                // Another thing we have to make sure, is that we always stick to fixedupdate timesteps when sending and receiving these changes
-                // We can definitely make sure we do the RPC calls from fixeduptade
-                // But we also have to send the results within fixedupdate
-
-                // Nullable
-                CommandInformation? cmdInfo = null;
-
-                while (receivedCommandInfo.Count > 0)
-                {
-                    if (receivedCommandInfo.Peek().tickNum > parentCharacter.numberOfTicks)
-                    {
-                        cmdInfo = receivedCommandInfo.Dequeue();
-                    }
-                    else
-                    {
-                        // Got to the part of the queue, where the next object is too new
-                        break;
-                    }
-                }
-
-
-                if (cmdInfo != null)
-                {
-                    print("(SEND) Time: " + cmdInfo.Value.timestamp);
-                    stream.SendNext(rigidBody.position);
-                    stream.SendNext(rigidBody.velocity);
-                    stream.SendNext(cmdInfo.Value.timestamp);
-                }
-                else
-                {
-                    print("(XX) Time: " + -1);
-                    stream.SendNext(rigidBody.position);
-                    stream.SendNext(rigidBody.velocity);
-                    stream.SendNext(-1.0f);
-                }
-                
-            }
-
-            /*// Receive info
-            else
-            {
-                Vector2 syncPosition = (Vector2)stream.ReceiveNext();
-                Vector2 syncVelocity = (Vector2)stream.ReceiveNext();
-
-                syncTime = 0f;
-                syncDelay = Time.time - lastSynchronizationTime;
-                lastSynchronizationTime = Time.time;
-
-                syncEndPosition = syncPosition + syncVelocity * syncDelay;
-                syncEndVelocity = syncVelocity;
-                syncStartPosition = rigidBody.position;
-                syncStartVelocity = rigidBody.velocity;
-            }*/
-        }
-
-        // We are not the host
-        else
-        {
-            print("We are not the host");
-
-            if (photonView.isMine)
-            {
-                print("Attempting to give ownership");
-                photonView.TransferOwnership(PhotonNetwork.masterClient);
-                return;
-            }
-
-            /*if (stream.isWriting)
             {
                 stream.SendNext(rigidBody.position);
                 stream.SendNext(rigidBody.velocity);
-            }
 
-            // Receive info
-            else
-            {*/
-            // Only trust the information from the server
-            if (!info.sender.isMasterClient)
-            {
-                print("ignoring some info");
-                return;
-            }
+                Dictionary<byte, Queue<ICommand>> commands = parentCharacter.movementStateHandler.finalizedCache;
 
+                // Length of types
+                stream.SendNext(commands.Keys.Count);
+
+                foreach (var type in commands.Keys)
+                {
+                    Queue<AbstractCommand> cAbs = new Queue<AbstractCommand>();
+                    Queue<MoveCommand> cMove = new Queue<MoveCommand>();
+                    Queue<ShootingCommand> cShoot = new Queue<ShootingCommand>();
+
+                    Queue<ICommand> cloneCommands = new Queue<ICommand>(commands[type]);
+
+                    while (cloneCommands.Count > 0)
+                    {
+                        ICommand comm = cloneCommands.Dequeue();
+
+                        if (comm is MoveCommand)
+                        {
+                            cMove.Enqueue((MoveCommand)comm);
+                        }
+                        else if (comm is ShootingCommand)
+                        {
+                            cShoot.Enqueue((ShootingCommand)comm);
+                        }
+                        else
+                        {
+                            cAbs.Enqueue((AbstractCommand)comm);
+                        }
+                    }
+
+                    byte[] moveBytes = MoveCommand.SerializeQueue(cMove);
+                    byte[] shootBytes = ShootingCommand.SerializeQueue(cShoot);
+                    byte[] absBytes = AbstractCommand.SerializeQueue(cAbs);
+
+                    //photonView.RPC("SendClientInput", PhotonTargets.MasterClient, type, CommandClass.Move, moveBytes);
+                    //photonView.RPC("SendClientInput", PhotonTargets.MasterClient, type, CommandClass.Shoot, shootBytes);
+                    //photonView.RPC("SendClientInput", PhotonTargets.MasterClient, type, CommandClass.Abs, absBytes);
+                    stream.SendNext(type);
+
+                    stream.SendNext(moveBytes);
+                    stream.SendNext(shootBytes);
+                    stream.SendNext(absBytes);
+                }
+            }
+        }
+        else
+        {
             // Now instead we are sent a timestamp and two vectors to be used
             // Instead of applying them here, we go back to the history of our positions/velocities
             // calculate the delta and apply Lerp with the time of 0.5x the ping
@@ -192,7 +153,6 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
 
             Vector2 syncPosition = (Vector2)stream.ReceiveNext();
             Vector2 syncVelocity = (Vector2)stream.ReceiveNext();
-            float timestamp = (float)stream.ReceiveNext();
 
             syncTime = 0f;
             syncDelay = Time.realtimeSinceStartup - lastSynchronizationTime;
@@ -203,40 +163,31 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
             syncStartPosition = rigidBody.position;
             syncStartVelocity = rigidBody.velocity;
 
-            // We control this character, lets get some reconciliation information
-            if (parentCharacter.wasMine)
+            int countTypes = (int)stream.ReceiveNext();
+
+            for (int i = 0; i < countTypes; ++i)
             {
-                // Save the info the server sent
-                NetworkInfo serverInfo = new NetworkInfo();
-                serverInfo.positon = syncPosition;
-                serverInfo.velocity = syncVelocity;
-                serverInfo.timestamp = timestamp;
+                byte cmdType = (byte)stream.ReceiveNext();
 
-                // Create the reconciliation data
-                ReconciliationInfo recInfo = new ReconciliationInfo();
-                recInfo.serverPosition = serverInfo;
+                byte[] moveBytes = (byte[])stream.ReceiveNext();
+                byte[] shootBytes = (byte[])stream.ReceiveNext();
+                byte[] absBytes = (byte[])stream.ReceiveNext();
 
-                // Save current time and ping (with a 5% margin)
-                recInfo.lerpStartTime = Time.realtimeSinceStartup;
-                recInfo.lerpDuration = syncDelay * 0.95f;
-
-                // Nullable, because we might not find the client info
-                NetworkInfo? clientInfo = null;
-
-                while (clientSnapshots.Count > 0)
+                foreach (var comm in MoveCommand.DeserializeQueue(moveBytes))
                 {
-                    if (clientSnapshots.Peek().timestamp > timestamp)
-                    {
-                        break;
-                    }
-
-                    clientInfo = clientSnapshots.Dequeue();
+                    parentCharacter.movementStateHandler.addCommand((PMovementStateHandler.ECommandType)cmdType, comm);
                 }
 
-                // Save the position from the local history, can be null if nothing was found
-                recInfo.localHistoryPosition = clientInfo;
+                foreach (var comm in ShootingCommand.DeserializeQueue(shootBytes))
+                {
+                    parentCharacter.movementStateHandler.addCommand((PMovementStateHandler.ECommandType)cmdType, comm);
+                }
+
+                foreach (var comm in AbstractCommand.DeserializeQueue(absBytes))
+                {
+                    parentCharacter.movementStateHandler.addCommand((PMovementStateHandler.ECommandType)cmdType, comm);
+                }
             }
-            //}
         }
         
     }
@@ -269,10 +220,6 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
         if (!parentCharacter.wasMine && !photonView.isMine)
         {
             SyncedExternalMovement();
-        }
-        else if (PhotonNetwork.isMasterClient)
-        {
-
         }
     }
 
@@ -338,11 +285,6 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
         rigidBody.velocity = Vector2.Lerp(syncStartVelocity, syncEndVelocity, Mathf.Pow(syncTime / syncDelay, 2));
     }
 
-    void ReconciliatedMovement()
-    {
-
-    }
-
     // ----------------------------- INPUT MESSAGE EXCHANGE ----------------------------------
     // Instead of serializeview, lets use RPC to exchange pos data
 
@@ -360,7 +302,7 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
             //photonView.RPC("ReceiveClientInputData", PhotonTargets.MasterClient, lastCommandsSentTime, commands);
 
             // Begin
-            photonView.RPC("StartClientInputSending", PhotonTargets.MasterClient, lastCommandsSentTime);
+            photonView.RPC("StartClientInputSending", PhotonTargets.All, lastCommandsSentTime, rigidBody.position, rigidBody.velocity);
 
             foreach (var type in commands.Keys)
             {
@@ -431,9 +373,18 @@ public class PlayerSynchronizer : Photon.MonoBehaviour {
     }
 
     [PunRPC] 
-    public void StartClientInputSending(float timestamp, PhotonMessageInfo info)
+    public void StartClientInputSending(float timestamp, Vector2 syncPosition, Vector2 syncVelocity, PhotonMessageInfo info)
     {
         networkInputData = new NetworkInputData(timestamp);
+
+        syncTime = 0f;
+        syncDelay = Time.realtimeSinceStartup - lastSynchronizationTime;
+        lastSynchronizationTime = Time.realtimeSinceStartup;
+
+        syncEndPosition = syncPosition + syncVelocity * syncDelay;
+        syncEndVelocity = syncVelocity;
+        syncStartPosition = rigidBody.position;
+        syncStartVelocity = rigidBody.velocity;
     }
 
     [PunRPC]

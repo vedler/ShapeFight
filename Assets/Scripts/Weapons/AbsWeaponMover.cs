@@ -11,6 +11,8 @@ public abstract class AbsWeaponMover : MonoBehaviour, PoolObject, IWeaponMover {
     protected Vector2 direction;
     protected Vector2 startPosition;
 
+    public ProjectileSynchronizer sync;
+
     public abstract void FireMe(Vector2 direction);
 
     public abstract void move();
@@ -24,8 +26,8 @@ public abstract class AbsWeaponMover : MonoBehaviour, PoolObject, IWeaponMover {
 
     // Use this for initialization
     void Start () {
-	    
-	}
+        sync = GetComponent<ProjectileSynchronizer>();
+    }
 	
 	// Update is called once per frame
 	void Update () {

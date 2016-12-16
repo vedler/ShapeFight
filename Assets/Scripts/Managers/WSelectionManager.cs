@@ -5,6 +5,9 @@ public class WSelectionManager {
 
     private GameManager gameManager;
 
+    public string mainWeaponName;
+    public string altWeaponName;
+
     public GameObject mainWeapon;
     public GameObject altWeapon;
     public GameObject[] weapons; // push prefabs
@@ -42,19 +45,27 @@ public class WSelectionManager {
     {
         // Init
         this.gameManager = gameManager;
-        weapons = Resources.LoadAll<GameObject>("Weapons");
+        //weapons = Resources.LoadAll<GameObject>("Photon Unity Networking/Resources/Weapons");
+
+        mainWeaponName = "Weapons/networkRocket";
+        altWeaponName = "Weapons/networkBullet";
+
+        //mainWeapon = PhotonNetwork.Instantiate("Weapons/networkRocket", new Vector3(0, 0, 0), new Quaternion(), 0);
+        //altWeapon = PhotonNetwork.Instantiate("Weapons/networkBullet", new Vector3(0, 0, 0), new Quaternion(), 0);
 
         //One way of choosing which projectile prefab to choose
-        for (int i = 0; i < weapons.Length; ++i)
+        /*for (int i = 0; i < weapons.Length; ++i)
         {
-            if (weapons[i].name == "newRocket")
+            if (weapons[i].name == "networkRocket")
             {
-                mainWeapon = GameObject.Instantiate(weapons[i]);
-            } else if (weapons[i].name == "newBullet")
-            {
-                altWeapon = GameObject.Instantiate(weapons[i]);
+                //mainWeapon = GameObject.Instantiate(weapons[i]);
+                mainWeapon = PhotonNetwork.Instantiate(weapons[i].name, new Vector3(0,0,0), new Quaternion(), 0);
             }
-        }
+            else if (weapons[i].name == "networkBullet")
+            {
+                altWeapon = PhotonNetwork.Instantiate(weapons[i].name, new Vector3(0,0,0), new Quaternion(), 0);
+            }
+        }*/
     }
 
 

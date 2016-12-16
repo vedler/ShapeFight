@@ -43,15 +43,15 @@ public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
                     // Instead of using the newRocket field, create a manager where you can get main and alt weapons, that have already been set up with the correct components
                     // I.e. an empty projectile prefab, that a manager will attach a mover and an effect component to
 
-                    weaponSelectionManager.getMainWeapon().GetComponent<AbsWeaponMover>().SetStartPosition(myPos);
-                    weaponManager.ReuseObject(weaponSelectionManager.getMainWeapon(), myPos, rotation, direction);
+                    //weaponSelectionManager.getMainWeapon().GetComponent<AbsWeaponMover>().SetStartPosition(myPos);
+                    weaponManager.ReuseNetworkObject(weaponSelectionManager.mainWeaponName, myPos, rotation, direction);
                     break;
                     
                     
 
                 case EInputControls.ShootAlt:
-                    weaponSelectionManager.getAltWeapon().GetComponent<AbsWeaponMover>().SetStartPosition(myPos);
-                    weaponManager.ReuseObject(weaponSelectionManager.getAltWeapon(), myPos, rotation, direction);
+                    //weaponSelectionManager.getAltWeapon().GetComponent<AbsWeaponMover>().SetStartPosition(myPos);
+                    weaponManager.ReuseNetworkObject(weaponSelectionManager.altWeaponName, myPos, rotation, direction);
                     break;
             }
         }
@@ -92,8 +92,11 @@ public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
         weaponSelectionManager = GameManager.getInstance().getWSelectionManager();
 
         //Creates a pool for weapons
-        weaponManager.CreatePool(weaponSelectionManager.getMainWeapon(), 20);
-        weaponManager.CreatePool(weaponSelectionManager.getAltWeapon(), 20);
+        //weaponManager.CreatePool(weaponSelectionManager.getMainWeapon(), 20);
+        //weaponManager.CreatePool(weaponSelectionManager.getAltWeapon(), 20);
+
+        weaponManager.CreateNetworkPool(weaponSelectionManager.mainWeaponName, 20);
+        weaponManager.CreateNetworkPool(weaponSelectionManager.altWeaponName, 20);
 
         // If view is ours, attach us to the input manager
         if (photonView.isMine)

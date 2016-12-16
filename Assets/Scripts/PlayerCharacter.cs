@@ -148,7 +148,7 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
 
         if (wasMine && !(PhotonNetwork.isMasterClient))
         {
-            synchronizer.sendInputData();
+            //synchronizer.sendInputData();
         }
 
         // Delegate to movementStateHandler

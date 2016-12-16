@@ -17,7 +17,8 @@ public class WeaponManager {
     }
 
     // Creates a pool with a certain size
-	public void CreatePool(GameObject prefab, int poolSize)
+    [System.Obsolete("CreatePool is deprecated, please use CreateNetworkPool instead.")]
+    public void CreatePool(GameObject prefab, int poolSize)
     {
         int poolKey = prefab.GetInstanceID();
 
@@ -33,8 +34,25 @@ public class WeaponManager {
         }
     }
 
+    public void CreateNetworkPool(string weaponName, int poolSize)
+    {
+        int poolKey = weaponName.GetHashCode();
+
+        if (!poolDictionary.ContainsKey(poolKey))
+        {
+            poolDictionary.Add(poolKey, new Queue<ObjectInstance>());
+
+            for (int i = 0; i < poolSize; ++i)
+            {
+                ObjectInstance newObject = new ObjectInstance(PhotonNetwork.Instantiate(weaponName, Vector3.zero, new Quaternion(), 0));
+                poolDictionary[poolKey].Enqueue(newObject);
+            }
+        }
+    }
+
 
     //Use this to reuse an object from the pool
+    [System.Obsolete("ReuseObject is deprecated, please use ReuseNetworkObject instead.")]
     public void ReuseObject(GameObject prefab, Vector3 position, Quaternion rotation, Vector2 direction)
     {
         int poolKey = prefab.GetInstanceID();
@@ -48,8 +66,22 @@ public class WeaponManager {
         }
     }
 
+    public void ReuseNetworkObject(string weaponName, Vector3 position, Quaternion rotation, Vector2 direction)
+    {
+        int poolKey = weaponName.GetHashCode();
+
+        if (poolDictionary.ContainsKey(poolKey))
+        {
+            ObjectInstance objectToReuse = poolDictionary[poolKey].Dequeue();
+            poolDictionary[poolKey].Enqueue(objectToReuse);
+
+            objectToReuse.Reuse(position, rotation, direction);
+        }
+    }
+
     public class ObjectInstance{
 
+        ProjectileSynchronizer sync;
         GameObject gameObject;
         bool hasPoolObjectComponent;
         PoolObject poolObjectScript;
@@ -58,6 +90,8 @@ public class WeaponManager {
         {
             gameObject = objectInstance;
             gameObject.SetActive(false);
+
+            sync = gameObject.GetComponent<ProjectileSynchronizer>();
 
             if (gameObject.GetComponent<PoolObject>() != null)
             {
