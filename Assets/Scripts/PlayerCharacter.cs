@@ -23,6 +23,18 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     [SerializeField]
     public float jetPackPower;
 
+    [SerializeField]
+    public GameObject jetpack;
+
+    private Coroutine jetsFiring;
+
+    private float jetpackFuel = 2000;
+
+    [SerializeField]
+    private float health = 100;
+
+    private Color clr;
+
 
     // -----------------------
 
@@ -47,29 +59,18 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
 
     void Awake()
     {
-        numberOfTicks = 0;
-
-        rigidBody = GetComponent<Rigidbody2D>();
-        defaultGravityScale = rigidBody.gravityScale;
-        
-        movementStateHandler = new PMovementStateHandler(this);
-
         if (photonView.isMine)
         {
             print("ismine");
             wasMine = true;
         }
 
-        synchronizer = GetComponent<PlayerSynchronizer>();
-    }
-
-    // Use this for initialization
-    void Start ()
-    {
         // Subscribe to local input if this is our network view object
         if (wasMine)
         {
-            print("wasmine");
+            // Send RPC with new random color
+            SetCharacterColors(UnityEngine.Random.ColorHSV(0, 1, 1, 1, 1, 1));
+            photonView.RPC("RemoteSetCharacterColors", PhotonTargets.AllBuffered, clr.r, clr.g, clr.b, clr.a);
 
             inputManager = GameManager.getInstance().getInputManager();
 
@@ -79,6 +80,27 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
             // Register the camera to follow us
             GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CamMovement>().setTarget(gameObject);
         }
+
+        jetpack = transform.GetChild(1).gameObject;
+        transform.GetChild(1).gameObject.GetComponent<ParticleSystem>().Stop();
+        stopJets();
+
+        // --------
+
+        numberOfTicks = 0;
+
+        rigidBody = GetComponent<Rigidbody2D>();
+        defaultGravityScale = rigidBody.gravityScale;
+        
+        movementStateHandler = new PMovementStateHandler(this);
+
+        synchronizer = GetComponent<PlayerSynchronizer>();
+    }
+
+    // Use this for initialization
+    void Start() { 
+    
+        
     }
 
     // Check for collision (called before update)
@@ -195,4 +217,115 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     {
         return maxMoveSpeed;
     }
+
+    // Juta's jetpack code
+
+    public float getJetpackFuel()
+    {
+        return jetpackFuel;
+    }
+
+    public void reduceFuel()
+    {
+        jetpackFuel -= 5f;
+    }
+
+    public void reduceFuel(float f)
+    {
+        jetpackFuel -= f;
+    }
+
+    public void restoreFuelABit()
+    {
+        jetpackFuel += 7f;
+    }
+
+    private IEnumerator jetLifeCycle()
+    {
+        for (int i = 0; i < 3; i++)
+        {
+            yield return new WaitForSeconds(.3f);
+        }
+        jetpack.GetComponent<ParticleSystem>().Stop();
+    }
+
+    public void fireJets()
+    {
+        //PlayerGroundState.nullifySoundCount();
+        jetpack.GetComponent<ParticleSystem>().Play();
+
+        reduceFuel();
+        jetsFiring = StartCoroutine(jetLifeCycle());
+    }
+
+    public void stopJets()
+    {
+        if (jetsFiring != null)
+            StopCoroutine(jetsFiring);
+        jetpack.GetComponent<ParticleSystem>().Stop();
+    }
+
+    public void rotateJetpack()
+    {
+        Quaternion rotateTo = Quaternion.Euler(0, 0, 180);
+        jetpack.transform.rotation = Quaternion.Slerp(jetpack.transform.rotation, rotateTo, Time.deltaTime * 1.2f);
+    }
+
+    public void rotateJetpack(float deg)
+    {
+        reduceFuel(3.5f);
+        Quaternion rotateTo = Quaternion.Euler(0, 0, deg);
+        jetpack.transform.rotation = Quaternion.Slerp(jetpack.transform.rotation, rotateTo, Time.deltaTime * .9f);
+    }
+
+    public void burst()
+    {
+        reduceFuel(12);
+        Quaternion rotateTo = Quaternion.Euler(0, 0, 180);
+        jetpack.transform.rotation = Quaternion.Slerp(jetpack.transform.rotation, rotateTo, Time.deltaTime * 1.9f);
+    }
+
+    public void getHit(float dam)
+    {
+        GetComponent<AudioSource>().Play();
+        health -= dam;
+        StartCoroutine(damageAnim());
+    }
+
+    public IEnumerator damageAnim()
+    {
+        for (int i = 0; i < 6; i++)
+        {
+            if (i % 6 == 0)
+                GetComponent<SpriteRenderer>().color = Color.red;
+            else if (i % 6 == 3)
+                GetComponent<SpriteRenderer>().color = Color.white;
+            else
+                GetComponent<SpriteRenderer>().color = clr;
+            yield return new WaitForSeconds(.1f);
+        }
+    }
+
+    [PunRPC]
+    public void RemoteSetCharacterColors(float r, float g, float b, float a, PhotonMessageInfo info)
+    {
+        SetCharacterColors(new Color(r, g, b, a));
+    }
+
+    [PunRPC]
+    public void RequestCharacterColors(float r, float g, float b, float a, PhotonMessageInfo info)
+    {
+        SetCharacterColors(new Color(r, g, b, a));
+        //photonView.RPC("RemoteSetCharacterColors", PhotonTargets., clr.r, clr.g, clr.b, clr.a);
+    }
+
+    public void SetCharacterColors(Color color)
+    {
+        clr = color;
+        GetComponent<SpriteRenderer>().color = clr;
+        transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().color = clr;
+        transform.GetChild(1).gameObject.GetComponent<ParticleSystem>().startColor = clr;
+    }
 }
+
+

@@ -36,7 +36,7 @@ public class PlayerSynchronizer : Photon.MonoBehaviour
     private Vector2 syncEndVelocity = Vector2.zero;
 
     private Rigidbody2D rigidBody;
-    private Collider2D collider;
+    private Collider2D collider2d;
 
     // Client
     private float lastCommandsSentTime;
@@ -53,7 +53,7 @@ public class PlayerSynchronizer : Photon.MonoBehaviour
     void Awake()
     {
         rigidBody = GetComponent<Rigidbody2D>();
-        collider = GetComponent<Collider2D>();
+        collider2d = GetComponent<Collider2D>();
 
         parentCharacter = GetComponent<PlayerCharacter>();
         hand = gameObject.GetComponentInChildren<Hand>();
@@ -85,9 +85,9 @@ public class PlayerSynchronizer : Photon.MonoBehaviour
             rigidBody = GetComponent<Rigidbody2D>();
         }
 
-        if (collider == null)
+        if (collider2d == null)
         {
-            collider = GetComponent<Collider2D>();
+            collider2d = GetComponent<Collider2D>();
         }
 
         // It's our view
@@ -162,6 +162,7 @@ public class PlayerSynchronizer : Photon.MonoBehaviour
             lastSynchronizationTime = Time.realtimeSinceStartup;
 
             syncEndPosition = syncPosition + syncVelocity * syncDelay;
+            //syncEndPosition = syncPosition;
             syncEndVelocity = syncVelocity;
             syncStartPosition = rigidBody.position;
             syncStartVelocity = rigidBody.velocity;
@@ -202,9 +203,9 @@ public class PlayerSynchronizer : Photon.MonoBehaviour
             rigidBody = GetComponent<Rigidbody2D>();
         }
 
-        if (collider == null)
+        if (collider2d == null)
         {
-            collider = GetComponent<Collider2D>();
+            collider2d = GetComponent<Collider2D>();
         }
 
         /* if (parentCharacter.wasMine)
@@ -252,18 +253,18 @@ public class PlayerSynchronizer : Photon.MonoBehaviour
         rayDir.Normalize();
 
         // Get diagonal size of the square
-        Vector2 diagVec = collider.bounds.size;
+        Vector2 diagVec = collider2d.bounds.size;
 
         // Layer mask to only detect hits with the map layer
         // TODO: Player layer
         var layerMask = (1 << LayerMask.NameToLayer("MapLayer"));
 
         bool collidingSoon = false;
-        Vector2 collisionTransform = Vector2.zero;
+        /*Vector2 collisionTransform = Vector2.zero;
 
         if (Physics.Raycast(transform.position, rayDir, out hit, diagVec.magnitude * 3, layerMask))
         {
-            Vector3 colliderEdgePoint = collider.bounds.ClosestPoint(hit.point);
+            Vector3 colliderEdgePoint = collider2d.bounds.ClosestPoint(hit.point);
             print("closest to coll: " + colliderEdgePoint);
             collidingSoon = Vector2.Distance(colliderEdgePoint, transform.position) * 2 >= Vector2.Distance(hit.point, transform.position);
 
@@ -273,19 +274,20 @@ public class PlayerSynchronizer : Photon.MonoBehaviour
                 print("Colliding soon");
                 collisionTransform = hit.point - colliderEdgePoint + transform.position;
             }
-        }
+        }*/
 
-        if (collidingSoon)
+        /*if (collidingSoon)
         {
             rigidBody.position = Vector2.Lerp(syncStartPosition, collisionTransform, Mathf.Pow(syncTime / syncDelay, 2));
         }
         else
-        {
-            rigidBody.position = Vector2.Lerp(syncStartPosition, syncEndPosition, Mathf.Pow(syncTime / syncDelay, 2));
-        }
+        {*/
+        //rigidBody.position = Vector2.Lerp(syncStartPosition, syncEndPosition, Mathf.Pow(syncTime / syncDelay, 2));
+        //}
+        rigidBody.position = Vector2.Lerp(syncStartPosition, syncEndPosition, syncTime / syncDelay);
 
-
-        rigidBody.velocity = Vector2.Lerp(syncStartVelocity, syncEndVelocity, Mathf.Pow(syncTime / syncDelay, 2));
+        //rigidBody.velocity = Vector2.Lerp(syncStartVelocity, syncEndVelocity, Mathf.Pow(syncTime / syncDelay, 2));
+        rigidBody.velocity = Vector2.Lerp(syncStartVelocity, syncEndVelocity, syncTime / syncDelay);
     }
 
     // ----------------------------- INPUT MESSAGE EXCHANGE ----------------------------------
@@ -393,7 +395,7 @@ public class PlayerSynchronizer : Photon.MonoBehaviour
     [PunRPC]
     public void SendClientInput(byte cmdType, byte cmdClass, byte[] commandData, PhotonMessageInfo info)
     {
-        Queue<ICommand> commands = new Queue<ICommand>();
+        //Queue<ICommand> commands = new Queue<ICommand>();
 
         if (cmdClass == (byte)CommandClass.Move)
         {
@@ -452,8 +454,7 @@ public class PlayerSynchronizer : Photon.MonoBehaviour
         }
 
         CommandInformation commandInfo = new CommandInformation();
-        commandInfo.tickNum =
-            parentCharacter.numberOfTicks;
+        commandInfo.tickNum = parentCharacter.numberOfTicks;
         commandInfo.timestamp = networkInputData.timestamp;
 
         receivedCommandInfo.Enqueue(commandInfo);

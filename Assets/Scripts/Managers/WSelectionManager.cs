@@ -8,13 +8,9 @@ public class WSelectionManager {
     public string mainWeaponName;
     public string altWeaponName;
 
-    public GameObject mainWeapon;
-    public GameObject altWeapon;
-    public GameObject[] weapons; // push prefabs
-
     //Should actually use prefab names not numbers, so it would be possible to find the correct
     //prefab from weapons[] using a for loop (see example in initialization method below
-    void SwitchWeapons(int main, int alt)
+    /*void SwitchWeapons(int main, int alt)
     {
         mainWeapon = weapons[main];
         altWeapon = weapons[alt];
@@ -38,6 +34,16 @@ public class WSelectionManager {
     public GameObject getAltWeapon()
     {
         return altWeapon;
+    }*/
+
+    public string getMainWeaponName()
+    {
+        return mainWeaponName;
+    }
+
+    public string getAltWeaponName()
+    {
+        return altWeaponName;
     }
 
     // Use this for initialization
@@ -56,10 +62,12 @@ public class WSelectionManager {
         //One way of choosing which projectile prefab to choose
         /*for (int i = 0; i < weapons.Length; ++i)
         {
-            if (weapons[i].name == "networkRocket")
+            if (weapons[i].name == "newPellet")
             {
                 //mainWeapon = GameObject.Instantiate(weapons[i]);
                 mainWeapon = PhotonNetwork.Instantiate(weapons[i].name, new Vector3(0,0,0), new Quaternion(), 0);
+            } else if (weapons[i].name == "newGrenade")
+                altWeaponName = weapons[i].name;
             }
             else if (weapons[i].name == "networkBullet")
             {

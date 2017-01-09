@@ -13,6 +13,8 @@ public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
     // -----------------------
 
     Hand hand;
+    private float timeStampMain;
+    private float timeStampAlt;
 
     public void OnUserInputKeyDown(EInputGroup group, ICommand command)
     {
@@ -26,7 +28,8 @@ public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
             PlayerCharacter player = FindObjectOfType<PlayerCharacter>();
             Vector2 playerVelocity = player.GetComponent<Rigidbody2D>().velocity;
             playerVelocity.Normalize();
-            Vector2 direction = targetPos - new Vector2(hand.transform.position.x, hand.transform.position.y);
+            Vector2 handPos = new Vector2(hand.transform.position.x, hand.transform.position.y);
+            Vector2 direction = targetPos - handPos;
 
             //Normalize the vector for the adding of force
             direction.Normalize();
@@ -41,19 +44,50 @@ public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
             switch (shootingCommand.control)
             {
                 case EInputControls.ShootMain:
-
                     // Instead of using the newRocket field, create a manager where you can get main and alt weapons, that have already been set up with the correct components
                     // I.e. an empty projectile prefab, that a manager will attach a mover and an effect component to
 
                     //weaponSelectionManager.getMainWeapon().GetComponent<AbsWeaponMover>().SetStartPosition(myPos);
-                    weaponManager.ReuseNetworkObject(weaponSelectionManager.mainWeaponName, myPos, rotation, direction);
+                    
+                                        //Check for cooldown
+                    if (timeStampMain > Time.time)
+                    {
+                        return;
+                    }
+
+                    if(weaponSelectionManager.getMainWeaponName() == "Weapons/networkPellet")
+                    {
+                        shootPellets(myPos, rotation, targetPos, handPos, direction);
+                    }
+                    else
+                    {
+                        weaponManager.ReuseNetworkObject(weaponSelectionManager.mainWeaponName, myPos, rotation, direction);
+                    }
+
+                    //Set cooldown
+                    timeStampMain = Time.time + FindConfig(weaponSelectionManager.altWeaponName).cooldownPeriod;
                     break;
                     
-                    
-
                 case EInputControls.ShootAlt:
+
+                    //Check for cooldown
+                    if (timeStampAlt > Time.time)
+                    {
+                        return;
+                    }
+
                     //weaponSelectionManager.getAltWeapon().GetComponent<AbsWeaponMover>().SetStartPosition(myPos);
-                    weaponManager.ReuseNetworkObject(weaponSelectionManager.altWeaponName, myPos, rotation, direction);
+                    if (weaponSelectionManager.getAltWeaponName() == "Weapons/networkPellet")
+                    {
+                        shootPellets(myPos, rotation, targetPos, handPos, direction);
+                    }
+                    else
+                    {
+                        weaponManager.ReuseNetworkObject(weaponSelectionManager.altWeaponName, myPos, rotation, direction);
+                    }
+
+                    //Set cooldown
+                    timeStampAlt = Time.time + FindConfig(weaponSelectionManager.altWeaponName).cooldownPeriod;
                     break;
             }
         }
@@ -113,4 +147,32 @@ public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
     void Update () {
 	
 	}
+
+    //For the shotgun
+    private void shootPellets(Vector2 myPos, Quaternion rotation, Vector2 targetPos, Vector2 handPos, Vector2 direction)
+    {
+        for (int i = 0; i < 10; ++i)
+        {
+            targetPos += new Vector2(UnityEngine.Random.Range(-2f, 2f), UnityEngine.Random.Range(-2f, 2f));
+            direction = targetPos - handPos;
+            direction.Normalize();
+            //weaponManager.ReuseObject(weaponSelectionManager.getMainWeapon(), myPos, rotation, direction);
+            weaponManager.ReuseNetworkObject(weaponSelectionManager.mainWeaponName, myPos, rotation, direction);
+        }
+    }
+
+    public WeaponConfig FindConfig(string name)
+    {
+        switch (name)
+        {
+            case "Weapons/networkRocket":
+                return weaponManager.rocketConfig;
+            case "Weapons/networkBullet":
+                return weaponManager.bulletConfig;
+            case "Weapons/networkPellet":
+                return weaponManager.pelletConfig;
+        }
+
+        return null;
+    }
 }

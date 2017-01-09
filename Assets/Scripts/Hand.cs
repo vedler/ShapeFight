@@ -71,10 +71,10 @@ public class Hand : MonoBehaviour {
 
     private void InterpRotation()
     {
-        if (targetRot == null)
+        /*if (targetRot == null)
         {
             return;
-        }
+        }*/
 
         // Smoothly rotate towards the target point.
         Quaternion rot = Quaternion.Slerp(transform.rotation, targetRot, 5f * Time.deltaTime);

@@ -41,7 +41,8 @@ public class GameManager : MonoBehaviour
         {
             throw new UnityException("GameManager's WeaponManager instance was accessed before Unity started it!");
         }
-            return weaponManager;
+
+        return weaponManager;
     }
 
     private WSelectionManager weaponSelectionManager;

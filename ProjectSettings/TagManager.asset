@@ -7,6 +7,10 @@ TagManager:
   - PlatformTag
   - LocalPlayerTag
   - LocalProjectileTag
+  - soundTag
+  - LocalJetpackTag
+  - SoundTriggerTag
+  - WeaponSoundsTag
   layers:
   - Default
   - TransparentFX

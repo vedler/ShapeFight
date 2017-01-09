@@ -4,6 +4,11 @@ using System.Collections.Generic;
 
 public class WeaponManager {
 
+    public WeaponConfig bulletConfig;
+    public WeaponConfig rocketConfig;
+    public WeaponConfig pelletConfig;
+    public WeaponConfig grenadeConfig;
+
     private GameManager gameManager;
 
     Dictionary<int, Queue<ObjectInstance>> poolDictionary = new Dictionary<int, Queue<ObjectInstance>> ();
@@ -13,6 +18,30 @@ public class WeaponManager {
     {
         // Init
         this.gameManager = gameManager;
+
+        bulletConfig = new WeaponConfig();
+        //bulletConfig.sounds = GameObject.FindGameObjectWithTag("WeaponSoundsTag").GetComponents<AudioSource>();
+        bulletConfig.damage = 20;
+        bulletConfig.radius = 5;
+
+
+        rocketConfig = new WeaponConfig();
+        //rocketConfig.sounds = GameObject.FindGameObjectWithTag("WeaponSoundsTag").GetComponents<AudioSource>();
+        rocketConfig.radius = 10;
+        rocketConfig.damage = 30;
+
+
+        pelletConfig = new WeaponConfig();
+        //pelletConfig.sounds = GameObject.FindGameObjectWithTag("WeaponSoundsTag").GetComponents<AudioSource>();
+        pelletConfig.damage = 15;
+        pelletConfig.radius = 3;
+
+
+        grenadeConfig = new WeaponConfig();
+        //grenadeConfig.sounds = GameObject.FindGameObjectWithTag("WeaponSoundsTag").GetComponents<AudioSource>();
+        grenadeConfig.damage = 20;
+        grenadeConfig.radius = 15;
+
 
     }
 
@@ -79,7 +108,7 @@ public class WeaponManager {
         }
     }
 
-    public class ObjectInstance{
+    public class ObjectInstance {
 
         ProjectileSynchronizer sync;
         GameObject gameObject;
@@ -97,6 +126,12 @@ public class WeaponManager {
             {
                 hasPoolObjectComponent = true;
                 poolObjectScript = gameObject.GetComponent<PoolObject>();
+            }
+
+            AbsWeaponMover mover = gameObject.GetComponent<AbsWeaponMover>();
+            if (mover != null)
+            {
+                mover.init();
             }
         }
 

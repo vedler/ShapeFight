@@ -113,6 +113,24 @@ public class PlayerFlyingState : AbstractPMovementState
             }
         }*/
 
+        while (commandCache[(byte)PMovementStateHandler.ECommandType.Down].Count > 0)
+        {
+            ICommand baseCommand = commandCache[(byte)PMovementStateHandler.ECommandType.Down].Dequeue();
+            if (baseCommand is MoveCommand)
+            {
+                switch (((MoveCommand)baseCommand).control)
+                {
+                    case EInputControls.JetPack:
+                        if (handler.playerCharacter.getJetpackFuel() >= 3.5)
+                        {
+                            handler.playerCharacter.stopJets();
+                            handler.playerCharacter.fireJets();
+                        }
+                        break;
+                }
+            }
+        }
+
         // Key hold
         while (commandCache[(byte)PMovementStateHandler.ECommandType.Hold].Count > 0)
         {
@@ -125,7 +143,12 @@ public class PlayerFlyingState : AbstractPMovementState
                 {
                     case EInputControls.MoveUp:
 
-                        handler.manipulateGravity(EInputControls.MoveUp, -handler.playerCharacter.verticalDeltaGravity);
+                        //handler.manipulateGravity(EInputControls.MoveUp, -handler.playerCharacter.verticalDeltaGravity);
+                        if (handler.playerCharacter.getJetpackFuel() >= 20)
+                        {
+                            handler.manipulateGravity(EInputControls.MoveUp, -handler.playerCharacter.verticalDeltaGravity);
+                            handler.playerCharacter.burst();
+                        }
                         break;
 
                     case EInputControls.MoveDown:
@@ -141,7 +164,13 @@ public class PlayerFlyingState : AbstractPMovementState
                             return false;
                         }
 
-                        handler.playerCharacter.rigidBody.AddForce(new Vector2(handler.playerCharacter.leftAndRightPower, 0), ForceMode2D.Impulse);
+                        //handler.playerCharacter.rigidBody.AddForce(new Vector2(handler.playerCharacter.leftAndRightPower, 0), ForceMode2D.Impulse);
+                        if (handler.playerCharacter.getJetpackFuel() >= 3.5f)
+                        {
+                            handler.playerCharacter.rigidBody.AddForce(new Vector2(handler.playerCharacter.leftAndRightPower, 0), ForceMode2D.Impulse);
+                            handler.playerCharacter.rotateJetpack(90);
+                        }
+
                         break;
 
                     case EInputControls.MoveLeft:
@@ -152,12 +181,23 @@ public class PlayerFlyingState : AbstractPMovementState
                             return false;
                         }
 
-                        handler.playerCharacter.rigidBody.AddForce(new Vector2(-handler.playerCharacter.leftAndRightPower, 0), ForceMode2D.Impulse);
+                        //handler.playerCharacter.rigidBody.AddForce(new Vector2(-handler.playerCharacter.leftAndRightPower, 0), ForceMode2D.Impulse);
+                        if (handler.playerCharacter.getJetpackFuel() >= 3.5f)
+                        {
+                            handler.playerCharacter.rigidBody.AddForce(new Vector2(-handler.playerCharacter.leftAndRightPower, 0), ForceMode2D.Impulse);
+                            handler.playerCharacter.rotateJetpack(-90);
+                        }
                         break;
 
                     case EInputControls.JetPack:
 
-                        handler.playerCharacter.rigidBody.AddForce(new Vector2(0, handler.playerCharacter.jetPackPower), ForceMode2D.Impulse);
+                        //handler.playerCharacter.rigidBody.AddForce(new Vector2(0, handler.playerCharacter.jetPackPower), ForceMode2D.Impulse);
+                        if (handler.playerCharacter.getJetpackFuel() >= 3.5f)
+                        {
+                            handler.playerCharacter.rotateJetpack();
+                            handler.playerCharacter.rigidBody.AddForce(new Vector2(0, handler.playerCharacter.jetPackPower), ForceMode2D.Impulse);
+                        }
+
                         /*if (!isInJump)
                         {
                             

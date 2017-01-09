@@ -5,7 +5,7 @@ using System;
 public class BulletMover : AbsWeaponMover
 {
     public override void FireMe(Vector2 direction)
-    {
+    { 
         this.direction = direction;
         direction.Normalize();
         // TODO: Initial velocity based on player speed instead of percentage of max speed (player speed + some margin)
@@ -36,8 +36,6 @@ public class BulletMover : AbsWeaponMover
 
     public override void OnObjectReuse()
     {
-        speed = 0.7f;
-        maxSpeed = 50.0f;
     }
 
     [PunRPC]
@@ -48,5 +46,10 @@ public class BulletMover : AbsWeaponMover
         // TODO: Initial velocity based on player speed instead of percentage of max speed (player speed + some margin)
         rigidBody.velocity = direction * (maxSpeed * 0.5f);
         isFired = true;
+    }
+
+    public override void init()
+    {
+        //this.activeConfig = GameManager.getInstance().getWeaponManager().bulletConfig;
     }
 }

@@ -47,4 +47,6 @@ MonoBehaviour:
   - TriggerFireMe
   - TriggerMove
   - SendHandRotation
+  - RemoteSetCharacterColors
+  - RequestCharacterColors
   DisableAutoOpenWizard: 1

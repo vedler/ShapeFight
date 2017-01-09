@@ -17,14 +17,14 @@ public class ProjectileSynchronizer : Photon.MonoBehaviour
     private Vector2 syncEndVelocity = Vector2.zero;
 
     private Rigidbody2D rigidBody;
-    private Collider2D collider;
+    private Collider2D collider2d;
 
     private AbsWeaponMover mover;
 
     void Awake()
     {
         rigidBody = GetComponent<Rigidbody2D>();
-        collider = GetComponent<Collider2D>();
+        collider2d = GetComponent<Collider2D>();
         mover = GetComponent<AbsWeaponMover>();
     }
 
@@ -36,9 +36,9 @@ public class ProjectileSynchronizer : Photon.MonoBehaviour
             rigidBody = GetComponent<Rigidbody2D>();
         }
 
-        if (collider == null)
+        if (collider2d == null)
         {
-            collider = GetComponent<Collider2D>();
+            collider2d = GetComponent<Collider2D>();
         }
 
         // It's our view
@@ -73,9 +73,9 @@ public class ProjectileSynchronizer : Photon.MonoBehaviour
             rigidBody = GetComponent<Rigidbody2D>();
         }
 
-        if (collider == null)
+        if (collider2d == null)
         {
-            collider = GetComponent<Collider2D>();
+            collider2d = GetComponent<Collider2D>();
         }
 
         if (!photonView.isMine)
@@ -95,7 +95,7 @@ public class ProjectileSynchronizer : Photon.MonoBehaviour
         rayDir.Normalize();
 
         // Get diagonal size of the square
-        Vector2 diagVec = collider.bounds.size;
+        Vector2 diagVec = collider2d.bounds.size;
 
         // Layer mask to only detect hits with the map layer
         // TODO: Player layer
@@ -106,7 +106,7 @@ public class ProjectileSynchronizer : Photon.MonoBehaviour
 
         if (Physics.Raycast(transform.position, rayDir, out hit, diagVec.magnitude * 3, layerMask))
         {
-            Vector3 colliderEdgePoint = collider.bounds.ClosestPoint(hit.point);
+            Vector3 colliderEdgePoint = collider2d.bounds.ClosestPoint(hit.point);
             collidingSoon = Vector2.Distance(colliderEdgePoint, transform.position) * 2 >= Vector2.Distance(hit.point, transform.position);
 
             // Calculate the center of the transform

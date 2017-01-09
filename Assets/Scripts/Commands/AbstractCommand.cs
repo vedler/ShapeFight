@@ -111,7 +111,7 @@ class AbstractCommand : ICommand, ISerializable
         return (AbstractCommand)bin.Deserialize(ms);
     }
 
-    public new static byte[] SerializeQueue(object customobject)
+    public static byte[] SerializeQueue(object customobject)
     {
         BinaryFormatter bin = new BinaryFormatter();
 
@@ -129,7 +129,7 @@ class AbstractCommand : ICommand, ISerializable
         return ms.ToArray();
     }
 
-    public new static Queue<AbstractCommand> DeserializeQueue(byte[] bytes)
+    public static Queue<AbstractCommand> DeserializeQueue(byte[] bytes)
     {
         if (bytes.Length == 0)
         {
