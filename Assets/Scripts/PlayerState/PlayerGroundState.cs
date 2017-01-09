@@ -101,6 +101,7 @@ public class PlayerGroundState : AbstractPMovementState
                         if (handler.playerCharacter.getJetpackFuel() >= 3.5)
                         {
                             handler.playerCharacter.rotateJetpack();
+                            handler.playerCharacter.reduceFuel();
                             handler.playerCharacter.rigidBody.AddForce(new Vector2(0, handler.playerCharacter.jetPackPower), ForceMode2D.Impulse);
                         }
 

@@ -12,6 +12,7 @@ TagManager:
   - SoundTriggerTag
   - WeaponSoundsTag
   - PlayerHealthTag
+  - PlayerFuelTag
   layers:
   - Default
   - TransparentFX

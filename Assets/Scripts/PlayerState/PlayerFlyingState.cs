@@ -194,6 +194,7 @@ public class PlayerFlyingState : AbstractPMovementState
                         //handler.playerCharacter.rigidBody.AddForce(new Vector2(0, handler.playerCharacter.jetPackPower), ForceMode2D.Impulse);
                         if (handler.playerCharacter.getJetpackFuel() >= 3.5f)
                         {
+                            handler.playerCharacter.reduceFuel();
                             handler.playerCharacter.rotateJetpack();
                             handler.playerCharacter.rigidBody.AddForce(new Vector2(0, handler.playerCharacter.jetPackPower), ForceMode2D.Impulse);
                         }

@@ -238,7 +238,7 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
 
     private void updateFuelText()
     {
-        fuelText.text = string.Format("Fuel:    {0:0.0%}", jetpackFuel/maxFuel);
+        fuelText.text = string.Format("Fuel:    {0:0.0%}", Mathf.Max(jetpackFuel/maxFuel, 0));
     }
 
     private IEnumerator jetLifeCycle()

@@ -665,7 +665,7 @@ GameObject:
   - 114: {fileID: 508000391}
   m_Layer: 5
   m_Name: Fuel text
-  m_TagString: PlayerHealthTag
+  m_TagString: PlayerFuelTag
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
