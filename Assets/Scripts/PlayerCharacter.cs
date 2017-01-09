@@ -30,6 +30,7 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     private Coroutine jetsFiring;
 
     private float jetpackFuel = 2000;
+    private float maxFuel = 2000;
     private float maxHealth = 100;
 
     [SerializeField]
@@ -54,8 +55,9 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     private PMovementStateHandler movementStateHandler;
 
     private Text healthText;
+    private Text fuelText;
 
-    
+
     void Awake()
     {
         rigidBody = GetComponent<Rigidbody2D>();
@@ -81,6 +83,7 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
             // Register the camera to follow us
             GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CamMovement>().setTarget(gameObject);
             healthText = GameObject.FindGameObjectWithTag("PlayerHealthTag").GetComponent<Text>();
+            fuelText = GameObject.FindGameObjectWithTag("PlayerFuelTag").GetComponent<Text>();
         }
         transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().color = clr;
         transform.GetChild(1).gameObject.GetComponent<ParticleSystem>().startColor = clr;
@@ -215,16 +218,27 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     public void reduceFuel()
     {
         jetpackFuel -= 5f;
+        updateFuelText();
     }
 
     public void reduceFuel(float f)
     {
         jetpackFuel -= f;
+        updateFuelText();
     }
 
     public void restoreFuelABit()
     {
-        jetpackFuel += 7f;
+        if (jetpackFuel < maxFuel)
+        {
+            jetpackFuel = Mathf.Min(jetpackFuel + 7f, maxFuel);
+            updateFuelText();
+        }
+    }
+
+    private void updateFuelText()
+    {
+        fuelText.text = string.Format("Fuel:    {0:0.0%}", jetpackFuel/maxFuel);
     }
 
     private IEnumerator jetLifeCycle()
