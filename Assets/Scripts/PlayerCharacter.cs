@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using UnityEngine.UI;
 
 public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
 
@@ -29,6 +30,8 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     private Coroutine jetsFiring;
 
     private float jetpackFuel = 2000;
+    private float maxFuel = 2000;
+    private float maxHealth = 100;
 
     [SerializeField]
     private float health = 100;
@@ -56,6 +59,9 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     // -------- Networking ----------
     private PlayerSynchronizer synchronizer;
     public long numberOfTicks { get; private set; }
+    private Text healthText;
+    private Text fuelText;
+
 
     void Awake()
     {
@@ -79,6 +85,8 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
 
             // Register the camera to follow us
             GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CamMovement>().setTarget(gameObject);
+            healthText = GameObject.FindGameObjectWithTag("PlayerHealthTag").GetComponent<Text>();
+            fuelText = GameObject.FindGameObjectWithTag("PlayerFuelTag").GetComponent<Text>();
         }
 
         jetpack = transform.GetChild(1).gameObject;
@@ -228,16 +236,27 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     public void reduceFuel()
     {
         jetpackFuel -= 5f;
+        updateFuelText();
     }
 
     public void reduceFuel(float f)
     {
         jetpackFuel -= f;
+        updateFuelText();
     }
 
     public void restoreFuelABit()
     {
-        jetpackFuel += 7f;
+        if (jetpackFuel < maxFuel)
+        {
+            jetpackFuel = Mathf.Min(jetpackFuel + 7f, maxFuel);
+            updateFuelText();
+        }
+    }
+
+    private void updateFuelText()
+    {
+        fuelText.text = string.Format("Fuel:    {0:0.0%}", Mathf.Max(jetpackFuel/maxFuel, 0));
     }
 
     private IEnumerator jetLifeCycle()
@@ -290,6 +309,8 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
         GetComponent<AudioSource>().Play();
         health -= dam;
         StartCoroutine(damageAnim());
+        float ratio = health / maxHealth;
+        healthText.text = string.Format("Health: {0:0.0%}", ratio);
     }
 
     public IEnumerator damageAnim()

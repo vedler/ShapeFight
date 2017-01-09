@@ -13,6 +13,7 @@ public abstract class AbsWeaponMover : Photon.MonoBehaviour, PoolObject, IWeapon
 
     [SerializeField]
     protected WeaponConfig activeConfig;
+    protected Collider2D myCollider;
 
     protected Rigidbody2D rigidBody;
 
@@ -43,12 +44,14 @@ public abstract class AbsWeaponMover : Photon.MonoBehaviour, PoolObject, IWeapon
         sync = GetComponent<ProjectileSynchronizer>();
         rigidBody = GetComponent<Rigidbody2D>();
         //sounds = GameObject.FindGameObjectWithTag("WeaponSoundsTag").GetComponents<AudioSource>();
+        myCollider = GetComponent<Collider2D>();
     }
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
 
     void FixedUpdate()
     {
@@ -60,7 +63,7 @@ public abstract class AbsWeaponMover : Photon.MonoBehaviour, PoolObject, IWeapon
             {
                 Vector2 vel = GetComponent<Rigidbody2D>().velocity;
                 vel.Normalize();
-                GetComponent<Rigidbody2D>().velocity = vel * maxSpeed; 
+                GetComponent<Rigidbody2D>().velocity = vel * maxSpeed;
             }
         }
 
@@ -76,9 +79,9 @@ public abstract class AbsWeaponMover : Photon.MonoBehaviour, PoolObject, IWeapon
         {
             /*if (collider.GetComponent<GrenadeMover>() != null)
                 activeConfig.sounds[2].Play();
-            else if (collider.GetComponent<RocketMover>() != null)
+            else if (myCollider.GetComponent<RocketMover>() != null)
                 activeConfig.sounds[1].Play();
-            else if (collider.GetComponent<PelletMover>() != null)
+            else if (myCollider.GetComponent<PelletMover>() != null)
                 activeConfig.sounds[0].Play();
                 */
             if (activeConfig.sounds.Length > 0)
@@ -94,7 +97,11 @@ public abstract class AbsWeaponMover : Photon.MonoBehaviour, PoolObject, IWeapon
             foreach (PlayerCharacter pc in pcs)
             {
                 if ((pc.transform.position - transform.position).magnitude <= activeConfig.radius)
-                    pc.getHit((1 - (pc.transform.position - transform.position).magnitude / 10) * activeConfig.damage);
+                {
+                    pc.getHit(Mathf.Abs(1 - (pc.transform.position - transform.position).magnitude / activeConfig.radius) * activeConfig.damage);
+                    print("1´- magnitude/radius = "+(1 - (pc.transform.position - transform.position).magnitude / 10));
+                    print("total damage out of " + activeConfig.damage + ": " + Mathf.Abs(1 - (pc.transform.position - transform.position).magnitude / activeConfig.radius) * activeConfig.damage);
+                }
             }
             this.gameObject.SetActive(false);
         }
@@ -105,6 +112,8 @@ public abstract class AbsWeaponMover : Photon.MonoBehaviour, PoolObject, IWeapon
         }
         sync.TriggerExploded(rigidBody.position);
     }
+
+
 
 
     public void SetVelocity(Vector2 velocity)

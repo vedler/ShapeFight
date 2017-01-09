@@ -7,6 +7,7 @@ using UnityEngine;
 public class PlayerWallState : AbstractPMovementState
 {
     private PMovementStateHandler.EWallDirection direction;
+    private static bool jump = true;
 
     public PlayerWallState(PMovementStateHandler handler, PMovementStateHandler.EWallDirection direction) : base(handler)
     {
@@ -100,6 +101,7 @@ public class PlayerWallState : AbstractPMovementState
                 {
                     case EInputControls.Jump:
 
+                        jump = true;
                         if (direction == PMovementStateHandler.EWallDirection.Left)
                         {
                             // Half the jump power facing away from the wall and vertical jump also hindered
@@ -116,6 +118,16 @@ public class PlayerWallState : AbstractPMovementState
                         setNextState(new PlayerFlyingState(handler, true));
                         handler.forceOffWall(direction);
                         return false;
+
+                    case EInputControls.JetPack:
+                        if (handler.playerCharacter.getJetpackFuel() >= 3.5)
+                        {
+
+                            jump = false;
+                            handler.playerCharacter.stopJets();
+                            handler.playerCharacter.fireJets();
+                        }
+                        break;
                 }
             }
         }
@@ -169,6 +181,16 @@ public class PlayerWallState : AbstractPMovementState
                         else if (direction == PMovementStateHandler.EWallDirection.Left)
                         {
                             wasKeyHeld = true;
+                        }
+                        break;
+
+                    case EInputControls.JetPack:
+
+                        if (handler.playerCharacter.getJetpackFuel() >= 3.5)
+                        {
+                            handler.playerCharacter.reduceFuel();
+                            handler.playerCharacter.rotateJetpack();
+                            handler.playerCharacter.rigidBody.AddForce(new Vector2(0, handler.playerCharacter.jetPackPower), ForceMode2D.Impulse);
                         }
                         break;
                 }

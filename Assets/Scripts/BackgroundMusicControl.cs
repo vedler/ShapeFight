@@ -23,6 +23,7 @@ public class BackgroundMusicControl : MonoBehaviour {
         {
             beginGame.TransitionTo(0.1f);
             started = true;
+            GetComponent<Collider2D>().enabled = false;
         }
     }
 }

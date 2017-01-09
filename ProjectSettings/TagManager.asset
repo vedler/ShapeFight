@@ -11,6 +11,8 @@ TagManager:
   - LocalJetpackTag
   - SoundTriggerTag
   - WeaponSoundsTag
+  - PlayerHealthTag
+  - PlayerFuelTag
   layers:
   - Default
   - TransparentFX
