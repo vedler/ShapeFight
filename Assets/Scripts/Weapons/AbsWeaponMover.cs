@@ -2,7 +2,8 @@
 using System.Collections;
 using System;
 
-public abstract class AbsWeaponMover : MonoBehaviour, PoolObject, IWeaponMover {
+public abstract class AbsWeaponMover : MonoBehaviour, PoolObject, IWeaponMover
+{
 
     public float maxSpeed;
     public float cooldownPeriod;
@@ -16,6 +17,7 @@ public abstract class AbsWeaponMover : MonoBehaviour, PoolObject, IWeaponMover {
     protected Vector2 startPosition;
     protected float damage;
     protected float radius;
+    protected Collider2D myCollider;
 
     public abstract void FireMe(Vector2 direction);
 
@@ -31,15 +33,18 @@ public abstract class AbsWeaponMover : MonoBehaviour, PoolObject, IWeaponMover {
     }
 
     // Use this for initialization
-    void Start () {
+    void Start()
+    {
         this.rigidBody = GetComponent<Rigidbody2D>();
         sounds = GameObject.FindGameObjectWithTag("WeaponSoundsTag").GetComponents<AudioSource>();
+        myCollider = GetComponent<Collider2D>();
     }
-	
-	// Update is called once per frame
-	void Update () {
-	
-	}
+
+    // Update is called once per frame
+    void Update()
+    {
+
+    }
 
     void FixedUpdate()
     {
@@ -51,7 +56,7 @@ public abstract class AbsWeaponMover : MonoBehaviour, PoolObject, IWeaponMover {
             {
                 Vector2 vel = GetComponent<Rigidbody2D>().velocity;
                 vel.Normalize();
-                GetComponent<Rigidbody2D>().velocity = vel * maxSpeed; 
+                GetComponent<Rigidbody2D>().velocity = vel * maxSpeed;
             }
         }
 
@@ -63,19 +68,19 @@ public abstract class AbsWeaponMover : MonoBehaviour, PoolObject, IWeaponMover {
 
     void OnTriggerEnter2D(Collider2D collider)
     {
-        if (!CompareTag("SoundTriggerTag"))
+        if (isFired && collider.GetComponent<PelletMover>()==null)
         {
-            if (collider.GetComponent<GrenadeMover>() != null)
+            if (myCollider.GetComponent<GrenadeMover>() != null)
                 sounds[2].Play();
-            else if (collider.GetComponent<RocketMover>() != null)
+            else if (myCollider.GetComponent<RocketMover>() != null)
                 sounds[1].Play();
-            else if (collider.GetComponent<PelletMover>() != null)
+            else if (myCollider.GetComponent<PelletMover>() != null)
                 sounds[0].Play();
 
-            if (collider.gameObject.tag == "LocalPlayerTag" || collider.gameObject.tag == "LocalProjectileTag" || collider.gameObject.tag == "")
-            {
-                return;
-            }
+            //if (myCollider.gameObject.tag == "LocalPlayerTag" || myCollider.gameObject.tag == "LocalProjectileTag" || myCollider.gameObject.tag == "")
+            //{
+            //    return;
+            //}
 
             GameObject explosion = (GameObject)Instantiate(particleSysPrefab, transform.position, particleSysPrefab.transform.rotation);
             Destroy(explosion, explosion.GetComponent<ParticleSystem>().startLifetime * 2);
@@ -88,6 +93,8 @@ public abstract class AbsWeaponMover : MonoBehaviour, PoolObject, IWeaponMover {
             this.gameObject.SetActive(false);
         }
     }
+
+
 
 
     public void SetVelocity(Vector2 velocity)
