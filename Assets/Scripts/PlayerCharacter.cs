@@ -1,6 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 using System;
+using UnityEngine.UI;
 
 public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
 
@@ -29,6 +30,7 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     private Coroutine jetsFiring;
 
     private float jetpackFuel = 2000;
+    private float maxHealth = 100;
 
     [SerializeField]
     private float health = 100;
@@ -50,6 +52,8 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
 
     // -------- State handling ---------
     private PMovementStateHandler movementStateHandler;
+
+    private Text healthText;
 
     
     void Awake()
@@ -76,6 +80,7 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
 
             // Register the camera to follow us
             GameObject.FindGameObjectWithTag("MainCamera").GetComponent<CamMovement>().setTarget(gameObject);
+            healthText = GameObject.FindGameObjectWithTag("PlayerHealthTag").GetComponent<Text>();
         }
         transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().color = clr;
         transform.GetChild(1).gameObject.GetComponent<ParticleSystem>().startColor = clr;
@@ -272,6 +277,8 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
         GetComponent<AudioSource>().Play();
         health -= dam;
         StartCoroutine(damageAnim());
+        float ratio = health / maxHealth;
+        healthText.text = string.Format("Health: {0:0.0%}", ratio);
     }
 
     public IEnumerator damageAnim()

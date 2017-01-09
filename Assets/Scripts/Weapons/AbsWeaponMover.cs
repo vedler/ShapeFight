@@ -88,7 +88,11 @@ public abstract class AbsWeaponMover : MonoBehaviour, PoolObject, IWeaponMover
             foreach (PlayerCharacter pc in pcs)
             {
                 if ((pc.transform.position - transform.position).magnitude <= radius)
-                    pc.getHit((1 - (pc.transform.position - transform.position).magnitude / 10) * damage);
+                {
+                    pc.getHit(Mathf.Abs(1 - (pc.transform.position - transform.position).magnitude / radius) * damage);
+                    print("1´- magnitude/radius = "+(1 - (pc.transform.position - transform.position).magnitude / 10));
+                    print("total damage out of " + damage + ": " + Mathf.Abs(1 - (pc.transform.position - transform.position).magnitude / radius) * damage);
+                }
             }
             this.gameObject.SetActive(false);
         }

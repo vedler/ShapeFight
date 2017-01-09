@@ -89,7 +89,6 @@ MonoBehaviour:
   cooldownPeriod: 1.5
   particleSysPrefab: {fileID: 1000011581375342, guid: 447d81045a6c3024597f7edd240179fc,
     type: 2}
-  sounds: {fileID: 1000012394951508, guid: 9ea4d59db38315b4089e34be956f0684, type: 2}
 --- !u!212 &212000011557326338
 SpriteRenderer:
   m_ObjectHideFlags: 1
