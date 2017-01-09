@@ -6,6 +6,9 @@ using UnityEngine;
 
 public class PlayerGroundState : AbstractPMovementState
 {
+
+    private static bool jump = true;
+
     public PlayerGroundState(PMovementStateHandler handler) : base(handler)
     {
     }
@@ -50,7 +53,7 @@ public class PlayerGroundState : AbstractPMovementState
                 {
                     case EInputControls.Jump:
                         handler.playerCharacter.rigidBody.AddForce(new Vector2(0, handler.playerCharacter.jumpPower), ForceMode2D.Impulse);
-
+                        jump = true;
                         // Tell the state handler we want to switch states now
                         setNextState(new PlayerFlyingState(handler, true));
                         handler.forceOffGround();
@@ -59,6 +62,8 @@ public class PlayerGroundState : AbstractPMovementState
                     case EInputControls.JetPack:
                         if (handler.playerCharacter.getJetpackFuel() >= 3.5)
                         {
+                            jump = false;
+                            setNextState(new PlayerFlyingState(handler, true));
                             handler.playerCharacter.stopJets();
                             handler.playerCharacter.fireJets();
                         }

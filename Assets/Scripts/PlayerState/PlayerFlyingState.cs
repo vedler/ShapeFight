@@ -7,6 +7,7 @@ using UnityEngine;
 public class PlayerFlyingState : AbstractPMovementState
 {
     private bool isInJump;
+    private static bool jump = true;
     private bool skipCheckingJumpFirstUpdate;
 
     public PlayerFlyingState(PMovementStateHandler handler, bool isInJump) : base(handler)
@@ -123,9 +124,14 @@ public class PlayerFlyingState : AbstractPMovementState
                     case EInputControls.JetPack:
                         if (handler.playerCharacter.getJetpackFuel() >= 3.5)
                         {
+                            jump = false;
                             handler.playerCharacter.stopJets();
                             handler.playerCharacter.fireJets();
                         }
+                        break;
+
+                    case EInputControls.Jump:
+                        jump = true;
                         break;
                 }
             }
@@ -144,7 +150,7 @@ public class PlayerFlyingState : AbstractPMovementState
                     case EInputControls.MoveUp:
 
                         //handler.manipulateGravity(EInputControls.MoveUp, -handler.playerCharacter.verticalDeltaGravity);
-                        if (handler.playerCharacter.getJetpackFuel() >= 20)
+                        if (!jump && handler.playerCharacter.getJetpackFuel() >= 20)
                         {
                             handler.manipulateGravity(EInputControls.MoveUp, -handler.playerCharacter.verticalDeltaGravity);
                             handler.playerCharacter.burst();
@@ -165,7 +171,7 @@ public class PlayerFlyingState : AbstractPMovementState
                         }
 
                         //handler.playerCharacter.rigidBody.AddForce(new Vector2(handler.playerCharacter.leftAndRightPower, 0), ForceMode2D.Impulse);
-                        if (handler.playerCharacter.getJetpackFuel() >= 3.5f)
+                        if (!jump && handler.playerCharacter.getJetpackFuel() >= 3.5f)
                         {
                             handler.playerCharacter.rigidBody.AddForce(new Vector2(handler.playerCharacter.leftAndRightPower, 0), ForceMode2D.Impulse);
                             handler.playerCharacter.rotateJetpack(90);
@@ -182,7 +188,7 @@ public class PlayerFlyingState : AbstractPMovementState
                         }
 
                         //handler.playerCharacter.rigidBody.AddForce(new Vector2(-handler.playerCharacter.leftAndRightPower, 0), ForceMode2D.Impulse);
-                        if (handler.playerCharacter.getJetpackFuel() >= 3.5f)
+                        if (!jump && handler.playerCharacter.getJetpackFuel() >= 3.5f)
                         {
                             handler.playerCharacter.rigidBody.AddForce(new Vector2(-handler.playerCharacter.leftAndRightPower, 0), ForceMode2D.Impulse);
                             handler.playerCharacter.rotateJetpack(-90);
