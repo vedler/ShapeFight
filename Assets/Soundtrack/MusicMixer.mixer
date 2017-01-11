@@ -11,6 +11,7 @@ AudioMixerController:
   m_Snapshots:
   - {fileID: 24500003}
   - {fileID: 245000012894144974}
+  - {fileID: 245000014257182094}
   m_StartSnapshot: {fileID: 24500003}
   m_SuspendThreshold: -80
   m_EnableSuspend: 1
@@ -20,6 +21,7 @@ AudioMixerController:
   - guids:
     - 17b5637118eecd64aba1cc3d0436c969
     - 31090fb08fff19b48a5cf1594addec2a
+    - 7892294344b73e342afa11bdd55b9dec
     name: View
   m_CurrentViewIndex: 0
   m_TargetSnapshot: {fileID: 245000012894144974}
@@ -33,6 +35,7 @@ AudioMixerGroupController:
   m_GroupID: 17b5637118eecd64aba1cc3d0436c969
   m_Children:
   - {fileID: 243000011273204774}
+  - {fileID: 243000012022352764}
   m_Volume: 9345c6156275590459dc99a258d48081
   m_Pitch: 27f67c04f27399947950554a1539a94c
   m_Effects:
@@ -65,6 +68,7 @@ AudioMixerSnapshotController:
   m_FloatValues:
     9345c6156275590459dc99a258d48081: -9.833286
     754526a8fff927f4b94fe74ba0c3c17b: -80
+    b54e9b8c4268f8f4da89cb3b71c7a0df: -80
   m_TransitionOverrides: {}
 --- !u!243 &243000011273204774
 AudioMixerGroupController:
@@ -83,6 +87,36 @@ AudioMixerGroupController:
   m_Mute: 0
   m_Solo: 0
   m_BypassEffects: 0
+--- !u!243 &243000012022352764
+AudioMixerGroupController:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: BG Song2
+  m_AudioMixer: {fileID: 24100000}
+  m_GroupID: 7892294344b73e342afa11bdd55b9dec
+  m_Children: []
+  m_Volume: b54e9b8c4268f8f4da89cb3b71c7a0df
+  m_Pitch: 907474a69791e5d4f9712ef1127371bc
+  m_Effects:
+  - {fileID: 244000011666746396}
+  m_UserColorIndex: 0
+  m_Mute: 0
+  m_Solo: 0
+  m_BypassEffects: 0
+--- !u!244 &244000011666746396
+AudioMixerEffectController:
+  m_ObjectHideFlags: 3
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: 
+  m_EffectID: 796676e9211f6f04db3e6c3b52e06b85
+  m_EffectName: Attenuation
+  m_MixLevel: 719f6871f2a4e834eb73175cc06653a7
+  m_Parameters: []
+  m_SendTarget: {fileID: 0}
+  m_EnableWetMix: 0
+  m_Bypass: 0
 --- !u!244 &244000013933495888
 AudioMixerEffectController:
   m_ObjectHideFlags: 3
@@ -106,5 +140,19 @@ AudioMixerSnapshotController:
   m_SnapshotID: 869d098fe5c9e73418fe7f5f9bb1cc2d
   m_FloatValues:
     9345c6156275590459dc99a258d48081: -9.833286
-    754526a8fff927f4b94fe74ba0c3c17b: -10.4748535
+    754526a8fff927f4b94fe74ba0c3c17b: -7.1014667
+    b54e9b8c4268f8f4da89cb3b71c7a0df: -80
+  m_TransitionOverrides: {}
+--- !u!245 &245000014257182094
+AudioMixerSnapshotController:
+  m_ObjectHideFlags: 0
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 0}
+  m_Name: BeginGame2
+  m_AudioMixer: {fileID: 24100000}
+  m_SnapshotID: f3ff7490f3236e845976b2cc36d1ebcb
+  m_FloatValues:
+    9345c6156275590459dc99a258d48081: -9.833286
+    754526a8fff927f4b94fe74ba0c3c17b: -80
+    b54e9b8c4268f8f4da89cb3b71c7a0df: -6.556618
   m_TransitionOverrides: {}
