@@ -143,8 +143,8 @@ public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
         //weaponManager.CreatePool(weaponSelectionManager.getMainWeapon(), 20);
         //weaponManager.CreatePool(weaponSelectionManager.getAltWeapon(), 20);
 
-        weaponManager.CreateNetworkPool(weaponSelectionManager.mainWeaponName, 20);
-        weaponManager.CreateNetworkPool(weaponSelectionManager.altWeaponName, 20);
+        weaponManager.CreateNetworkPool(weaponSelectionManager.mainWeaponName, 40);
+        weaponManager.CreateNetworkPool(weaponSelectionManager.altWeaponName, 40);
 
         // If view is ours, attach us to the input manager
         if (photonView.isMine)

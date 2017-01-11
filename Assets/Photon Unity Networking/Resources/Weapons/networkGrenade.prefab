@@ -115,12 +115,13 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   maxSpeed: 50
   activeConfig:
-    cooldownPeriod: 0
+    cooldownPeriod: 1
     particleSysPrefab: {fileID: 1000011581375342, guid: 9b30324a1ee4ee84f815fdceec8f8d60,
       type: 2}
     sounds: []
-    damage: 0
-    radius: 0
+    damage: 100
+    radius: 8
+    explosionFalloffModifier: 2
   sync: {fileID: 0}
 --- !u!114 &114000011491279142
 MonoBehaviour:

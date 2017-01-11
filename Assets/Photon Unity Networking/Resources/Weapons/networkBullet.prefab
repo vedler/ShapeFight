@@ -162,15 +162,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 0412624822518804ab97458a114f3bda, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeed: 40
+  maxSpeed: 80
   activeConfig:
-    cooldownPeriod: 0
+    cooldownPeriod: 0.2
     particleSysPrefab: {fileID: 1000011581375342, guid: c4dae3fd4e3ffce4fa8d5c03898dd283,
       type: 2}
     sounds:
     - {fileID: 82000010465227896}
-    damage: 0
+    damage: 20
     radius: 0
+    explosionFalloffModifier: 0
   sync: {fileID: 0}
 --- !u!114 &114000011098039142
 MonoBehaviour:
