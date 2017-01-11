@@ -62,10 +62,6 @@ public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
 
                     if(weaponSelectionManager.getMainWeaponName() == "Weapons/networkPellet")
                     {
-                        myPos = new Vector2(
-                        hand.transform.position.x + Mathf.Sign(direction.x) * (Mathf.Abs(direction.x) + 1) + (-.5f) * Math.Abs(playerVelocity.x),
-                        hand.transform.position.y + direction.y + playerVelocity.y
-);
                         shootPellets(myPos, rotation, targetPos, handPos, direction);
                         
                     }
@@ -91,9 +87,6 @@ public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
                     //weaponSelectionManager.getAltWeapon().GetComponent<AbsWeaponMover>().SetStartPosition(myPos);
                     if (weaponSelectionManager.getAltWeaponName() == "Weapons/networkPellet")
                     {
-                        myPos = new Vector2(
-                        hand.transform.position.x + Mathf.Sign(direction.x) * (Mathf.Abs(direction.x) + 1) + (-.5f) * Math.Abs(playerVelocity.x),
-                        hand.transform.position.y + direction.y + playerVelocity.y);
                         shootPellets(myPos, rotation, targetPos, handPos, direction);
                     }
                     else
@@ -192,17 +185,13 @@ public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
         switch (name)
         {
             case "Weapons/networkRocket":
-                return null;
-                //return GameManager.getInstance().getNetworkManager().rocketPrefab.GetComponent<AbsWeaponMover>().activeConfig;
+                return GameManager.getInstance().getNetworkManager().rocketPrefab.GetComponent<AbsWeaponMover>().activeConfig;
             case "Weapons/networkBullet":
-                return null;
-                //return GameManager.getInstance().getNetworkManager().bulletPrefab.GetComponent<AbsWeaponMover>().activeConfig;
+                return GameManager.getInstance().getNetworkManager().bulletPrefab.GetComponent<AbsWeaponMover>().activeConfig;
             case "Weapons/networkPellet":
-                return null;
-                //return GameManager.getInstance().getNetworkManager().pelletPrefab.GetComponent<AbsWeaponMover>().activeConfig;
+                return GameManager.getInstance().getNetworkManager().pelletPrefab.GetComponent<AbsWeaponMover>().activeConfig;
             case "Weapons/networkGrenade":
-                return null;
-                //return GameManager.getInstance().getNetworkManager().grenadePrefab.GetComponent<AbsWeaponMover>().activeConfig;
+                return GameManager.getInstance().getNetworkManager().grenadePrefab.GetComponent<AbsWeaponMover>().activeConfig;
         }
 
         return null;
