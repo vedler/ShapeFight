@@ -64,6 +64,7 @@ public class PlayerGroundState : AbstractPMovementState
                         {
                             jump = false;
                             setNextState(new PlayerFlyingState(handler, true));
+                            // TODO: Force off ground?
                             handler.playerCharacter.stopJets();
                             handler.playerCharacter.fireJets();
                         }

@@ -88,8 +88,8 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
             healthText = GameObject.FindGameObjectWithTag("PlayerHealthTag").GetComponent<Text>();
             fuelText = GameObject.FindGameObjectWithTag("PlayerFuelTag").GetComponent<Text>();
         }
-        else
-            SetCharacterColors();
+        //else
+        //    SetCharacterColors();
 
         jetpack = transform.GetChild(1).gameObject;
         transform.GetChild(1).gameObject.GetComponent<ParticleSystem>().Stop();
@@ -177,20 +177,10 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     void FixedUpdate()
     {
         numberOfTicks++;
-
-        if (wasMine && !(PhotonNetwork.isMasterClient))
-        {
-            //synchronizer.sendInputData();
-        }
-
+        
         // Delegate to movementStateHandler
         movementStateHandler.FixedUpdate();
-
-        if (wasMine && !(PhotonNetwork.isMasterClient))
-        {
-            //synchronizer.sendInputData();
-        }
-
+        
         if (rigidBody.velocity.magnitude > maxMoveSpeed)
         {
             rigidBody.velocity = rigidBody.velocity.normalized * maxMoveSpeed;
@@ -238,13 +228,19 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     public void reduceFuel()
     {
         jetpackFuel -= 5f;
-        updateFuelText();
+        if (wasMine)
+        {
+            updateFuelText();
+        }
     }
 
     public void reduceFuel(float f)
     {
         jetpackFuel -= f;
-        updateFuelText();
+        if (wasMine)
+        {
+            updateFuelText();
+        }
     }
 
     public void restoreFuelABit()
@@ -252,7 +248,11 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
         if (jetpackFuel < maxFuel)
         {
             jetpackFuel = Mathf.Min(jetpackFuel + 7f, maxFuel);
-            updateFuelText();
+
+            if (wasMine)
+            {
+                updateFuelText();
+            }
         }
     }
 

@@ -46,6 +46,8 @@ public class PMovementStateHandler
     private float pressedJumpTimer;
     private float forceDisablePressedJumpTimer;
 
+    private bool jetpackUsedThisFrame;
+
     public enum EWallDirection : byte
     {
         Left = 0,
@@ -107,6 +109,8 @@ public class PMovementStateHandler
 
         currentGravityScale = playerCharacter.defaultGravityScale;
         grvManipulatorsThisFrame = new Dictionary<EInputControls, float>();
+
+        jetpackUsedThisFrame = false;
     }
 
     public void FixedUpdate()
@@ -345,5 +349,20 @@ public class PMovementStateHandler
         }
 
         return pressedJumpTimer + Time.fixedDeltaTime > Time.fixedTime;
+    }
+
+    public void lateHandleJetpackUsage()
+    {
+
+    }
+
+    public void setJetpackUsedThisFrame()
+    {
+        jetpackUsedThisFrame = true;
+    }
+
+    public void resetJetpackUsage()
+    {
+        jetpackUsedThisFrame = false;
     }
 }

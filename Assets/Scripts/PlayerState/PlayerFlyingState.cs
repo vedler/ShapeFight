@@ -49,71 +49,7 @@ public class PlayerFlyingState : AbstractPMovementState
 
         // Check if player is still holding the jump button (keyUp might have been eaten already)
         // Also make sure this isn't the first frame, where we probably have already eaten the jump press
-
-        /*if (isInJump)
-        {
-            foreach (MoveCommand comm in commandCache[PMovementStateHandler.ECommandType.Up])
-            {
-                bool isStillHoldingJump = false;
-                if (comm.control == EInputControls.Jump)
-                {
-                    isStillHoldingJump = true;
-                    break;
-                }
-
-                if (!isStillHoldingJump)
-                {
-                    handler.forceNotInJump();
-                    isInJump = false;
-                }
-            }
-        }
-
-        if (isInJump && !skipCheckingJumpFirstUpdate)
-        {
-            bool isStillHoldingJump = false;
-
-            foreach (MoveCommand comm in commandCache[PMovementStateHandler.ECommandType.Hold])
-            {
-                if (comm.control == EInputControls.Jump)
-                {
-                    isStillHoldingJump = true;
-                    handler.setIsInJump();
-                    break;
-                }
-            }
-
-            if (!isStillHoldingJump)
-            {
-                isInJump = false;
-                MonoBehaviour.print("Release jump1");
-            }
-        }
-        else if (isInJump && skipCheckingJumpFirstUpdate)
-        {
-            // We are past the first update
-            skipCheckingJumpFirstUpdate = false;
-
-            bool isStillHoldingJump = false;
-
-            // Also check key up just to make sure (only the first frame)
-            foreach (MoveCommand comm in commandCache[PMovementStateHandler.ECommandType.Up])
-            {
-                if (comm.control == EInputControls.Jump)
-                {
-                    isStillHoldingJump = true;
-                    handler.setIsInJump();
-                    break;
-                }
-            }
-
-            if (!isStillHoldingJump)
-            {
-                isInJump = false;
-                MonoBehaviour.print("Release jump2");
-            }
-        }*/
-
+        
         while (commandCache[(byte)PMovementStateHandler.ECommandType.Down].Count > 0)
         {
             ICommand baseCommand = commandCache[(byte)PMovementStateHandler.ECommandType.Down].Dequeue();

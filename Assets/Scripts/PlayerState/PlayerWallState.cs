@@ -118,16 +118,6 @@ public class PlayerWallState : AbstractPMovementState
                         setNextState(new PlayerFlyingState(handler, true));
                         handler.forceOffWall(direction);
                         return false;
-
-                    case EInputControls.JetPack:
-                        if (handler.playerCharacter.getJetpackFuel() >= 3.5)
-                        {
-
-                            jump = false;
-                            handler.playerCharacter.stopJets();
-                            handler.playerCharacter.fireJets();
-                        }
-                        break;
                 }
             }
         }
