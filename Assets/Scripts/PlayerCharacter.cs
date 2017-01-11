@@ -27,7 +27,7 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     [SerializeField]
     public GameObject jetpack;
 
-    private Coroutine jetsFiring;
+    private Coroutine jetsFiring = null;
 
     private float jetpackFuel = 2000;
     private float maxFuel = 2000;
@@ -329,7 +329,6 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
         {
             return;
         }
-
         //PlayerGroundState.nullifySoundCount();
         jetpack.GetComponent<ParticleSystem>().Play();
         
@@ -339,7 +338,10 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     public void stopJets()
     {
         if (jetsFiring != null)
+        {
             StopCoroutine(jetsFiring);
+            jetsFiring = null;
+        }
         jetpack.GetComponent<ParticleSystem>().Stop();
     }
 
