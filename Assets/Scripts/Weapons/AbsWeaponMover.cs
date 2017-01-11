@@ -88,6 +88,11 @@ public abstract class AbsWeaponMover : Photon.MonoBehaviour, PoolObject, IWeapon
                 activeConfig.sounds[0].Play();
             }
 
+            if (collider.name.Contains("Pellet"))
+            {
+                return;
+            }
+
             GameObject explosion = (GameObject)Instantiate(activeConfig.particleSysPrefab, 
                 transform.position, 
                 activeConfig.particleSysPrefab.transform.rotation);

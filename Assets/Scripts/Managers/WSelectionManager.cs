@@ -53,8 +53,8 @@ public class WSelectionManager {
         this.gameManager = gameManager;
         //weapons = Resources.LoadAll<GameObject>("Photon Unity Networking/Resources/Weapons");
 
-        mainWeaponName = "Weapons/networkGrenade";
-        altWeaponName = "Weapons/networkPellet";
+        mainWeaponName = "Weapons/networkPellet";
+        altWeaponName = "Weapons/networkGrenade";
 
         //mainWeapon = PhotonNetwork.Instantiate("Weapons/networkRocket", new Vector3(0, 0, 0), new Quaternion(), 0);
         //altWeapon = PhotonNetwork.Instantiate("Weapons/networkBullet", new Vector3(0, 0, 0), new Quaternion(), 0);

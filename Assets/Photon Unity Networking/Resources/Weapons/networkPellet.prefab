@@ -23,6 +23,8 @@ GameObject:
   - 50: {fileID: 50000010873206218}
   - 61: {fileID: 61000013677696666}
   - 114: {fileID: 114000010660342098}
+  - 114: {fileID: 114000013424049778}
+  - 114: {fileID: 114000011092557132}
   m_Layer: 0
   m_Name: networkPellet
   m_TagString: LocalProjectileTag
@@ -85,7 +87,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: c3f27c47221d95748bed4e6ce769ae48, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeed: 0
+  maxSpeed: 50
   activeConfig:
     cooldownPeriod: 0
     particleSysPrefab: {fileID: 1000011581375342, guid: 447d81045a6c3024597f7edd240179fc,
@@ -94,6 +96,43 @@ MonoBehaviour:
     damage: 0
     radius: 0
   sync: {fileID: 0}
+--- !u!114 &114000011092557132
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000014059297756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab09a0806ae85e5498fd6f4bb92605a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+--- !u!114 &114000013424049778
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000014059297756}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ownerId: 0
+  group: 0
+  OwnerShipWasTransfered: 0
+  prefixBackup: -1
+  observed: {fileID: 0}
+  synchronization: 3
+  onSerializeTransformOption: 3
+  onSerializeRigidBodyOption: 2
+  ownershipTransfer: 0
+  ObservedComponents:
+  - {fileID: 114000011092557132}
+  ObservedComponentsFoldoutOpen: 1
+  viewIdField: 0
+  instantiationId: -1
+  isRuntimeInstantiated: 0
 --- !u!212 &212000014185873810
 SpriteRenderer:
   m_ObjectHideFlags: 1

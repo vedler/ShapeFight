@@ -62,7 +62,12 @@ public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
 
                     if(weaponSelectionManager.getMainWeaponName() == "Weapons/networkPellet")
                     {
+                        myPos = new Vector2(
+                        hand.transform.position.x + Mathf.Sign(direction.x) * (Mathf.Abs(direction.x) + 1) + (-.5f) * Math.Abs(playerVelocity.x),
+                        hand.transform.position.y + direction.y + playerVelocity.y
+);
                         shootPellets(myPos, rotation, targetPos, handPos, direction);
+                        
                     }
                     else
                     {
@@ -70,7 +75,9 @@ public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
                     }
 
                     //Set cooldown
-                    timeStampMain = Time.time + FindConfig(weaponSelectionManager.altWeaponName).cooldownPeriod;
+                    timeStampMain = Time.time + FindConfig(weaponSelectionManager
+                        .mainWeaponName)
+                        .cooldownPeriod;
                     break;
                     
                 case EInputControls.ShootAlt:
@@ -84,6 +91,9 @@ public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
                     //weaponSelectionManager.getAltWeapon().GetComponent<AbsWeaponMover>().SetStartPosition(myPos);
                     if (weaponSelectionManager.getAltWeaponName() == "Weapons/networkPellet")
                     {
+                        myPos = new Vector2(
+                        hand.transform.position.x + Mathf.Sign(direction.x) * (Mathf.Abs(direction.x) + 1) + (-.5f) * Math.Abs(playerVelocity.x),
+                        hand.transform.position.y + direction.y + playerVelocity.y);
                         shootPellets(myPos, rotation, targetPos, handPos, direction);
                     }
                     else
@@ -92,7 +102,10 @@ public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
                     }
 
                     //Set cooldown
-                    timeStampAlt = Time.time + FindConfig(weaponSelectionManager.altWeaponName).cooldownPeriod;
+
+                    timeStampAlt = Time.time + FindConfig(weaponSelectionManager
+                        .altWeaponName)
+                        .cooldownPeriod;
                     break;
             }
         }
@@ -162,7 +175,15 @@ public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
             direction = targetPos - handPos;
             direction.Normalize();
             //weaponManager.ReuseObject(weaponSelectionManager.getMainWeapon(), myPos, rotation, direction);
-            weaponManager.ReuseNetworkObject(weaponSelectionManager.mainWeaponName, myPos, rotation, direction);
+            if (weaponSelectionManager.getMainWeaponName() == "Weapons/networkPellet")
+            {
+                weaponManager.ReuseNetworkObject(weaponSelectionManager.mainWeaponName, myPos, rotation, direction);
+            }
+            else if (weaponSelectionManager.getAltWeaponName() == "Weapons/networkPellet")
+            {
+                weaponManager.ReuseNetworkObject(weaponSelectionManager.altWeaponName, myPos, rotation, direction);
+            }
+            
         }
     }
 
@@ -171,11 +192,17 @@ public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
         switch (name)
         {
             case "Weapons/networkRocket":
-                return weaponManager.rocketConfig;
+                return null;
+                //return GameManager.getInstance().getNetworkManager().rocketPrefab.GetComponent<AbsWeaponMover>().activeConfig;
             case "Weapons/networkBullet":
-                return weaponManager.bulletConfig;
+                return null;
+                //return GameManager.getInstance().getNetworkManager().bulletPrefab.GetComponent<AbsWeaponMover>().activeConfig;
             case "Weapons/networkPellet":
-                return weaponManager.pelletConfig;
+                return null;
+                //return GameManager.getInstance().getNetworkManager().pelletPrefab.GetComponent<AbsWeaponMover>().activeConfig;
+            case "Weapons/networkGrenade":
+                return null;
+                //return GameManager.getInstance().getNetworkManager().grenadePrefab.GetComponent<AbsWeaponMover>().activeConfig;
         }
 
         return null;

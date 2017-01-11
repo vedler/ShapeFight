@@ -10,6 +10,12 @@ public class NetworkManager : Photon.MonoBehaviour {
     public GameObject localPlayerObject { get; private set; }
     public PlayerCharacter localPlayerCharacter { get; private set; }
 
+    [SerializeField]
+    public GameObject bulletPrefab;
+    public GameObject rocketPrefab;
+    public GameObject grenadePrefab;
+    public GameObject pelletPrefab;
+
     // Use this for initialization
     void Start () {
         PhotonNetwork.ConnectUsingSettings("0.1a");

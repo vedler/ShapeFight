@@ -23,6 +23,8 @@ GameObject:
   - 50: {fileID: 50000012505234346}
   - 61: {fileID: 61000014178854790}
   - 114: {fileID: 114000011393133606}
+  - 114: {fileID: 114000011194054778}
+  - 114: {fileID: 114000011491279142}
   m_Layer: 0
   m_Name: networkGrenade
   m_TagString: LocalProjectileTag
@@ -74,6 +76,32 @@ BoxCollider2D:
   m_Offset: {x: 0, y: 0}
   serializedVersion: 2
   m_Size: {x: 0.15, y: 0.15}
+--- !u!114 &114000011194054778
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011618418256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: aa584fbee541324448dd18d8409c7a41, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  ownerId: 0
+  group: 0
+  OwnerShipWasTransfered: 0
+  prefixBackup: -1
+  observed: {fileID: 0}
+  synchronization: 3
+  onSerializeTransformOption: 3
+  onSerializeRigidBodyOption: 2
+  ownershipTransfer: 0
+  ObservedComponents:
+  - {fileID: 114000011491279142}
+  ObservedComponentsFoldoutOpen: 1
+  viewIdField: 0
+  instantiationId: -1
+  isRuntimeInstantiated: 0
 --- !u!114 &114000011393133606
 MonoBehaviour:
   m_ObjectHideFlags: 1
@@ -85,7 +113,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 1310924c197dbf44c8e6035f44356381, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeed: 0
+  maxSpeed: 50
   activeConfig:
     cooldownPeriod: 0
     particleSysPrefab: {fileID: 1000011581375342, guid: 9b30324a1ee4ee84f815fdceec8f8d60,
@@ -94,6 +122,17 @@ MonoBehaviour:
     damage: 0
     radius: 0
   sync: {fileID: 0}
+--- !u!114 &114000011491279142
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1000011618418256}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: ab09a0806ae85e5498fd6f4bb92605a3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!212 &212000014095996986
 SpriteRenderer:
   m_ObjectHideFlags: 1
