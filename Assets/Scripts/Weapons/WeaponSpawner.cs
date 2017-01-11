@@ -39,8 +39,6 @@ public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
 
             float sin = direction.y / direction.magnitude, cos = Mathf.Abs(direction.x / direction.magnitude);
 
-            print(playerVelocity);
-
             Vector2 myPos = new Vector2(
                         hand.transform.position.x + Mathf.Sign(direction.x) * ( 2f * Mathf.Abs(cos) + 0.5f * (Math.Min(Math.Abs(playerVelocity.x), 2))), //( 1.5f + .5f * Math.Abs(playerVelocity.x)),
                         hand.transform.position.y + Mathf.Sign(direction.y) * ( 2f * Mathf.Abs(sin) + 0.5f * (Math.Min(Math.Abs(playerVelocity.y), 2)))

@@ -12,7 +12,8 @@ public abstract class AbsWeaponMover : Photon.MonoBehaviour, PoolObject, IWeapon
     protected Vector2 startPosition;
 
     [SerializeField]
-    protected WeaponConfig activeConfig;
+    public WeaponConfig activeConfig;
+
     protected Collider2D myCollider;
 
     protected Rigidbody2D rigidBody;
@@ -77,13 +78,11 @@ public abstract class AbsWeaponMover : Photon.MonoBehaviour, PoolObject, IWeapon
     {
         if (!CompareTag("SoundTriggerTag") && isFired)
         {
-            /*if (collider.GetComponent<GrenadeMover>() != null)
-                activeConfig.sounds[2].Play();
-            else if (myCollider.GetComponent<RocketMover>() != null)
-                activeConfig.sounds[1].Play();
-            else if (myCollider.GetComponent<PelletMover>() != null)
-                activeConfig.sounds[0].Play();
-                */
+            if (collider.gameObject.tag == "LocalProjectileTag" || collider.gameObject.tag == "")
+            {
+                return;
+            }
+
             if (activeConfig.sounds.Length > 0)
             {
                 activeConfig.sounds[0].Play();
@@ -93,7 +92,7 @@ public abstract class AbsWeaponMover : Photon.MonoBehaviour, PoolObject, IWeapon
                 transform.position, 
                 activeConfig.particleSysPrefab.transform.rotation);
             Destroy(explosion, explosion.GetComponent<ParticleSystem>().startLifetime * 2);
-            PlayerCharacter[] pcs = FindObjectsOfType<PlayerCharacter>();
+            /*PlayerCharacter[] pcs = FindObjectsOfType<PlayerCharacter>();
             foreach (PlayerCharacter pc in pcs)
             {
                 if ((pc.transform.position - transform.position).magnitude <= activeConfig.radius)
@@ -102,19 +101,34 @@ public abstract class AbsWeaponMover : Photon.MonoBehaviour, PoolObject, IWeapon
                     print("1´- magnitude/radius = "+(1 - (pc.transform.position - transform.position).magnitude / 10));
                     print("total damage out of " + activeConfig.damage + ": " + Mathf.Abs(1 - (pc.transform.position - transform.position).magnitude / activeConfig.radius) * activeConfig.damage);
                 }
-            }
+            }*/
             this.gameObject.SetActive(false);
         }
         
-        if (collider.gameObject.tag == "LocalPlayerTag" || collider.gameObject.tag == "LocalProjectileTag" || collider.gameObject.tag == "")
+        if (collider.gameObject.tag == "LocalPlayerTag")
+        {
+            PhotonView otherView = collider.gameObject.GetComponent<PhotonView>();
+
+            if (otherView != null)
+            {
+                sync.TriggerProjectileHit(rigidBody.position, otherView.ownerId);
+            }
+            else
+            {
+                sync.TriggerProjectileHit(rigidBody.position, -1);
+            }
+
+            return;
+        }
+
+        if (collider.gameObject.tag == "LocalProjectileTag" || collider.gameObject.tag == "")
         {
             return;
         }
-        sync.TriggerExploded(rigidBody.position);
+
+        sync.TriggerProjectileHit(rigidBody.position, -1);
     }
-
-
-
+    
 
     public void SetVelocity(Vector2 velocity)
     {

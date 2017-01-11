@@ -381,7 +381,6 @@ public class PMovementStateHandler
         if (failed)
         {
             playerCharacter.stopJets();
-
             return;
         }
         

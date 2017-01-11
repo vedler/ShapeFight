@@ -372,6 +372,21 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
         StartCoroutine(damageAnim());
         float ratio = health / maxHealth;
         healthText.text = string.Format("Health: {0:0.0%}", ratio);
+        photonView.RPC("RemoteUpdateHealth", PhotonTargets.All, health);
+        photonView.RPC("RemoteTriggerHitAnim", PhotonTargets.All);
+    }
+
+    [PunRPC]
+    public void RemoteUpdateHealth(float hp, PhotonMessageInfo info)
+    {
+        health = hp;
+    }
+    
+    [PunRPC]
+    public void RemoteTriggerHitAnim(PhotonMessageInfo info)
+    {
+        GetComponent<AudioSource>().Play();
+        StartCoroutine(damageAnim());
     }
 
     public IEnumerator damageAnim()
@@ -394,12 +409,12 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
         SetCharacterColors(new Color(r, g, b, a));
     }
 
-    [PunRPC]
+    /*[PunRPC]
     public void RequestCharacterColors(float r, float g, float b, float a, PhotonMessageInfo info)
     {
         SetCharacterColors(new Color(r, g, b, a));
         //photonView.RPC("RemoteSetCharacterColors", PhotonTargets., clr.r, clr.g, clr.b, clr.a);
-    }
+    }*/
 
     public void SetCharacterColors(Color color)
     {
@@ -414,6 +429,50 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
         GetComponent<SpriteRenderer>().color = clr;
         transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().color = clr;
         transform.GetChild(1).gameObject.GetComponent<ParticleSystem>().startColor = clr;
+    }
+
+    public void handleRemoteHit(Vector2 position, WeaponConfig weapon, int otherId)
+    {
+        float damage = 0;
+
+        // Direct hit on me
+        if (otherId == photonView.ownerId)
+        {
+            print("DIRECT HIT, DMG: " + weapon.damage);
+            damage = weapon.damage;
+        }
+
+        else if (weapon.radius > 0)
+        {
+            int layerMask = LayerMask.GetMask("LocalPlayerTag");
+
+            Collider2D[] collisions = Physics2D.OverlapCircleAll(position, weapon.radius, layerMask, 0);
+
+            if (Array.IndexOf<Collider2D>(collisions, gameObject.GetComponent<Collider2D>()) == -1)
+            {
+                float dmgModifier = calcExplosionDamageModifier(position, rigidBody.transform.position, weapon.radius, weapon.explosionFalloffModifier);
+
+                damage = dmgModifier * weapon.damage;
+
+                print("SPLASH HIT, DMG: " + damage);
+            }
+        }
+
+        if (damage > 0.0f)
+        {
+            getHit(damage);
+        }
+    }
+
+    float calcExplosionDamageModifier(Vector2 center, Vector2 target, float maxRadius, float mod)
+    {
+        float dist = (target - center).magnitude;
+        if (dist > maxRadius)
+        {
+            return 0.0f;
+        }
+           
+        return Mathf.Pow(1.0f - dist / maxRadius, mod);
     }
 }
 

@@ -195,8 +195,9 @@ MonoBehaviour:
       type: 2}
     sounds:
     - {fileID: 82000011516013742}
-    damage: 0
-    radius: 0
+    damage: 500
+    radius: 6
+    explosionFalloffModifier: 4
   sync: {fileID: 0}
   acceleration: 0
 --- !u!114 &114000013862349252

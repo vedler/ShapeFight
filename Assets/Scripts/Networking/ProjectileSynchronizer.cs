@@ -168,18 +168,20 @@ public class ProjectileSynchronizer : Photon.MonoBehaviour
         syncStartVelocity = velocity;
     }
 
-    public void TriggerExploded(Vector2 position)
+    public void TriggerProjectileHit(Vector2 position, int otherId)
     {
         active = false;
         gameObject.SetActive(false);
-        photonView.RPC("Exploded", PhotonTargets.All, position);
+        photonView.RPC("RemoteProjectileHit", PhotonTargets.All, position, otherId);
     }
 
     [PunRPC]
-    public void Exploded(Vector2 position, PhotonMessageInfo info)
+    public void RemoteProjectileHit(Vector2 position, int otherId, PhotonMessageInfo info)
     {
         active = false;
         gameObject.SetActive(false);
+
+        GameManager.getInstance().getNetworkManager().localPlayerCharacter.handleRemoteHit(position, mover.activeConfig, otherId);
     }
 
 }

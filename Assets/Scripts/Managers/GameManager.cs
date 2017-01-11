@@ -56,6 +56,18 @@ public class GameManager : MonoBehaviour
         return weaponSelectionManager;
     }
 
+    private NetworkManager networkManager;
+
+    public NetworkManager getNetworkManager()
+    {
+        if (networkManager == null)
+        {
+            networkManager = FindObjectOfType<NetworkManager>();
+        }
+
+        return networkManager;
+    }
+
     // Use this for initialization
     void Awake()
     {
@@ -73,6 +85,9 @@ public class GameManager : MonoBehaviour
         this.weaponManager = new WeaponManager(this);
 
         this.weaponSelectionManager = new WSelectionManager(this);
+
+        // Get the network manager object from the scene
+        this.networkManager = FindObjectOfType<NetworkManager>();
 
         // PhotonPeer.RegisterType(Type customType, byte code, SerializeMethod serializeMethod, DeserializeMethod constructor)
 

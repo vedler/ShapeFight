@@ -13,4 +13,5 @@ public class WeaponConfig
     
     public float damage;
     public float radius;
+    public float explosionFalloffModifier;
 }

@@ -7,8 +7,11 @@ public class NetworkManager : Photon.MonoBehaviour {
     [SerializeField]
     public GameObject playerPrefab;
 
-	// Use this for initialization
-	void Start () {
+    public GameObject localPlayerObject { get; private set; }
+    public PlayerCharacter localPlayerCharacter { get; private set; }
+
+    // Use this for initialization
+    void Start () {
         PhotonNetwork.ConnectUsingSettings("0.1a");
         // PhotonPeer.RegisterType(Type customType, byte code, SerializeMethod serializeMethod, DeserializeMethod constructor)
         print("reg:" + PhotonPeer.RegisterType(typeof(AbstractCommand), (byte)'A', AbstractCommand.Serialize, AbstractCommand.Serialize));
@@ -80,6 +83,7 @@ public class NetworkManager : Photon.MonoBehaviour {
     void OnJoinedRoom()
     {
         Debug.Log("Connected to Room");
-        PhotonNetwork.Instantiate(playerPrefab.name, new Vector3(0, 0, 0), Quaternion.identity, 0);
+        localPlayerObject = PhotonNetwork.Instantiate(playerPrefab.name, new Vector3(0, 0, 0), Quaternion.identity, 0);
+        localPlayerCharacter = localPlayerObject.GetComponent<PlayerCharacter>();
     }
 }
