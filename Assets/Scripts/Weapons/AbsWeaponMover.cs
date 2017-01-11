@@ -56,85 +56,66 @@ public abstract class AbsWeaponMover : Photon.MonoBehaviour, PoolObject, IWeapon
 
     void FixedUpdate()
     {
-        if (isFired)
+        if (photonView.isMine)
         {
-            move();
-
-            if (rigidBody.velocity.magnitude > maxSpeed)
+            if (hasEnded)
             {
-                Vector2 vel = GetComponent<Rigidbody2D>().velocity;
-                vel.Normalize();
-                GetComponent<Rigidbody2D>().velocity = vel * maxSpeed;
+                isFired = false;
+                Remove();
             }
-        }
 
-        if (hasEnded)
-        {
-            this.gameObject.SetActive(false);
+            if (isFired)
+            {
+                move();
+
+                if (rigidBody.velocity.magnitude > maxSpeed)
+                {
+                    Vector2 vel = rigidBody.velocity;
+                    vel.Normalize();
+                    rigidBody.velocity = vel * maxSpeed;
+                }
+            }
         }
     }
 
     void OnTriggerEnter2D(Collider2D collider)
     {
-        if (!CompareTag("SoundTriggerTag") && isFired)
+        if (!isFired || !sync.active || !photonView.isMine)
         {
-            if (collider.gameObject.tag == "LocalProjectileTag" || collider.gameObject.tag == "")
+            return;
+        }
+
+        if (!CompareTag("SoundTriggerTag"))
+        {
+            if (collider.gameObject.tag == "LocalPlayerTag")
+            {
+                PhotonView otherView = collider.gameObject.GetComponent<PhotonView>();
+
+                if (otherView != null)
+                {
+                    sync.TriggerProjectileHit(rigidBody.position, otherView.ownerId);
+                }
+                else
+                {
+                    sync.TriggerProjectileHit(rigidBody.position, -1);
+                }
+            }
+            else if (collider.gameObject.tag == "LocalProjectileTag" || collider.gameObject.tag == "")
             {
                 return;
             }
+
+            sync.TriggerProjectileHit(rigidBody.position, -1);
 
             if (activeConfig.sounds.Length > 0)
             {
                 activeConfig.sounds[0].Play();
             }
 
-            if (collider.name.Contains("Pellet"))
-            {
-                return;
-            }
-
-            GameObject explosion = (GameObject)Instantiate(activeConfig.particleSysPrefab, 
-                transform.position, 
-                activeConfig.particleSysPrefab.transform.rotation);
-            Destroy(explosion, explosion.GetComponent<ParticleSystem>().startLifetime * 2);
-            /*PlayerCharacter[] pcs = FindObjectsOfType<PlayerCharacter>();
-            foreach (PlayerCharacter pc in pcs)
-            {
-                if ((pc.transform.position - transform.position).magnitude <= activeConfig.radius)
-                {
-                    pc.getHit(Mathf.Abs(1 - (pc.transform.position - transform.position).magnitude / activeConfig.radius) * activeConfig.damage);
-                    print("1´- magnitude/radius = "+(1 - (pc.transform.position - transform.position).magnitude / 10));
-                    print("total damage out of " + activeConfig.damage + ": " + Mathf.Abs(1 - (pc.transform.position - transform.position).magnitude / activeConfig.radius) * activeConfig.damage);
-                }
-            }*/
-            this.gameObject.SetActive(false);
+            Remove();
         }
-        
-        if (collider.gameObject.tag == "LocalPlayerTag")
-        {
-            PhotonView otherView = collider.gameObject.GetComponent<PhotonView>();
-
-            if (otherView != null)
-            {
-                sync.TriggerProjectileHit(rigidBody.position, otherView.ownerId);
-            }
-            else
-            {
-                sync.TriggerProjectileHit(rigidBody.position, -1);
-            }
-
-            return;
-        }
-
-        if (collider.gameObject.tag == "LocalProjectileTag" || collider.gameObject.tag == "")
-        {
-            return;
-        }
-
-        sync.TriggerProjectileHit(rigidBody.position, -1);
     }
     
-
     public void SetVelocity(Vector2 velocity)
     {
         rigidBody.velocity = velocity;
@@ -144,5 +125,27 @@ public abstract class AbsWeaponMover : Photon.MonoBehaviour, PoolObject, IWeapon
     public void SetStartPosition(Vector2 sp)
     {
         startPosition = sp;
+    }
+
+    public void Remove()
+    {
+        // Move it so it doesnt reappear in the old place
+        rigidBody.transform.position = new Vector2(1000, 1000);
+        rigidBody.velocity = Vector2.zero;
+
+        sync.active = false;
+        gameObject.SetActive(false);
+        photonView.RPC("RemoteTriggerRemove", PhotonTargets.All);
+    }
+
+    [PunRPC]
+    public void RemoteTriggerRemove()
+    {
+        // Move it so it doesnt reappear in the old place
+        rigidBody.transform.position = new Vector2(1000, 1000);
+        rigidBody.velocity = Vector2.zero;
+
+        sync.active = false;
+        gameObject.SetActive(false);
     }
 }

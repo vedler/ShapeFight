@@ -52,4 +52,5 @@ MonoBehaviour:
   - RemoteProjectileHit
   - RemoteTriggerHitAnim
   - RemoteUpdateHealth
+  - RemoteTriggerRemove
   DisableAutoOpenWizard: 1

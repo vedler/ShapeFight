@@ -10,11 +10,10 @@ public class RocketMover : AbsWeaponMover {
     public override void FireMe(Vector2 direction)
     {
         this.direction = direction;
-        //radius = 10;
-        //damage = 30;
         direction.Normalize();
-        // TODO: Initial velocity based on player speed instead of percentage of max speed (player speed + some margin)
+
         rigidBody.velocity = direction * (maxSpeed * 0.5f);
+
         isFired = true;
 
         photonView.RPC("TriggerFireMe", PhotonTargets.All, direction);
@@ -25,7 +24,6 @@ public class RocketMover : AbsWeaponMover {
         if (isFired)
         {
             rigidBody.AddForce(direction * acceleration, ForceMode2D.Impulse);
-            //print("mag: " + GetComponent<Rigidbody2D>().velocity.magnitude);
         }
 
         photonView.RPC("TriggerMove", PhotonTargets.All);
@@ -37,14 +35,13 @@ public class RocketMover : AbsWeaponMover {
         if (isFired)
         {
             rigidBody.AddForce(direction * acceleration, ForceMode2D.Impulse);
-            //print("mag: " + GetComponent<Rigidbody2D>().velocity.magnitude);
         }
     }
 
     public override void OnObjectReuse()
     {
-        //acceleration = 0.7f;
-        //maxSpeed = 50.0f;
+        isFired = false;
+        hasEnded = false;
     }
 
     [PunRPC]
@@ -52,13 +49,13 @@ public class RocketMover : AbsWeaponMover {
     {
         this.direction = direction;
         direction.Normalize();
-        // TODO: Initial velocity based on player speed instead of percentage of max speed (player speed + some margin)
+
         rigidBody.velocity = direction * (maxSpeed * 0.5f);
         isFired = true;
     }
 
     public override void init()
     {
-        //this.activeConfig = GameManager.getInstance().getWeaponManager().rocketConfig;
+
     }
 }

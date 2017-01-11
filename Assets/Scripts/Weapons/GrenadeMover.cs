@@ -6,12 +6,9 @@ public class GrenadeMover : AbsWeaponMover {
 
     public override void FireMe(Vector2 direction)
     {
-        //damage = 20;
-        //radius = 15;
-
         this.direction = direction;
         direction.Normalize();
-        // TODO: Initial velocity based on player speed instead of percentage of max speed (player speed + some margin)
+
         rigidBody.velocity = direction * (maxSpeed);
         isFired = true;
 
@@ -20,14 +17,13 @@ public class GrenadeMover : AbsWeaponMover {
 
     public override void move()
     {
-        if (isFired)
-        {
-        }
+
     }
 
     public override void OnObjectReuse()
     {
-
+        isFired = false;
+        hasEnded = false;
     }
 
     [PunRPC]
@@ -42,12 +38,12 @@ public class GrenadeMover : AbsWeaponMover {
 
     public override void TriggerMove(PhotonMessageInfo info)
     {
-        throw new NotImplementedException();
+        
     }
 
     public override void init()
     {
-        //this.activeConfig = GameManager.getInstance().getWeaponManager().grenadeConfig;
+
     }
 }
 

@@ -4,11 +4,6 @@ using System.Collections.Generic;
 
 public class WeaponManager {
 
-    public WeaponConfig bulletConfig;
-    public WeaponConfig rocketConfig;
-    public WeaponConfig pelletConfig;
-    public WeaponConfig grenadeConfig;
-
     private GameManager gameManager;
 
     Dictionary<int, Queue<ObjectInstance>> poolDictionary = new Dictionary<int, Queue<ObjectInstance>> ();
@@ -18,31 +13,6 @@ public class WeaponManager {
     {
         // Init
         this.gameManager = gameManager;
-
-        bulletConfig = new WeaponConfig();
-        //bulletConfig.sounds = GameObject.FindGameObjectWithTag("WeaponSoundsTag").GetComponents<AudioSource>();
-        bulletConfig.damage = 20;
-        bulletConfig.radius = 5;
-
-
-        rocketConfig = new WeaponConfig();
-        //rocketConfig.sounds = GameObject.FindGameObjectWithTag("WeaponSoundsTag").GetComponents<AudioSource>();
-        rocketConfig.radius = 10;
-        rocketConfig.damage = 30;
-
-
-        pelletConfig = new WeaponConfig();
-        //pelletConfig.sounds = GameObject.FindGameObjectWithTag("WeaponSoundsTag").GetComponents<AudioSource>();
-        pelletConfig.damage = 15;
-        pelletConfig.radius = 3;
-
-
-        grenadeConfig = new WeaponConfig();
-        //grenadeConfig.sounds = GameObject.FindGameObjectWithTag("WeaponSoundsTag").GetComponents<AudioSource>();
-        grenadeConfig.damage = 20;
-        grenadeConfig.radius = 15;
-
-
     }
 
     // Creates a pool with a certain size
@@ -73,7 +43,7 @@ public class WeaponManager {
 
             for (int i = 0; i < poolSize; ++i)
             {
-                ObjectInstance newObject = new ObjectInstance(PhotonNetwork.Instantiate(weaponName, Vector3.zero, new Quaternion(), 0));
+                ObjectInstance newObject = new ObjectInstance(PhotonNetwork.Instantiate(weaponName, new Vector3(1000, 1000, 0), new Quaternion(), 0));
                 poolDictionary[poolKey].Enqueue(newObject);
             }
         }
@@ -120,6 +90,8 @@ public class WeaponManager {
             gameObject = objectInstance;
             gameObject.SetActive(false);
 
+            gameObject.transform.position = new Vector3(1000, 1000, 0);
+
             sync = gameObject.GetComponent<ProjectileSynchronizer>();
 
             if (gameObject.GetComponent<PoolObject>() != null)
@@ -138,7 +110,7 @@ public class WeaponManager {
         public void Reuse(Vector3 position, Quaternion rotation, Vector2 direction)
         {
             ResetObjectPhysics(); //resets the object's physics
-            gameObject.SetActive(true); 
+
             gameObject.transform.position = position; // gives the object correct spawn parameters
             gameObject.transform.rotation = rotation; //
             sync.TriggerResetToPosition(position, Vector2.zero, rotation);

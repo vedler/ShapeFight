@@ -243,51 +243,11 @@ public class PlayerSynchronizer : Photon.MonoBehaviour
     private void SyncedExternalMovement()
     {
         syncTime += Time.fixedDeltaTime;
-        //GetComponent<Rigidbody2D>().position = Vector2.Lerp(syncStartPosition, syncEndPosition, syncTime / syncDelay);
-        //GetComponent<Rigidbody2D>().velocity = Vector2.Lerp(syncStartVelocity, syncEndVelocity, syncTime / syncDelay);
 
-        RaycastHit hit;
-
-        // Get movement direction vector
-        Vector2 rayDir = rigidBody.velocity;
-        rayDir.Normalize();
-
-        // Get diagonal size of the square
-        Vector2 diagVec = collider2d.bounds.size;
-
-        // Layer mask to only detect hits with the map layer
-        // TODO: Player layer
-        var layerMask = (1 << LayerMask.NameToLayer("MapLayer"));
-
-        bool collidingSoon = false;
-        /*Vector2 collisionTransform = Vector2.zero;
-
-        if (Physics.Raycast(transform.position, rayDir, out hit, diagVec.magnitude * 3, layerMask))
-        {
-            Vector3 colliderEdgePoint = collider2d.bounds.ClosestPoint(hit.point);
-            print("closest to coll: " + colliderEdgePoint);
-            collidingSoon = Vector2.Distance(colliderEdgePoint, transform.position) * 2 >= Vector2.Distance(hit.point, transform.position);
-
-            // Calculate the center of the transform
-            if (collidingSoon)
-            {
-                print("Colliding soon");
-                collisionTransform = hit.point - colliderEdgePoint + transform.position;
-            }
-        }*/
-
-        /*if (collidingSoon)
-        {
-            rigidBody.position = Vector2.Lerp(syncStartPosition, collisionTransform, Mathf.Pow(syncTime / syncDelay, 2));
-        }
-        else
-        {*/
-        //rigidBody.position = Vector2.Lerp(syncStartPosition, syncEndPosition, Mathf.Pow(syncTime / syncDelay, 2));
-        //}
         rigidBody.position = Vector2.Lerp(syncStartPosition, syncEndPosition, syncTime / syncDelay);
 
-        //rigidBody.velocity = Vector2.Lerp(syncStartVelocity, syncEndVelocity, Mathf.Pow(syncTime / syncDelay, 2));
-        rigidBody.velocity = Vector2.Lerp(syncStartVelocity, syncEndVelocity, syncTime / syncDelay);
+        rigidBody.velocity = Vector2.Lerp(syncStartVelocity, syncEndVelocity, Mathf.Pow(syncTime / syncDelay, 0.5f));
+        //rigidBody.velocity = Vector2.Lerp(syncStartVelocity, syncEndVelocity, syncTime / syncDelay);
     }
 
     // ----------------------------- INPUT MESSAGE EXCHANGE ----------------------------------

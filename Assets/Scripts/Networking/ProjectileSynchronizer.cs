@@ -6,7 +6,8 @@ using UnityEngine;
 
 public class ProjectileSynchronizer : Photon.MonoBehaviour
 {
-    private bool active = false;
+    [HideInInspector]
+    public bool active;
 
     private float lastSynchronizationTime = 0f;
     private float syncDelay = 0f;
@@ -23,6 +24,8 @@ public class ProjectileSynchronizer : Photon.MonoBehaviour
 
     void Awake()
     {
+        active = false;
+
         rigidBody = GetComponent<Rigidbody2D>();
         collider2d = GetComponent<Collider2D>();
         mover = GetComponent<AbsWeaponMover>();
@@ -39,6 +42,11 @@ public class ProjectileSynchronizer : Photon.MonoBehaviour
         if (collider2d == null)
         {
             collider2d = GetComponent<Collider2D>();
+        }
+
+        if (!active)
+        {
+            return;
         }
 
         // It's our view
@@ -87,45 +95,12 @@ public class ProjectileSynchronizer : Photon.MonoBehaviour
     private void SyncedExternalMovement()
     {
         syncTime += Time.fixedDeltaTime;
-
-        RaycastHit hit;
-
-        // Get movement direction vector
-        Vector2 rayDir = rigidBody.velocity;
-        rayDir.Normalize();
-
-        // Get diagonal size of the square
-        Vector2 diagVec = collider2d.bounds.size;
-
-        // Layer mask to only detect hits with the map layer
-        // TODO: Player layer
-        var layerMask = (1 << LayerMask.NameToLayer("MapLayer"));
-
-        bool collidingSoon = false;
-        Vector2 collisionTransform = Vector2.zero;
-
-        if (Physics.Raycast(transform.position, rayDir, out hit, diagVec.magnitude * 3, layerMask))
-        {
-            Vector3 colliderEdgePoint = collider2d.bounds.ClosestPoint(hit.point);
-            collidingSoon = Vector2.Distance(colliderEdgePoint, transform.position) * 2 >= Vector2.Distance(hit.point, transform.position);
-
-            // Calculate the center of the transform
-            if (collidingSoon)
-            {
-                collisionTransform = hit.point - colliderEdgePoint + transform.position;
-            }
-        }
-
-        if (collidingSoon)
-        {
-            rigidBody.position = Vector2.Lerp(syncStartPosition, collisionTransform, Mathf.Pow(syncTime / syncDelay, 2));
-        }
-        else
-        {
-            rigidBody.position = Vector2.Lerp(syncStartPosition, syncEndPosition, Mathf.Pow(syncTime / syncDelay, 2));
-        }
         
-        rigidBody.velocity = Vector2.Lerp(syncStartVelocity, syncEndVelocity, Mathf.Pow(syncTime / syncDelay, 2));
+        rigidBody.position = Vector2.Lerp(syncStartPosition, syncEndPosition, syncTime / syncDelay);
+        
+        //rigidBody.velocity = Vector2.Lerp(syncStartVelocity, syncEndVelocity, Mathf.Pow(syncTime / syncDelay, 0.5f));
+        rigidBody.velocity = Vector2.Lerp(syncStartVelocity, syncEndVelocity, syncTime / syncDelay);
+        //rigidBody.velocity = syncEndVelocity;
     }
 
     // Reset to position and make visible
@@ -136,10 +111,18 @@ public class ProjectileSynchronizer : Photon.MonoBehaviour
     {
         active = true;
         gameObject.SetActive(true);
+
         rigidBody.position = position;
+        // Mitigate some activation issues
+        rigidBody.transform.position = position;
         rigidBody.velocity = velocity;
         rigidBody.transform.rotation = rotation;
         rigidBody.angularVelocity = 0.0f;
+
+        syncTime = 0f;
+        syncDelay = Time.realtimeSinceStartup - lastSynchronizationTime;
+        lastSynchronizationTime = Time.realtimeSinceStartup;
+
         syncEndPosition = position;
         syncEndVelocity = velocity;
 
@@ -151,36 +134,55 @@ public class ProjectileSynchronizer : Photon.MonoBehaviour
     {
         active = true;
         gameObject.SetActive(true);
+
         rigidBody.position = position;
+        // Mitigate some activation issues
+        rigidBody.transform.position = position;
         rigidBody.velocity = velocity;
         rigidBody.transform.rotation = rotation;
         rigidBody.angularVelocity = 0.0f;
-        //syncEndPosition = position;
-        //syncEndVelocity = velocity;
+        syncEndPosition = position;
+        syncEndVelocity = velocity;
 
         syncTime = 0f;
         syncDelay = Time.realtimeSinceStartup - lastSynchronizationTime;
         lastSynchronizationTime = Time.realtimeSinceStartup;
 
-        syncEndPosition = position + velocity * syncDelay;
-        syncEndVelocity = velocity;
+        //syncEndPosition = position + velocity * syncDelay;
+        //syncEndVelocity = velocity;
         syncStartPosition = position;
         syncStartVelocity = velocity;
     }
 
     public void TriggerProjectileHit(Vector2 position, int otherId)
     {
+
+        GameObject explosion = (GameObject)Instantiate(mover.activeConfig.particleSysPrefab,
+                transform.position,
+                mover.activeConfig.particleSysPrefab.transform.rotation);
+
+        Destroy(explosion, explosion.GetComponent<ParticleSystem>().startLifetime * 2);
+
         active = false;
-        gameObject.SetActive(false);
+        mover.Remove();
+
         photonView.RPC("RemoteProjectileHit", PhotonTargets.All, position, otherId);
     }
 
     [PunRPC]
     public void RemoteProjectileHit(Vector2 position, int otherId, PhotonMessageInfo info)
     {
-        active = false;
-        gameObject.SetActive(false);
+        if (!gameObject.activeSelf)
+        {
+            print("ayy we inactive");
+        }
+        GameObject explosion = (GameObject)Instantiate(mover.activeConfig.particleSysPrefab,
+                position,
+                mover.activeConfig.particleSysPrefab.transform.rotation);
 
+        Destroy(explosion, explosion.GetComponent<ParticleSystem>().startLifetime * 2);
+
+        active = false;
         GameManager.getInstance().getNetworkManager().localPlayerCharacter.handleRemoteHit(position, mover.activeConfig, otherId);
     }
 
