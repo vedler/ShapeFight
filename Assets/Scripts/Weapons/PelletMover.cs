@@ -11,7 +11,7 @@ public class PelletMover : AbsWeaponMover {
         this.direction = direction;
         direction.Normalize();
         // TODO: Initial velocity based on player speed instead of percentage of max speed (player speed + some margin)
-        rigidBody.velocity = direction * (maxSpeed - UnityEngine.Random.Range(0f, 5f));
+        rigidBody.velocity = direction * (maxSpeed - UnityEngine.Random.Range(0f, maxSpeed * 0.2f));
         isFired = true;
 
         photonView.RPC("TriggerFireMe", PhotonTargets.All, direction);
@@ -39,6 +39,7 @@ public class PelletMover : AbsWeaponMover {
         isFired = false;
     }
 
+    [PunRPC]
     public override void TriggerFireMe(Vector2 direction, PhotonMessageInfo info)
     {
         this.direction = direction;
@@ -48,6 +49,7 @@ public class PelletMover : AbsWeaponMover {
         isFired = true;
     }
 
+    [PunRPC]
     public override void TriggerMove(PhotonMessageInfo info)
     {
         if (isFired)

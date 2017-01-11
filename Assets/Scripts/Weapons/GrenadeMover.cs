@@ -30,6 +30,7 @@ public class GrenadeMover : AbsWeaponMover {
 
     }
 
+    [PunRPC]
     public override void TriggerFireMe(Vector2 direction, PhotonMessageInfo info)
     {
         this.direction = direction;
