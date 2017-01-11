@@ -31,16 +31,19 @@ public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
             PlayerCharacter player = GetComponent<PlayerCharacter>();
 
             Vector2 playerVelocity = player.GetComponent<Rigidbody2D>().velocity;
-            playerVelocity.Normalize();
             Vector2 handPos = new Vector2(hand.transform.position.x, hand.transform.position.y);
             Vector2 direction = targetPos - handPos;
 
             //Normalize the vector for the adding of force
             direction.Normalize();
 
+            float sin = direction.y / direction.magnitude, cos = Mathf.Abs(direction.x / direction.magnitude);
+
+            print(playerVelocity);
+
             Vector2 myPos = new Vector2(
-                        hand.transform.position.x + Mathf.Sign(direction.x) * (Mathf.Abs(direction.x) + 1) + (-.5f) * Math.Abs(playerVelocity.x),
-                        hand.transform.position.y + direction.y + playerVelocity.y
+                        hand.transform.position.x + Mathf.Sign(direction.x) * ( 2f * Mathf.Abs(cos) + 0.5f * (Math.Min(Math.Abs(playerVelocity.x), 2))), //( 1.5f + .5f * Math.Abs(playerVelocity.x)),
+                        hand.transform.position.y + Mathf.Sign(direction.y) * ( 2f * Mathf.Abs(sin) + 0.5f * (Math.Min(Math.Abs(playerVelocity.y), 2)))
                         );
 
             Quaternion rotation = Quaternion.Euler(0, 0, -90 + (Mathf.Atan2(direction.y, direction.x) * Mathf.Rad2Deg));
