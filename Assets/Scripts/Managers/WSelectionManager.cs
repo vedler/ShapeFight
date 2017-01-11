@@ -1,5 +1,6 @@
 ﻿using UnityEngine;
 using System.Collections;
+using System.Collections.Generic;
 
 public class WSelectionManager {
 
@@ -53,8 +54,19 @@ public class WSelectionManager {
         this.gameManager = gameManager;
         //weapons = Resources.LoadAll<GameObject>("Photon Unity Networking/Resources/Weapons");
 
-        mainWeaponName = "Weapons/networkPellet";
-        altWeaponName = "Weapons/networkGrenade";
+        List<string> names = new List<string>();
+        names.Add("Weapons/networkGrenade");
+        names.Add("Weapons/networkBullet");
+        names.Add("Weapons/networkPellet");
+        names.Add("Weapons/networkRocket");
+
+        int ran = Random.Range(0, 4);
+        Debug.Log(ran);
+        mainWeaponName = names[ran];
+        names.Remove(mainWeaponName);
+        ran = Random.Range(0, 3);
+        altWeaponName = names[ran];
+        Debug.Log(ran);
 
         //mainWeapon = PhotonNetwork.Instantiate("Weapons/networkRocket", new Vector3(0, 0, 0), new Quaternion(), 0);
         //altWeapon = PhotonNetwork.Instantiate("Weapons/networkBullet", new Vector3(0, 0, 0), new Quaternion(), 0);
