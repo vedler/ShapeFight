@@ -88,6 +88,8 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
             healthText = GameObject.FindGameObjectWithTag("PlayerHealthTag").GetComponent<Text>();
             fuelText = GameObject.FindGameObjectWithTag("PlayerFuelTag").GetComponent<Text>();
         }
+        else
+            SetCharacterColors();
 
         jetpack = transform.GetChild(1).gameObject;
         transform.GetChild(1).gameObject.GetComponent<ParticleSystem>().Stop();
@@ -343,6 +345,13 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     public void SetCharacterColors(Color color)
     {
         clr = color;
+        GetComponent<SpriteRenderer>().color = clr;
+        transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().color = clr;
+        transform.GetChild(1).gameObject.GetComponent<ParticleSystem>().startColor = clr;
+    }
+
+    private void SetCharacterColors()
+    {
         GetComponent<SpriteRenderer>().color = clr;
         transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().color = clr;
         transform.GetChild(1).gameObject.GetComponent<ParticleSystem>().startColor = clr;
