@@ -46,7 +46,16 @@ public class PMovementStateHandler
     private float pressedJumpTimer;
     private float forceDisablePressedJumpTimer;
 
-    private bool jetpackUsedThisFrame;
+    public EJetpackUsage jetpackUsageThisFrame { get; private set; }
+
+    public enum EJetpackUsage : byte
+    {
+        None = 0,
+        Normal,
+        Enhanced,
+        EnchanceNotUsed,
+        Liftoff
+    }
 
     public enum EWallDirection : byte
     {
@@ -110,7 +119,7 @@ public class PMovementStateHandler
         currentGravityScale = playerCharacter.defaultGravityScale;
         grvManipulatorsThisFrame = new Dictionary<EInputControls, float>();
 
-        jetpackUsedThisFrame = false;
+        jetpackUsageThisFrame = EJetpackUsage.None;
     }
 
     public void FixedUpdate()
@@ -160,8 +169,13 @@ public class PMovementStateHandler
 
             // Add to list of used states
             usedStateClasses.Add(currentState.GetType());
+
+            // Do jetpack usage and reset if there were multiple jetpack usages this frame
+            lateHandleJetpackUsage();
         }
-        
+
+        lateHandleJetpackUsage();
+
         cacheUsedThisUpdate = true;
     }
 
@@ -353,16 +367,54 @@ public class PMovementStateHandler
 
     public void lateHandleJetpackUsage()
     {
+        bool failed = false;
 
+        if (jetpackUsageThisFrame == EJetpackUsage.EnchanceNotUsed || jetpackUsageThisFrame == EJetpackUsage.None)
+        {
+            failed = true;
+        }
+        else if (!playerCharacter.hasEnoughFuelFor(jetpackUsageThisFrame))
+        {
+            failed = true;
+        }
+
+        if (failed)
+        {
+            playerCharacter.stopJets();
+
+            return;
+        }
+        
+        playerCharacter.fireJets();
+
+        playerCharacter.rigidBody.AddForce(new Vector2(0, playerCharacter.jetPackPower), ForceMode2D.Impulse);
+
+        // Other specific changes
+        switch (jetpackUsageThisFrame) {
+            case EJetpackUsage.Normal:
+                playerCharacter.rotateJetpack();
+                break;
+            case EJetpackUsage.Enhanced:
+                playerCharacter.burst();
+                break;
+            case EJetpackUsage.Liftoff:
+                playerCharacter.rotateJetpack();
+                break;
+            default:
+                break;
+        }
+        
+        playerCharacter.reduceFuel(jetpackUsageThisFrame);
+        resetJetpackUsage();
     }
 
-    public void setJetpackUsedThisFrame()
+    public void setJetpackUsageThisFrame(EJetpackUsage usage)
     {
-        jetpackUsedThisFrame = true;
+        jetpackUsageThisFrame = usage;
     }
 
     public void resetJetpackUsage()
     {
-        jetpackUsedThisFrame = false;
+        jetpackUsageThisFrame = EJetpackUsage.None;
     }
 }

@@ -58,12 +58,16 @@ public class PlayerFlyingState : AbstractPMovementState
                 switch (((MoveCommand)baseCommand).control)
                 {
                     case EInputControls.JetPack:
-                        if (handler.playerCharacter.getJetpackFuel() >= 3.5)
+
+                        if (handler.jetpackUsageThisFrame == PMovementStateHandler.EJetpackUsage.EnchanceNotUsed)
                         {
-                            jump = false;
-                            handler.playerCharacter.stopJets();
-                            handler.playerCharacter.fireJets();
+                            handler.setJetpackUsageThisFrame(PMovementStateHandler.EJetpackUsage.Enhanced);
                         }
+                        else
+                        {
+                            handler.setJetpackUsageThisFrame(PMovementStateHandler.EJetpackUsage.Normal);
+                        }
+
                         break;
 
                     case EInputControls.Jump:
@@ -85,12 +89,19 @@ public class PlayerFlyingState : AbstractPMovementState
                 {
                     case EInputControls.MoveUp:
 
-                        //handler.manipulateGravity(EInputControls.MoveUp, -handler.playerCharacter.verticalDeltaGravity);
-                        if (!jump && handler.playerCharacter.getJetpackFuel() >= 20)
+                        handler.manipulateGravity(EInputControls.MoveUp, -handler.playerCharacter.verticalDeltaGravity);
+
+                        if (handler.jetpackUsageThisFrame == PMovementStateHandler.EJetpackUsage.Normal)
                         {
-                            handler.manipulateGravity(EInputControls.MoveUp, -handler.playerCharacter.verticalDeltaGravity);
-                            handler.playerCharacter.burst();
+                            // We already applied the power, lets show it was the enchanced usage of jetpack
+                            handler.setJetpackUsageThisFrame(PMovementStateHandler.EJetpackUsage.Enhanced);
                         }
+                        else
+                        {
+                            // We have not yet fired the jetpack, but let it know that it's going to be enhanced if it is fired
+                            handler.setJetpackUsageThisFrame(PMovementStateHandler.EJetpackUsage.EnchanceNotUsed);
+                        }
+
                         break;
 
                     case EInputControls.MoveDown:
@@ -106,12 +117,8 @@ public class PlayerFlyingState : AbstractPMovementState
                             return false;
                         }
 
-                        //handler.playerCharacter.rigidBody.AddForce(new Vector2(handler.playerCharacter.leftAndRightPower, 0), ForceMode2D.Impulse);
-                        if (!jump && handler.playerCharacter.getJetpackFuel() >= 3.5f)
-                        {
-                            handler.playerCharacter.rigidBody.AddForce(new Vector2(handler.playerCharacter.leftAndRightPower, 0), ForceMode2D.Impulse);
-                            handler.playerCharacter.rotateJetpack(90);
-                        }
+                        handler.playerCharacter.rigidBody.AddForce(new Vector2(handler.playerCharacter.leftAndRightPower, 0), ForceMode2D.Impulse);
+                        handler.playerCharacter.rotateJetpack(90);
 
                         break;
 
@@ -123,28 +130,22 @@ public class PlayerFlyingState : AbstractPMovementState
                             return false;
                         }
 
-                        //handler.playerCharacter.rigidBody.AddForce(new Vector2(-handler.playerCharacter.leftAndRightPower, 0), ForceMode2D.Impulse);
-                        if (!jump && handler.playerCharacter.getJetpackFuel() >= 3.5f)
-                        {
-                            handler.playerCharacter.rigidBody.AddForce(new Vector2(-handler.playerCharacter.leftAndRightPower, 0), ForceMode2D.Impulse);
-                            handler.playerCharacter.rotateJetpack(-90);
-                        }
+                        handler.playerCharacter.rigidBody.AddForce(new Vector2(-handler.playerCharacter.leftAndRightPower, 0), ForceMode2D.Impulse);
+                        handler.playerCharacter.rotateJetpack(-90);
+
                         break;
 
                     case EInputControls.JetPack:
-
-                        //handler.playerCharacter.rigidBody.AddForce(new Vector2(0, handler.playerCharacter.jetPackPower), ForceMode2D.Impulse);
-                        if (handler.playerCharacter.getJetpackFuel() >= 3.5f)
+                        
+                        // See above about these usages
+                        if (handler.jetpackUsageThisFrame == PMovementStateHandler.EJetpackUsage.EnchanceNotUsed)
                         {
-                            handler.playerCharacter.reduceFuel();
-                            handler.playerCharacter.rotateJetpack();
-                            handler.playerCharacter.rigidBody.AddForce(new Vector2(0, handler.playerCharacter.jetPackPower), ForceMode2D.Impulse);
+                            handler.setJetpackUsageThisFrame(PMovementStateHandler.EJetpackUsage.Enhanced);
                         }
-
-                        /*if (!isInJump)
+                        else
                         {
-                            
-                        } */
+                            handler.setJetpackUsageThisFrame(PMovementStateHandler.EJetpackUsage.Normal);
+                        }
 
                         break;
                 }

@@ -33,6 +33,13 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     private float maxFuel = 2000;
     private float maxHealth = 100;
 
+    public static class FuelUsage
+    {
+        public static readonly float liftoff = 5f;
+        public static readonly float normal = 3.5f;
+        public static readonly float enhanced = 12f;
+    }
+
     [SerializeField]
     private float health = 100;
 
@@ -225,6 +232,33 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
         return jetpackFuel;
     }
 
+    public bool hasEnoughFuelFor(PMovementStateHandler.EJetpackUsage usage)
+    {
+        switch (usage)
+        {
+            case PMovementStateHandler.EJetpackUsage.Liftoff:
+                if (jetpackFuel >= FuelUsage.liftoff)
+                {
+                    return true;
+                }
+                return false;
+            case PMovementStateHandler.EJetpackUsage.Normal:
+                if (jetpackFuel >= FuelUsage.normal)
+                {
+                    return true;
+                }
+                return false;
+            case PMovementStateHandler.EJetpackUsage.Enhanced:
+                if (jetpackFuel >= FuelUsage.enhanced)
+                {
+                    return true;
+                }
+                return false;
+            default:
+                return false;
+        }
+    }
+
     public void reduceFuel()
     {
         jetpackFuel -= 5f;
@@ -240,6 +274,24 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
         if (wasMine)
         {
             updateFuelText();
+        }
+    }
+
+    public void reduceFuel(PMovementStateHandler.EJetpackUsage usage)
+    {
+        switch (usage)
+        {
+            case PMovementStateHandler.EJetpackUsage.Liftoff:
+                reduceFuel(FuelUsage.liftoff);
+                break;
+            case PMovementStateHandler.EJetpackUsage.Normal:
+                reduceFuel(FuelUsage.normal);
+                break;
+            case PMovementStateHandler.EJetpackUsage.Enhanced:
+                reduceFuel(FuelUsage.enhanced);
+                break;
+            default:
+                return;
         }
     }
 
@@ -268,14 +320,19 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
             yield return new WaitForSeconds(.3f);
         }
         jetpack.GetComponent<ParticleSystem>().Stop();
+        jetsFiring = null;
     }
 
     public void fireJets()
     {
+        if (jetsFiring != null)
+        {
+            return;
+        }
+
         //PlayerGroundState.nullifySoundCount();
         jetpack.GetComponent<ParticleSystem>().Play();
-
-        reduceFuel();
+        
         jetsFiring = StartCoroutine(jetLifeCycle());
     }
 
@@ -294,14 +351,14 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
 
     public void rotateJetpack(float deg)
     {
-        reduceFuel(3.5f);
+        //reduceFuel(3.5f);
         Quaternion rotateTo = Quaternion.Euler(0, 0, deg);
         jetpack.transform.rotation = Quaternion.Slerp(jetpack.transform.rotation, rotateTo, Time.deltaTime * .9f);
     }
 
     public void burst()
     {
-        reduceFuel(12);
+        //reduceFuel(12);
         Quaternion rotateTo = Quaternion.Euler(0, 0, 180);
         jetpack.transform.rotation = Quaternion.Slerp(jetpack.transform.rotation, rotateTo, Time.deltaTime * 1.9f);
     }

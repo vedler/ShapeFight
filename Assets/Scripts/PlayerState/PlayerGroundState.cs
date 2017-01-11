@@ -6,9 +6,6 @@ using UnityEngine;
 
 public class PlayerGroundState : AbstractPMovementState
 {
-
-    private static bool jump = true;
-
     public PlayerGroundState(PMovementStateHandler handler) : base(handler)
     {
     }
@@ -53,21 +50,15 @@ public class PlayerGroundState : AbstractPMovementState
                 {
                     case EInputControls.Jump:
                         handler.playerCharacter.rigidBody.AddForce(new Vector2(0, handler.playerCharacter.jumpPower), ForceMode2D.Impulse);
-                        jump = true;
                         // Tell the state handler we want to switch states now
                         setNextState(new PlayerFlyingState(handler, true));
                         handler.forceOffGround();
                         return false;
 
                     case EInputControls.JetPack:
-                        if (handler.playerCharacter.getJetpackFuel() >= 3.5)
-                        {
-                            jump = false;
-                            setNextState(new PlayerFlyingState(handler, true));
-                            // TODO: Force off ground?
-                            handler.playerCharacter.stopJets();
-                            handler.playerCharacter.fireJets();
-                        }
+                        setNextState(new PlayerFlyingState(handler, true));
+
+                        handler.setJetpackUsageThisFrame(PMovementStateHandler.EJetpackUsage.Liftoff);
                         break;
                 }
             }
@@ -103,20 +94,8 @@ public class PlayerGroundState : AbstractPMovementState
                         handler.playerCharacter.rigidBody.AddForce(new Vector2(-handler.playerCharacter.leftAndRightPower, 0), ForceMode2D.Impulse);
                         break;
                     case EInputControls.JetPack:
-
-                        if (handler.playerCharacter.getJetpackFuel() >= 3.5)
-                        {
-                            handler.playerCharacter.rotateJetpack();
-                            handler.playerCharacter.reduceFuel();
-                            handler.playerCharacter.rigidBody.AddForce(new Vector2(0, handler.playerCharacter.jetPackPower), ForceMode2D.Impulse);
-                        }
-
-                        //handler.playerCharacter.rigidBody.AddForce(new Vector2(0, handler.playerCharacter.jetPackPower), ForceMode2D.Impulse);
-                        /*if (!isInJump)
-                        {
-                            
-                        } */
-
+                        
+                        handler.setJetpackUsageThisFrame(PMovementStateHandler.EJetpackUsage.Liftoff);
                         break;
                 }
             }
