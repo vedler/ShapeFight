@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 using UnityEngine.UI;
+using System.Collections.Generic;
 
 public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
 
@@ -26,6 +27,9 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
 
     [SerializeField]
     public GameObject jetpack;
+
+    [SerializeField]
+    public Vector2[] spawnPoints;
 
     private Coroutine jetsFiring = null;
 
@@ -184,6 +188,12 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     void FixedUpdate()
     {
         numberOfTicks++;
+
+        // We dead...
+        if (health < 0)
+        {
+            playerDeath();
+        }
         
         // Delegate to movementStateHandler
         movementStateHandler.FixedUpdate();
@@ -308,7 +318,7 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
         }
     }
 
-    private void updateFuelText()
+    public void updateFuelText()
     {
         fuelText.text = string.Format("Fuel:    {0:0.0%}", Mathf.Max(jetpackFuel/maxFuel, 0));
     }
@@ -370,10 +380,15 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
         GetComponent<AudioSource>().Play();
         health -= dam;
         StartCoroutine(damageAnim());
-        float ratio = health / maxHealth;
-        healthText.text = string.Format("Health: {0:0.0%}", ratio);
+        updateHealthText();
         photonView.RPC("RemoteUpdateHealth", PhotonTargets.All, health);
         photonView.RPC("RemoteTriggerHitAnim", PhotonTargets.All);
+    }
+
+    public void updateHealthText()
+    {
+        float ratio = health / maxHealth;
+        healthText.text = string.Format("Health: {0:0.0%}", ratio);
     }
 
     [PunRPC]
@@ -454,7 +469,7 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
         // Direct hit on me
         if (otherId == photonView.ownerId)
         {
-            print("DIRECT HIT, DMG: " + weapon.damage);
+            //print("DIRECT HIT, DMG: " + weapon.damage);
             damage = weapon.damage;
         }
 
@@ -470,7 +485,7 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
 
                 damage = dmgModifier * weapon.damage;
 
-                print("SPLASH HIT, DMG: " + damage);
+                //print("SPLASH HIT, DMG: " + damage);
             }
         }
 
@@ -480,7 +495,7 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
         }
     }
 
-    float calcExplosionDamageModifier(Vector2 center, Vector2 target, float maxRadius, float mod)
+    private float calcExplosionDamageModifier(Vector2 center, Vector2 target, float maxRadius, float mod)
     {
         float dist = (target - center).magnitude;
         if (dist > maxRadius)
@@ -489,6 +504,26 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
         }
            
         return Mathf.Pow(1.0f - dist / maxRadius, mod);
+    }
+
+    public void resetForSpawn(Vector2 pos)
+    {
+        // Set both, because the item might be deactivated
+        rigidBody.position = pos;
+        transform.position = pos;
+
+        transform.rotation = Quaternion.identity;
+        rigidBody.angularVelocity = 0f;
+
+        health = maxHealth;
+        jetpackFuel = maxFuel;
+    }
+
+    public void playerDeath()
+    {
+        // TODO: RPC for others?
+        movementStateHandler.triggerDeath();
+        // Anim
     }
 }
 

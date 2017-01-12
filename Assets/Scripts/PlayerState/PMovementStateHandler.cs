@@ -34,6 +34,7 @@ public class PMovementStateHandler
     public PlayerCharacter playerCharacter { get; private set; }
     public float currentGravityScale;
     public Dictionary<EInputControls, float> grvManipulatorsThisFrame;
+    private bool deathTrigger;
 
     private float onGroundTimer;
     private float onLeftWallTimer;
@@ -113,13 +114,15 @@ public class PMovementStateHandler
         cacheUsedThisUpdate = false;
 
         // Default state is flying
-        currentState = new PlayerFlyingState(this, false);
+        //currentState = 
+        currentState = new PlayerDeadState(this, PlayerDeadState.EDeadReason.Joined);
         currentState.enter();
 
         currentGravityScale = playerCharacter.defaultGravityScale;
         grvManipulatorsThisFrame = new Dictionary<EInputControls, float>();
 
         jetpackUsageThisFrame = EJetpackUsage.None;
+        deathTrigger = false;
     }
 
     public void FixedUpdate()
@@ -144,6 +147,14 @@ public class PMovementStateHandler
         grvManipulatorsThisFrame = new Dictionary<EInputControls, float>();
 
         HashSet<Type> usedStateClasses = new HashSet<Type>();
+
+        if (deathTrigger)
+        {
+            deathTrigger = false;
+            currentState.exit();
+            currentState = new PlayerDeadState(this, PlayerDeadState.EDeadReason.Died);
+            currentState.enter();
+        }
 
         while (true)
         {
@@ -415,5 +426,10 @@ public class PMovementStateHandler
     public void resetJetpackUsage()
     {
         jetpackUsageThisFrame = EJetpackUsage.None;
+    }
+
+    public void triggerDeath()
+    {
+        deathTrigger = true;
     }
 }

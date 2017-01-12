@@ -121,6 +121,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: e001151fb7db14a44bd7c6a7a32fe293, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  deathCam: 0
+  deathcamZoomPerSecond: 0.8
 --- !u!81 &108597993
 AudioListener:
   m_ObjectHideFlags: 0
