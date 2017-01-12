@@ -403,6 +403,22 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
         }
     }
 
+    public IEnumerator respawnAnim()
+    {
+        for (int i = 0; i < 18; i++)
+        {
+            if ((i % 6) % 2 == 0)
+                GetComponent<SpriteRenderer>().color = Color.clear;
+            else if (i % 6 == 1)
+                GetComponent<SpriteRenderer>().color = Color.white;
+            else if (i % 6 == 3)
+                GetComponent<SpriteRenderer>().color = Color.yellow;
+            else
+                GetComponent<SpriteRenderer>().color = clr;
+            yield return new WaitForSeconds(.1f);
+        }
+    }
+
     [PunRPC]
     public void RemoteSetCharacterColors(float r, float g, float b, float a, PhotonMessageInfo info)
     {
