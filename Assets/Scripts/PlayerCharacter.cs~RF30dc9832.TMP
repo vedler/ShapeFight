@@ -82,6 +82,7 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     {
         if (photonView.isMine)
         {
+            print("ismine");
             wasMine = true;
         }
 
@@ -136,6 +137,7 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     public void addKill()
     {
         killcount++;
+        print(killcount);
         killText.text = "Kills:  " + killcount;
     }
 
@@ -405,7 +407,7 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     }
 
     public void updateHealthText()
-    {        
+    {
         float ratio = health / maxHealth;
         healthText.text = string.Format("Health: {0:0.0%}", ratio);
     }
@@ -414,8 +416,6 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     public void RemoteUpdateHealth(float hp, PhotonMessageInfo info)
     {
         health = hp;
-        if (health <= 0)
-            ded = true;
     }
     
     [PunRPC]
@@ -516,7 +516,7 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     public bool isDed()
     {
         if (ded)
-        {
+        
             ded = false;
             return true;
         }

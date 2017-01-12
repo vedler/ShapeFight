@@ -13,6 +13,7 @@ TagManager:
   - WeaponSoundsTag
   - PlayerHealthTag
   - PlayerFuelTag
+  - PlayerKillsTag
   layers:
   - Default
   - TransparentFX

@@ -121,6 +121,14 @@ public abstract class AbsWeaponMover : Photon.MonoBehaviour, PoolObject, IWeapon
             {
                 activeConfig.sounds[0].Play();
             }
+            PlayerCharacter me = spawner.GetComponent<PlayerCharacter>();
+            foreach (PlayerCharacter plr in FindObjectsOfType<PlayerCharacter>())
+            {
+                if (plr.isDed() && !plr.Equals(me))
+                {
+                    me.addKill();
+                }
+            }
 
             Remove();
         }
