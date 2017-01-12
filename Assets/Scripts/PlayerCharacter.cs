@@ -66,7 +66,7 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     public PMovementStateHandler movementStateHandler { get; private set; }
     public Collider2D boxCollider;
     private SpriteRenderer[] renderers;
-    private CamMovement camMovement;
+    public CamMovement camMovement { get; private set; }
     public bool wasMine { get; private set; }
 
     // -------- Networking ----------

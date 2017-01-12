@@ -173,6 +173,8 @@ public class ProjectileSynchronizer : Photon.MonoBehaviour
         mover.Remove();
 
         photonView.RPC("RemoteProjectileHit", PhotonTargets.All, position, otherId);
+
+        GameManager.getInstance().getNetworkManager().localPlayerCharacter.camMovement.SetShakeFor(.3f, position);
     }
 
     [PunRPC]
@@ -191,6 +193,7 @@ public class ProjectileSynchronizer : Photon.MonoBehaviour
         active = false;
         mover.Disable();
         GameManager.getInstance().getNetworkManager().localPlayerCharacter.handleRemoteHit(position, mover.activeConfig, otherId);
+        GameManager.getInstance().getNetworkManager().localPlayerCharacter.camMovement.SetShakeFor(.3f, position);
     }
 
     public void checkActiveChange()
