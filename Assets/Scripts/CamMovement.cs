@@ -79,7 +79,7 @@ public class CamMovement : MonoBehaviour {
         // Cam shake
         if (shakeDuration > 0)
         {
-            transform.position = transform.position + Random.insideUnitSphere * shakeAmount;
+            transform.position = transform.position + Random.insideUnitSphere * shakeAmount * shakeMod;
 
             shakeDuration -= Time.deltaTime * decreaseFactor;
         }
@@ -103,6 +103,10 @@ public class CamMovement : MonoBehaviour {
         if (dist <= MAX_SHAKE_DISTANCE)
         {
             shakeMod = 1.0f - (dist / MAX_SHAKE_DISTANCE);
+        }
+        else
+        {
+            shakeMod = 0f;
         }
     }
     
