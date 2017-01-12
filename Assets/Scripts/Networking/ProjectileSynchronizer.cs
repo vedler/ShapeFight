@@ -44,10 +44,10 @@ public class ProjectileSynchronizer : Photon.MonoBehaviour
             collider2d = GetComponent<Collider2D>();
         }
 
-        if (!active)
+        /*if (!active)
         {
             return;
-        }
+        }*/
 
         // It's our view
         if (photonView.isMine)
@@ -56,12 +56,15 @@ public class ProjectileSynchronizer : Photon.MonoBehaviour
             {
                 stream.SendNext(rigidBody.position);
                 stream.SendNext(rigidBody.velocity);
+                stream.SendNext(active);
             }
         }
         else
         {
             Vector2 syncPosition = (Vector2)stream.ReceiveNext();
             Vector2 syncVelocity = (Vector2)stream.ReceiveNext();
+            active = (bool)stream.ReceiveNext();
+            checkActiveChange();
 
             syncTime = 0f;
             syncDelay = Time.realtimeSinceStartup - lastSynchronizationTime;
@@ -110,7 +113,8 @@ public class ProjectileSynchronizer : Photon.MonoBehaviour
     public void TriggerResetToPosition(Vector2 position, Vector2 velocity, Quaternion rotation)
     {
         active = true;
-        gameObject.SetActive(true);
+        //gameObject.SetActive(true);
+        mover.Enable();
 
         rigidBody.position = position;
         // Mitigate some activation issues
@@ -133,7 +137,8 @@ public class ProjectileSynchronizer : Photon.MonoBehaviour
     public void ResetToPosition(Vector2 position, Vector2 velocity, Quaternion rotation, PhotonMessageInfo info)
     {
         active = true;
-        gameObject.SetActive(true);
+        //gameObject.SetActive(true);
+        mover.Enable();
 
         rigidBody.position = position;
         // Mitigate some activation issues
@@ -164,6 +169,7 @@ public class ProjectileSynchronizer : Photon.MonoBehaviour
         Destroy(explosion, explosion.GetComponent<ParticleSystem>().startLifetime * 2);
 
         active = false;
+        mover.Disable();
         mover.Remove();
 
         photonView.RPC("RemoteProjectileHit", PhotonTargets.All, position, otherId);
@@ -183,7 +189,22 @@ public class ProjectileSynchronizer : Photon.MonoBehaviour
         Destroy(explosion, explosion.GetComponent<ParticleSystem>().startLifetime * 2);
 
         active = false;
+        mover.Disable();
         GameManager.getInstance().getNetworkManager().localPlayerCharacter.handleRemoteHit(position, mover.activeConfig, otherId);
+    }
+
+    public void checkActiveChange()
+    {
+        if (active && !mover.isEnabled())
+        {
+            //gameObject.SetActive(true);
+            mover.Enable();
+        }
+        else if (!active && mover.isEnabled())
+        {
+            //gameObject.SetActive(false);
+            mover.Disable();
+        }
     }
 
 }

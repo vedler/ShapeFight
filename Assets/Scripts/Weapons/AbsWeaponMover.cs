@@ -10,6 +10,8 @@ public abstract class AbsWeaponMover : Photon.MonoBehaviour, PoolObject, IWeapon
     protected bool hasEnded;
     protected Vector2 direction;
     protected Vector2 startPosition;
+    
+    private SpriteRenderer[] renderers;
 
     [SerializeField]
     public WeaponConfig activeConfig;
@@ -46,6 +48,13 @@ public abstract class AbsWeaponMover : Photon.MonoBehaviour, PoolObject, IWeapon
         rigidBody = GetComponent<Rigidbody2D>();
         //sounds = GameObject.FindGameObjectWithTag("WeaponSoundsTag").GetComponents<AudioSource>();
         myCollider = GetComponent<Collider2D>();
+
+        SpriteRenderer[] _renderers = GetComponentsInChildren<SpriteRenderer>();
+        renderers = new SpriteRenderer[_renderers.Length + 1];
+        renderers[0] = GetComponent<SpriteRenderer>();
+        _renderers.CopyTo(renderers, 1);
+
+        // Request from owner
     }
 
     // Update is called once per frame
@@ -135,7 +144,8 @@ public abstract class AbsWeaponMover : Photon.MonoBehaviour, PoolObject, IWeapon
         rigidBody.velocity = Vector2.zero;
 
         sync.active = false;
-        gameObject.SetActive(false);
+        //gameObject.SetActive(false);
+        Disable();
         photonView.RPC("RemoteTriggerRemove", PhotonTargets.All);
     }
 
@@ -147,6 +157,86 @@ public abstract class AbsWeaponMover : Photon.MonoBehaviour, PoolObject, IWeapon
         rigidBody.velocity = Vector2.zero;
 
         sync.active = false;
-        gameObject.SetActive(false);
+        //gameObject.SetActive(false);
+
+        Disable();
+    }
+
+    public void Disable()
+    {
+        if (!myCollider.enabled)
+        {
+            // We are already disabled
+            return;
+        }
+
+        rigidBody.transform.position = new Vector2(1000, 1000);
+        rigidBody.velocity = Vector2.zero;
+
+        rigidBody.isKinematic = true;
+
+        myCollider.enabled = false;
+
+
+        foreach (var r in renderers)
+        {
+            r.enabled = false;
+        }
+        
+        photonView.RPC("RemoteTriggerProjDisable", PhotonTargets.All);
+    }
+
+    public void Enable()
+    {
+        if (myCollider.enabled)
+        {
+            // We are already enabled
+            return;
+        }
+
+        rigidBody.isKinematic = false;
+
+        myCollider.enabled = true;
+
+        foreach (var r in renderers)
+        {
+            r.enabled = true;
+        }
+        
+        photonView.RPC("RemoteTriggerProjEnable", PhotonTargets.All);
+    }
+
+    public bool isEnabled()
+    {
+        return myCollider.enabled;
+    }
+
+    [PunRPC]
+    public void RemoteTriggerProjDisable(PhotonMessageInfo info)
+    {
+        rigidBody.transform.position = new Vector2(1000, 1000);
+        rigidBody.velocity = Vector2.zero;
+
+        rigidBody.isKinematic = true;
+
+        myCollider.enabled = false;
+
+        foreach (var r in renderers)
+        {
+            r.enabled = false;
+        }
+    }
+
+    [PunRPC]
+    public void RemoteTriggerProjEnable(PhotonMessageInfo info)
+    {
+        rigidBody.isKinematic = false;
+
+        myCollider.enabled = true;
+
+        foreach (var r in renderers)
+        {
+            r.enabled = true;
+        }
     }
 }

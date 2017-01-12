@@ -95,6 +95,7 @@ public class PlayerSynchronizer : Photon.MonoBehaviour
         {
             if (stream.isWriting)
             {
+                stream.SendNext(parentCharacter.isEnabled());
                 stream.SendNext(rigidBody.position);
                 stream.SendNext(rigidBody.velocity);
 
@@ -153,6 +154,20 @@ public class PlayerSynchronizer : Photon.MonoBehaviour
             // Also when applying this Lerp, we check the raycast if the delta of our positions would hit anything
             // If it would, we instantly snap to the delta position (this could bring in some really huge bugs - getting stuck in walls or something)
             //      but to alleviate this problem, we can also make our ping cap at like 500ms
+
+            bool isActive = (bool)stream.ReceiveNext();
+
+            if (parentCharacter.isEnabled() != isActive)
+            {
+                if (isActive)
+                {
+                    parentCharacter.Enable();
+                }
+                else
+                {
+                    parentCharacter.Disable();
+                }
+            }
 
             Vector2 syncPosition = (Vector2)stream.ReceiveNext();
             Vector2 syncVelocity = (Vector2)stream.ReceiveNext();

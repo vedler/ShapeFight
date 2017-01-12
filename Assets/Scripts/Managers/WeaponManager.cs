@@ -96,9 +96,6 @@ public class WeaponManager {
         public ObjectInstance(GameObject objectInstance)
         {
             gameObject = objectInstance;
-            gameObject.SetActive(false);
-
-            gameObject.transform.position = new Vector3(1000, 1000, 0);
 
             sync = gameObject.GetComponent<ProjectileSynchronizer>();
 
@@ -112,6 +109,14 @@ public class WeaponManager {
             if (mover != null)
             {
                 mover.init();
+                mover.Remove();
+                mover.Disable();
+            }
+            else
+            {
+                MonoBehaviour.print("No mover found on pool object creation.");
+                //gameObject.SetActive(false);
+                gameObject.transform.position = new Vector3(1000, 1000, 0);
             }
         }
 

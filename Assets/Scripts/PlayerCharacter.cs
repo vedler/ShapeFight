@@ -64,7 +64,9 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
 
     // -------- State handling ---------
     public PMovementStateHandler movementStateHandler { get; private set; }
-
+    public Collider2D boxCollider;
+    private SpriteRenderer[] renderers;
+    private CamMovement camMovement;
     public bool wasMine { get; private set; }
 
     // -------- Networking ----------
@@ -81,6 +83,17 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
             print("ismine");
             wasMine = true;
         }
+
+        // --------- Death stuff
+
+        boxCollider = GetComponent<Collider2D>();
+
+        SpriteRenderer[] _renderers = GetComponentsInChildren<SpriteRenderer>();
+        renderers = new SpriteRenderer[_renderers.Length + 1];
+        renderers[0] = GetComponent<SpriteRenderer>();
+        _renderers.CopyTo(renderers, 1);
+
+        camMovement = FindObjectOfType<CamMovement>();
 
         // Subscribe to local input if this is our network view object
         if (wasMine)
@@ -190,7 +203,7 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
         numberOfTicks++;
 
         // We dead...
-        if (health < 0)
+        if (health <= 0)
         {
             playerDeath();
         }
@@ -363,14 +376,12 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
 
     public void rotateJetpack(float deg)
     {
-        //reduceFuel(3.5f);
         Quaternion rotateTo = Quaternion.Euler(0, 0, deg);
         jetpack.transform.rotation = Quaternion.Slerp(jetpack.transform.rotation, rotateTo, Time.deltaTime * .9f);
     }
 
     public void burst()
     {
-        //reduceFuel(12);
         Quaternion rotateTo = Quaternion.Euler(0, 0, 180);
         jetpack.transform.rotation = Quaternion.Slerp(jetpack.transform.rotation, rotateTo, Time.deltaTime * 1.9f);
     }
@@ -409,11 +420,11 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
         for (int i = 0; i < 6; i++)
         {
             if (i % 6 == 0)
-                GetComponent<SpriteRenderer>().color = Color.red;
+                renderers[0].color = Color.red;
             else if (i % 6 == 3)
-                GetComponent<SpriteRenderer>().color = Color.white;
+                renderers[0].color = Color.white;
             else
-                GetComponent<SpriteRenderer>().color = clr;
+                renderers[0].color = clr;
             yield return new WaitForSeconds(.1f);
         }
     }
@@ -423,13 +434,13 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
         for (int i = 0; i < 18; i++)
         {
             if ((i % 6) % 2 == 0)
-                GetComponent<SpriteRenderer>().color = Color.clear;
+                renderers[0].color = Color.clear;
             else if (i % 6 == 1)
-                GetComponent<SpriteRenderer>().color = Color.white;
+                renderers[0].color = Color.white;
             else if (i % 6 == 3)
-                GetComponent<SpriteRenderer>().color = Color.yellow;
+                renderers[0].color = Color.yellow;
             else
-                GetComponent<SpriteRenderer>().color = clr;
+                renderers[0].color = clr;
             yield return new WaitForSeconds(.1f);
         }
     }
@@ -450,14 +461,14 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     public void SetCharacterColors(Color color)
     {
         clr = color;
-        GetComponent<SpriteRenderer>().color = clr;
+        renderers[0].color = clr;
         transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().color = clr;
         transform.GetChild(1).gameObject.GetComponent<ParticleSystem>().startColor = clr;
     }
 
     private void SetCharacterColors()
     {
-        GetComponent<SpriteRenderer>().color = clr;
+        renderers[0].color = clr;
         transform.GetChild(0).gameObject.GetComponent<SpriteRenderer>().color = clr;
         transform.GetChild(1).gameObject.GetComponent<ParticleSystem>().startColor = clr;
     }
@@ -469,7 +480,6 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
         // Direct hit on me
         if (otherId == photonView.ownerId)
         {
-            //print("DIRECT HIT, DMG: " + weapon.damage);
             damage = weapon.damage;
         }
 
@@ -484,8 +494,6 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
                 float dmgModifier = calcExplosionDamageModifier(position, rigidBody.transform.position, weapon.radius, weapon.explosionFalloffModifier);
 
                 damage = dmgModifier * weapon.damage;
-
-                //print("SPLASH HIT, DMG: " + damage);
             }
         }
 
@@ -517,6 +525,7 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
 
         health = maxHealth;
         jetpackFuel = maxFuel;
+
     }
 
     public void playerDeath()
@@ -528,6 +537,74 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     public void playerRespawn()
     {
         StartCoroutine(respawnAnim());
+        photonView.RPC("RemoteTriggerPlayerRespawn", PhotonTargets.All);
+    }
+
+    [PunRPC]
+    public void RemoteTriggerPlayerRespawn(PhotonMessageInfo info)
+    {
+        StartCoroutine(respawnAnim());
+    }
+
+    public void Disable()
+    {
+        rigidBody.isKinematic = true;
+
+        boxCollider.enabled = false;
+
+        foreach (var r in renderers)
+        {
+            r.enabled = false;
+        }
+
+        camMovement.deathCam = true;
+        photonView.RPC("RemoteTriggerDisable", PhotonTargets.All);
+    }
+
+    public void Enable()
+    {
+        rigidBody.isKinematic = false;
+
+        boxCollider.enabled = true;
+
+        foreach (var r in renderers)
+        {
+            r.enabled = true;
+        }
+
+        camMovement.deathCam = false;
+        photonView.RPC("RemoteTriggerEnable", PhotonTargets.All);
+    }
+
+    public bool isEnabled()
+    {
+        return boxCollider.enabled;
+    }
+
+    [PunRPC]
+    public void RemoteTriggerDisable(PhotonMessageInfo info)
+    {
+        rigidBody.isKinematic = true;
+
+        boxCollider.enabled = false;
+
+        foreach (var r in renderers)
+        {
+            r.enabled = false;
+        }
+    }
+
+    [PunRPC]
+    public void RemoteTriggerEnable(PhotonMessageInfo info)
+    {
+        rigidBody.isKinematic = false;
+
+        boxCollider.enabled = true;
+
+        foreach (var r in renderers)
+        {
+            r.enabled = true;
+        }
     }
 }
 

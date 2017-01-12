@@ -154,6 +154,8 @@ public class PMovementStateHandler
             currentState.exit();
             currentState = new PlayerDeadState(this, PlayerDeadState.EDeadReason.Died);
             currentState.enter();
+
+            usedStateClasses.Add(currentState.GetType());
         }
 
         while (true)

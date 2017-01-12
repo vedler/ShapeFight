@@ -19,21 +19,12 @@ public class PlayerDeadState : AbstractPMovementState
     private readonly float SPAWN_TIME = 5.0f;
     private readonly float SPAWN_CLEAR_RADIUS = 8.0f;
 
-    private Collider2D collider;
-    private SpriteRenderer[] renderers;
-    private CamMovement camMovement;
+    
 
     public PlayerDeadState(PMovementStateHandler handler, EDeadReason reason) : base(handler)
     {
         deadReason = reason;
-        collider = handler.playerCharacter.GetComponent<Collider2D>();
-
-        SpriteRenderer[] _renderers = handler.playerCharacter.GetComponentsInChildren<SpriteRenderer>();
-        renderers = new SpriteRenderer[_renderers.Length + 1];
-        renderers[0] = handler.playerCharacter.GetComponent<SpriteRenderer>();
-        _renderers.CopyTo(renderers, 1);
-
-        camMovement = MonoBehaviour.FindObjectOfType<CamMovement>();
+        setNextState(new PlayerFlyingState(handler, false));
     }
 
     public override bool check()
@@ -43,9 +34,13 @@ public class PlayerDeadState : AbstractPMovementState
 
     public override void enter()
     {
+        if (!handler.playerCharacter.wasMine)
+        {
+            return;
+        }
+
         timeStartedDead = Time.realtimeSinceStartup;
-        Disable();
-        setNextState(new PlayerFlyingState(handler, false));
+        handler.playerCharacter.Disable();
 
         if (handler.playerCharacter.spawnPoints.Length == 0)
         {
@@ -106,15 +101,31 @@ public class PlayerDeadState : AbstractPMovementState
 
     public override void exit()
     {
-        Enable();
+        if (!handler.playerCharacter.wasMine)
+        {
+            return;
+        }
+
+        handler.playerCharacter.Enable();
         handler.playerCharacter.updateFuelText();
         handler.playerCharacter.updateHealthText();
         handler.playerCharacter.playerRespawn();
-        // TODO: Anim
     }
 
     public override bool FixedUpdate(ref Dictionary<byte, Queue<ICommand>> commandCache)
     {
+        if (!handler.playerCharacter.wasMine)
+        {
+            if (handler.playerCharacter.isEnabled())
+            {
+                commandCache = new Dictionary<byte, Queue<ICommand>>();
+                handler.setCacheUsed();
+                return false;
+            }
+
+            return true;
+        }
+
         switch (deadReason)
         {
             case EDeadReason.Joined:
@@ -158,35 +169,5 @@ public class PlayerDeadState : AbstractPMovementState
         return res;
     }
 
-    public void Disable()
-    {
-        //handler.playerCharacter.gameObject.SetActive(false);
-
-        handler.playerCharacter.rigidBody.isKinematic = true;
-
-        collider.enabled = false;
-
-        foreach (var r in renderers)
-        {
-            r.enabled = false;
-        }
-
-        camMovement.deathCam = true;
-    }
-
-    public void Enable()
-    {
-        //handler.playerCharacter.gameObject.SetActive(true);
-
-        handler.playerCharacter.rigidBody.isKinematic = false;
-
-        collider.enabled = true;
-
-        foreach (var r in renderers)
-        {
-            r.enabled = true;
-        }
-
-        camMovement.deathCam = false;
-    }
+    
 }
