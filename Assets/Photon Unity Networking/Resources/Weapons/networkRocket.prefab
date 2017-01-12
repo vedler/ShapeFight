@@ -188,7 +188,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d16488477654e2d4495224ed9e4de13b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  maxSpeed: 40
+  maxSpeed: 70
+  spawner: {fileID: 0}
   activeConfig:
     cooldownPeriod: 1
     particleSysPrefab: {fileID: 1000011581375342, guid: 26410a4969a30554d824b6b1c1ff4bb7,
@@ -199,7 +200,7 @@ MonoBehaviour:
     radius: 6
     explosionFalloffModifier: 4
   sync: {fileID: 0}
-  acceleration: 0
+  acceleration: 0.7
 --- !u!114 &114000013862349252
 MonoBehaviour:
   m_ObjectHideFlags: 1
