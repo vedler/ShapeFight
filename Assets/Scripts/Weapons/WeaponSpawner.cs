@@ -10,6 +10,9 @@ public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
 
     private WSelectionManager weaponSelectionManager;
 
+    [SerializeField]
+    private AudioSource[] sources;
+
     // -----------------------
 
     Hand hand;
@@ -137,6 +140,7 @@ public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
     {
         inputManager = GameManager.getInstance().getInputManager();
         weaponManager = GameManager.getInstance().getWeaponManager();
+        weaponManager.spawner = this;
         weaponSelectionManager = GameManager.getInstance().getWSelectionManager();
 
         //Creates a pool for weapons
@@ -195,5 +199,27 @@ public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
         }
 
         return null;
+    }
+
+    [PunRPC]
+    public void PlayTunes(string name, PhotonMessageInfo info)
+    {
+        print(name);
+        switch (name)
+        {
+            case "networkRocket(Clone)":
+                sources[1].Play(); break;
+            case "networkBullet(Clone)":
+                break;
+            case "networkPellet(Clone)":
+                sources[2].Play(); break;
+            case "networkGrenade(Clone)":
+                sources[0].Play(); break;
+        }
+    }
+
+    public void playTune(string name)
+    {
+        photonView.RPC("PlayTunes", PhotonTargets.All, name);
     }
 }

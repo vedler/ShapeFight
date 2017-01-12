@@ -5,7 +5,7 @@ using System;
 public abstract class AbsWeaponMover : Photon.MonoBehaviour, PoolObject, IWeaponMover
 {
     public float maxSpeed;
-    
+    public WeaponSpawner spawner;
     protected bool isFired;
     protected bool hasEnded;
     protected Vector2 direction;
@@ -105,6 +105,7 @@ public abstract class AbsWeaponMover : Photon.MonoBehaviour, PoolObject, IWeapon
                 return;
             }
 
+            spawner.playTune(name);
             sync.TriggerProjectileHit(rigidBody.position, -1);
 
             if (activeConfig.sounds.Length > 0)

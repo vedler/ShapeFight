@@ -53,4 +53,5 @@ MonoBehaviour:
   - RemoteTriggerHitAnim
   - RemoteUpdateHealth
   - RemoteTriggerRemove
+  - PlayTunes
   DisableAutoOpenWizard: 1

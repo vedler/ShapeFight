@@ -6,6 +6,8 @@ public class WeaponManager {
 
     private GameManager gameManager;
 
+    public WeaponSpawner spawner;
+
     Dictionary<int, Queue<ObjectInstance>> poolDictionary = new Dictionary<int, Queue<ObjectInstance>> ();
 
     // Use this for initialization
@@ -27,7 +29,7 @@ public class WeaponManager {
 
             for (int i = 0; i < poolSize; ++i)
             {
-                ObjectInstance newObject = new ObjectInstance (Object.Instantiate(prefab) as GameObject);
+                ObjectInstance newObject = new ObjectInstance(Object.Instantiate(prefab) as GameObject);
                 poolDictionary[poolKey].Enqueue(newObject);
             }
         }
@@ -44,6 +46,7 @@ public class WeaponManager {
             for (int i = 0; i < poolSize; ++i)
             {
                 ObjectInstance newObject = new ObjectInstance(PhotonNetwork.Instantiate(weaponName, new Vector3(1000, 1000, 0), new Quaternion(), 0));
+                newObject.passSpawner(spawner);
                 poolDictionary[poolKey].Enqueue(newObject);
             }
         }
@@ -84,6 +87,11 @@ public class WeaponManager {
         GameObject gameObject;
         bool hasPoolObjectComponent;
         PoolObject poolObjectScript;
+
+        public void passSpawner(WeaponSpawner spawner)
+        {
+            gameObject.GetComponent<AbsWeaponMover>().spawner = spawner;
+        }
 
         public ObjectInstance(GameObject objectInstance)
         {
