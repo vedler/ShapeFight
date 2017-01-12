@@ -523,7 +523,11 @@ public class PlayerCharacter : Photon.MonoBehaviour, IUserInputListener {
     {
         // TODO: RPC for others?
         movementStateHandler.triggerDeath();
-        // Anim
+    }
+
+    public void playerRespawn()
+    {
+        StartCoroutine(respawnAnim());
     }
 }
 

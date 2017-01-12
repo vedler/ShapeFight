@@ -109,6 +109,7 @@ public class PlayerDeadState : AbstractPMovementState
         Enable();
         handler.playerCharacter.updateFuelText();
         handler.playerCharacter.updateHealthText();
+        handler.playerCharacter.playerRespawn();
         // TODO: Anim
     }
 
