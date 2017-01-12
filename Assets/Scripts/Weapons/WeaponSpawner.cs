@@ -204,13 +204,12 @@ public class WeaponSpawner : Photon.MonoBehaviour, IUserInputListener {
     [PunRPC]
     public void PlayTunes(string name, PhotonMessageInfo info)
     {
-        print(name);
         switch (name)
         {
             case "networkRocket(Clone)":
                 sources[1].Play(); break;
             case "networkBullet(Clone)":
-                break;
+                sources[3].Play(); break;
             case "networkPellet(Clone)":
                 sources[2].Play(); break;
             case "networkGrenade(Clone)":
