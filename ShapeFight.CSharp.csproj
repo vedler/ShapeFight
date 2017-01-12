@@ -176,6 +176,7 @@
     <Compile Include="Assets\Scripts\PlayerState\AbstractPMovementState.cs" />
     <Compile Include="Assets\Scripts\PlayerState\IPlayerState.cs" />
     <Compile Include="Assets\Scripts\PlayerState\PMovementStateHandler.cs" />
+    <Compile Include="Assets\Scripts\PlayerState\PlayerDeadState.cs" />
     <Compile Include="Assets\Scripts\PlayerState\PlayerFlyingState.cs" />
     <Compile Include="Assets\Scripts\PlayerState\PlayerGroundState.cs" />
     <Compile Include="Assets\Scripts\PlayerState\PlayerWallState.cs" />
